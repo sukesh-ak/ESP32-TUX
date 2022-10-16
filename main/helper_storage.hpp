@@ -2,10 +2,12 @@
 
 #define MOUNT_POINT "/sdcard"
 
+// SPI - ESP32-S3
 // #define SD_MISO GPIO_NUM_37 
 // #define SD_MOSI GPIO_NUM_35
-// #define SD_CLK  GPIO_NUM_36
-#define SD_CS   GPIO_NUM_33
+// #define SD_SCLK GPIO_NUM_36
+
+#define SD_CS   GPIO_NUM_41
 static sdmmc_card_t* sdcard;
 
 bool init_sdspi()
