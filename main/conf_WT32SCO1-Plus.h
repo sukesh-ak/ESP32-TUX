@@ -1,4 +1,6 @@
 #define TOUCH_ENABLED
+
+// SD card Work-in-progress so disabled
 //#define SD_ENABLED 
 
 // Portrait
