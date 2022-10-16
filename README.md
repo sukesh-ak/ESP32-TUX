@@ -1,7 +1,7 @@
 #  Wireless Tag WT32-SC01 / Plus (3.5" TFT Touch Display)
 Design adapts to different screen resolution without any code changes.   
 
-## ESP32/ESP32-S3 + ESP-IDF + LVGL8.X + LOVYANGFX
+## ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
 > Wireless Tag WT32-SC01  
 ![device](datasheet/WT32-SC01.png)  
 
@@ -30,8 +30,8 @@ Some features included in the sample
 > Git clone and recursively update submodule
 ```cmake
 # Clone repo and update submodules (LovyanGFX + LVGL)
-git clone https://github.com/sukesh-ak/LVGL8x-SDSPI.git
-cd LVGL8x-SDSPI-Template
+git clone https://github.com/sukesh-ak/WT32-SC01-PLUS-LVGL-IDF.git
+cd WT32-SC01-PLUS-LVGL-IDF
 git submodule update --init --recursive
 
 # Update submodules (LovyanGFX + LVGL)
