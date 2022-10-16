@@ -1,0 +1,6 @@
+[submodule "components/LovyanGFX"]
+	path = components/LovyanGFX
+	url = https://github.com/lovyan03/LovyanGFX.git
+[submodule "components/lvgl"]
+	path = components/lvgl
+	url = https://github.com/lvgl/lvgl.git

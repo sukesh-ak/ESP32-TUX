@@ -1,0 +1,6 @@
+build-esp32/
+build-esp32s3/
+build/
+sdkconfig
+sdkconfig.old
+.vs/
