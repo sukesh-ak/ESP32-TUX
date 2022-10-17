@@ -5,7 +5,7 @@
 #include "sdmmc_cmd.h"
 
 static const char *TAG = "lvgl_gui";
-#define ENABLE_TEST_TIMER   // Enable/Disable TIMER used for testing
+//#define ENABLE_TEST_TIMER   // Enable/Disable TIMER used for testing
 
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
@@ -71,10 +71,9 @@ void app_main(void)
 #endif
     lv_setup_styles();
 
-    // STATUS / TITLE BAR
-    create_header(lv_scr_act());
-    create_content(lv_scr_act());
-    create_footer(lv_scr_act());
+
+    draw_ui();
+
 
 #ifdef SD_ENABLED
     lvgl_acquire();

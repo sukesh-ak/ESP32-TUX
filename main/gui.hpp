@@ -16,6 +16,7 @@ static const lv_font_t *font_symbol;
 static lv_obj_t *panel_header;
 static lv_obj_t *panel_status;
 static lv_obj_t *panel_container;
+static lv_obj_t *screen_container;
 
 static lv_obj_t *label_title;
 static lv_obj_t *label_message;
@@ -142,19 +143,8 @@ static void create_header(lv_obj_t *parent)
 
 static void create_content(lv_obj_t *parent)
 {
-    // CONTENT PANEL CONTAINER
-    panel_container = lv_obj_create(parent);
-    lv_obj_set_size(panel_container, LV_HOR_RES -20, LV_VER_RES - (HEADER_HEIGHT + FOOTER_HEIGHT + 20));
-    lv_obj_set_style_bg_opa(panel_container,LV_OPA_TRANSP,0);
-    lv_obj_set_style_border_width(panel_container, 0, 0);
-    lv_obj_align(panel_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT+10);
-    lv_obj_set_style_pad_all(panel_container,0,0);
-
-    //lv_obj_set_scrollbar_mode(panel_container, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_flex_flow(panel_container, LV_FLEX_FLOW_ROW_WRAP);
-
-    // Islands #1
-    lv_obj_t *contentPanel = lv_obj_create(panel_container);
+    // **************** Islands #1
+    lv_obj_t *contentPanel = lv_obj_create(parent);
     lv_obj_set_size(contentPanel, LV_PCT(100), 100);
     //lv_obj_set_style_bg_color(contentPanel, bg_theme_color, 0);
     lv_obj_set_style_border_width(contentPanel, 0, 0);
@@ -167,8 +157,8 @@ static void create_content(lv_obj_t *parent)
     lv_label_set_text(lbl, "Counter Button: 0");
     lv_obj_center(lbl);
 
-    // Islands #2
-    lv_obj_t *contentPanel1 = lv_obj_create(panel_container);
+    // **************** Islands #2
+    lv_obj_t *contentPanel1 = lv_obj_create(parent);
     lv_obj_set_size(contentPanel1, LV_PCT(100), 100);
     //lv_obj_set_style_bg_color(contentPanel1, bg_theme_color, 0);
     lv_obj_set_style_border_width(contentPanel1, 0, 0);
@@ -176,7 +166,6 @@ static void create_content(lv_obj_t *parent)
     lv_obj_set_flex_flow(contentPanel1, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(contentPanel1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-    // SHOW LVGL VERSION IN THE CENTER
     lv_obj_t *label = lv_label_create(contentPanel1);
     //lv_obj_set_style_text_color(label, lv_palette_main(LV_PALETTE_RED), 0);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
@@ -185,6 +174,19 @@ static void create_content(lv_obj_t *parent)
     lv_obj_t *sw = lv_switch_create(contentPanel1);
     lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
 
+    // **************** Islands #3
+    lv_obj_t *contentPanel2 = lv_obj_create(parent);
+    lv_obj_set_size(contentPanel2, LV_PCT(100), 200);
+    //lv_obj_set_style_bg_color(contentPanel2, bg_theme_color, 0);
+    lv_obj_set_style_border_width(contentPanel2, 0, 0);
+
+    // Button with counter
+    lv_obj_t *btn2 = lv_btn_create(contentPanel2);
+    lv_obj_align(btn2,LV_ALIGN_CENTER,0,0);
+    lv_obj_add_event_cb(btn2, counter_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_t *lbl2 = lv_label_create(btn2);
+    lv_label_set_text(lbl2, "Click Me!");
+    lv_obj_center(lbl2);
 }
 
 static void create_footer(lv_obj_t *parent)
@@ -205,6 +207,23 @@ static void create_footer(lv_obj_t *parent)
 
     // Show LVGL version
     display_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+}
+
+static void draw_ui()
+{
+    screen_container = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(screen_container,LV_HOR_RES - 4,LV_VER_RES - HEADER_HEIGHT - FOOTER_HEIGHT - 4);
+    lv_obj_align(screen_container, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_bg_opa(screen_container,LV_OPA_TRANSP,0);
+    lv_obj_set_style_border_width(screen_container, 0, 0);
+    
+    //lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
+    lv_obj_set_flex_flow(screen_container, LV_FLEX_FLOW_ROW_WRAP);
+    
+    // STATUS / TITLE BAR
+    create_header(lv_scr_act());
+    create_content(screen_container);//lv_scr_act());
+    create_footer(lv_scr_act());
 }
 
   /* Counter button event handler */
