@@ -1,7 +1,6 @@
-#define TOUCH_ENABLED
-
 // SD card Work-in-progress so disabled
-//#define SD_ENABLED 
+#define WT32_SC01_PLUS
+#define SD_ENABLED 
 
 // Portrait
 #define TFT_WIDTH   320
@@ -19,7 +18,7 @@ public:
   {
     {
       auto cfg = _bus_instance.config();
-      cfg.freq_write = 20000000;    
+      cfg.freq_write = 40000000;    
       cfg.pin_wr = 47;             
       cfg.pin_rd = -1;             
       cfg.pin_rs = 0;              
@@ -73,7 +72,6 @@ public:
       _panel_instance.setLight(&_light_instance);  
     }
 
-#ifdef TOUCH_ENABLED
     { 
       auto cfg = _touch_instance.config();
 
@@ -94,7 +92,6 @@ public:
       _touch_instance.config(cfg);
       _panel_instance.setTouch(&_touch_instance);  
     }
-#endif 
 
     setPanel(&_panel_instance); 
   }

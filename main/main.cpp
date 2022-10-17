@@ -10,13 +10,19 @@ static const char *TAG = "lvgl_gui";
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 
-// Enable one of the device/display from below
+// Enable one of the devices from below
 #include "conf_WT32SCO1.h"              // WT32-SC01 auto config
-// #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus support
+// #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus with SD Card support
 
 #include "helper_display.hpp"
-#include "helper_storage.hpp"
 
+#if defined(WT32_SC01_PLUS)
+    #include "helper_storage.hpp"
+// else // For SD card shared on TFT SPI bus
+//     #include "helper_storage_shared.hpp"
+#endif
+
+// UI design
 #include <gui.hpp>
 
 #ifdef ENABLE_TEST_TIMER

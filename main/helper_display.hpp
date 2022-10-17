@@ -29,9 +29,7 @@ static void gui_task(void *args);
 /*** Function declaration ***/
 void display_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
 
-#ifdef TOUCH_ENABLED
 void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
-#endif
 
 static void lv_tick_task(void *arg);
 
@@ -43,29 +41,6 @@ esp_err_t lv_display_init()
 
     lcd.setBrightness(128);
     lcd.setColorDepth(24);
-
-#ifdef RTOUCH
-    /* RESISTIVE TOUCH CALIBRATION */
-    // Calibrates when touch is available. (Optional)
-    if (lcd.touch())
-    {
-        if (lcd.width() < lcd.height())
-            lcd.setRotation(lcd.getRotation() ^ 1);
-
-        // Draw a guide sentence on the screen.
-        lcd.setTextDatum(textdatum_t::middle_center);
-        lcd.drawString("touch the arrow marker.", lcd.width() >> 1, lcd.height() >> 1);
-        lcd.setTextDatum(textdatum_t::top_left);
-
-        // When using touch, calibrate it. Touch the tips of the arrows that appear in the four corners of the screen in order.
-        std::uint16_t fg = TFT_WHITE;
-        std::uint16_t bg = TFT_BLACK;
-        if (lcd.isEPD())
-            std::swap(fg, bg);
-        lcd.calibrateTouch(nullptr, fg, bg, std::max(lcd.width(), lcd.height()) >> 3);
-    }
-    /* CALIBRATION */
-#endif
 
     lcd.fillScreen(TFT_BLACK);
 
@@ -82,14 +57,12 @@ esp_err_t lv_display_init()
     disp_drv.sw_rotate = 1;
     disp = lv_disp_drv_register(&disp_drv);
 
-#ifdef TOUCH_ENABLED
     //*** LVGL : Setup & Initialize the input device driver ***
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = touchpad_read;
     lv_indev_drv_register(&indev_drv);
-#endif
 
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t lv_periodic_timer_args = {
@@ -184,7 +157,6 @@ void lvgl_release(void)
     }
 }
 
-#ifdef TOUCH_ENABLED
 // Touchpad callback to read the touchpad
 void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
@@ -204,4 +176,3 @@ void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
         data->point.y = touchY;
     }
 }
-#endif
