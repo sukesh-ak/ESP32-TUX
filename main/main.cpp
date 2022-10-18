@@ -108,7 +108,7 @@ static void once_timer_callback(void* arg)
 
     // Rotating the screen 180 deg just once
     // lvgl_acquire();
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_90);
+    // lv_disp_set_rotation(disp, LV_DISP_ROT_180);
     // lvgl_release();
 }
 

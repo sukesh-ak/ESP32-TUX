@@ -1,4 +1,30 @@
+/* Create Custom symbols
+Download FontAwesome Free version or 
+take from lvgl\scripts\built_in_font\FontAwesome5-Solid+Brands+Regular.woff
+Automation done with this => https://github.com/lvgl/lv_font_conv
 
+
+Goto conversion tool
+https://lvgl.io/tools/fontconverter
+
+Name eg. font_fa_14
+Size : 14
+Bpp : 4 bit-per-pixel
+
+Select 'fa-brands-400.ttf' from download
+Range: Provide the symbol hex values with comma separated
+
+Use this site to convert Unicode to Hex UTF-8 bytes
+https://www.cogsci.ed.ac.uk/~richard/utf-8.cgi?input=f294&mode=hex
+
+then define constants for us like
+#define FA_BLE_SYMBOL "\xEF\x8A\x94"
+*/
+
+
+LV_FONT_DECLARE(font_fa_14)
+#define FA_SYMBOL_BLE "\xEF\x8A\x94"    // 0xf294
+#define FA_SYMBOL_SETTINGS "\xEF\x80\x93" // 0xf0ad
 /*********************
  *      DEFINES
  *********************/
@@ -12,10 +38,11 @@
 static const lv_font_t *font_large;
 static const lv_font_t *font_normal;
 static const lv_font_t *font_symbol;
+static const lv_font_t *font_fa;
 
 static lv_obj_t *panel_header;
-static lv_obj_t *panel_status;
-static lv_obj_t *panel_container;
+static lv_obj_t *panel_status; // Status icons in the header
+static lv_obj_t *content_container;
 static lv_obj_t *screen_container;
 
 static lv_obj_t *label_title;
@@ -23,6 +50,7 @@ static lv_obj_t *label_message;
 
 static lv_obj_t *icon_storage;
 static lv_obj_t *icon_wifi;
+static lv_obj_t *icon_ble;
 static lv_obj_t *icon_battery;
 
 static lv_coord_t screen_h;
@@ -35,6 +63,7 @@ static lv_style_t style_message;
 static lv_style_t style_title;
 static lv_style_t style_storage;
 static lv_style_t style_wifi;
+static lv_style_t style_ble;
 static lv_style_t style_battery;
 
 
@@ -61,6 +90,7 @@ void lv_setup_styles()
     font_symbol = &lv_font_montserrat_14;
     font_normal = &lv_font_montserrat_14;
     font_large = &lv_font_montserrat_16;
+    font_fa = &font_fa_14;
 
     screen_h = lv_obj_get_height(lv_scr_act());
     screen_w = lv_obj_get_width(lv_scr_act());
@@ -89,6 +119,12 @@ void lv_setup_styles()
     lv_style_set_align(&style_wifi, LV_ALIGN_RIGHT_MID);
     lv_style_set_pad_right(&style_wifi, 65);
 
+    // BLE
+    lv_style_init(&style_ble);
+    lv_style_set_text_font(&style_ble, font_fa);
+    lv_style_set_align(&style_ble, LV_ALIGN_RIGHT_MID);
+    lv_style_set_pad_right(&style_ble, 90); // Symbol is narrow
+
     // FOOTER MESSAGE & ANIMATION
     lv_anim_init(&anim_labelscroll);
     lv_anim_set_delay(&anim_labelscroll, 1000);          //Wait 1 second to start the first scroll
@@ -112,12 +148,11 @@ static void create_header(lv_obj_t *parent)
     lv_obj_set_size(panel_header,LV_PCT(100),HEADER_HEIGHT);
     //lv_obj_set_style_bg_color(panel_header, bg_theme_color, 0);
     lv_obj_set_style_pad_all(panel_header, 0, 0);
-    lv_obj_set_style_border_width(panel_header, 0, 0);
     lv_obj_set_style_radius(panel_header, 0, 0);
     lv_obj_set_align(panel_header, LV_ALIGN_TOP_MID);
 
     label_title = lv_label_create(panel_header);
-    lv_label_set_text(label_title, "DASHBOARD");
+    lv_label_set_text(label_title, LV_SYMBOL_HOME " DASHBOARD");
     lv_obj_add_style(label_title, &style_title, 0);
 
     // HEADER STATUS ICON PANEL
@@ -133,6 +168,11 @@ static void create_header(lv_obj_t *parent)
     icon_wifi = lv_label_create(panel_status);
     lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
     lv_obj_add_style(icon_wifi, &style_wifi, 0);
+
+    // BLE
+    icon_ble = lv_label_create(panel_status);
+    lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
+    lv_obj_add_style(icon_ble, &style_ble, 0);
 
     // SD CARD
     icon_storage = lv_label_create(panel_status);
@@ -197,7 +237,6 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_set_size(panel_footer,LV_PCT(100),FOOTER_HEIGHT);
     //lv_obj_set_style_bg_color(panel_footer, bg_theme_color, 0);
     lv_obj_set_style_pad_all(panel_footer, 0, 0);
-    lv_obj_set_style_border_width(panel_footer, 0, 0);
     lv_obj_set_style_radius(panel_footer, 0, 0);
     lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
 
@@ -225,16 +264,16 @@ static void draw_ui()
     create_header(screen_container);
     create_footer(screen_container);    
 
-    panel_container = lv_obj_create(screen_container);
-    lv_obj_set_size(panel_container,screen_w,screen_h - HEADER_HEIGHT - FOOTER_HEIGHT); 
-    lv_obj_align(panel_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
-    lv_obj_set_style_border_width(panel_container, 0, 0);   
+    content_container = lv_obj_create(screen_container);
+    lv_obj_set_size(content_container,screen_w,screen_h - HEADER_HEIGHT - FOOTER_HEIGHT); 
+    lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
+    lv_obj_set_style_border_width(content_container, 0, 0);   
 
-    lv_obj_set_style_bg_opa(panel_container,LV_OPA_TRANSP,0);
-    //lv_obj_set_style_bg_color(panel_container,lv_palette_main(LV_PALETTE_RED),0);
-    lv_obj_set_flex_flow(panel_container, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_style_bg_opa(content_container,LV_OPA_TRANSP,0);
+    //lv_obj_set_style_bg_color(content_container,lv_palette_main(LV_PALETTE_RED),0);
+    lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
     
-    create_content(panel_container);
+    create_content(content_container);
 }
 
   /* Counter button event handler */
@@ -280,12 +319,11 @@ static void rotate_event_handler(lv_event_t * e)
         // Update 
         screen_h = lv_obj_get_height(lv_scr_act());
         screen_w = lv_obj_get_width(lv_scr_act());
-        lv_obj_set_size(panel_container,screen_w,screen_h-HEADER_HEIGHT-FOOTER_HEIGHT); 
+        lv_obj_set_size(content_container,screen_w,screen_h-HEADER_HEIGHT-FOOTER_HEIGHT); 
         
         //display_message("%d,%d",screen_h,screen_w);
     }
 }
-
 
 static void theme_switch_event_handler(lv_event_t * e)
 {
@@ -297,10 +335,11 @@ static void theme_switch_event_handler(lv_event_t * e)
         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
         {
-            theme_current = lv_theme_default_init(disp, lv_palette_main(LV_PALETTE_BLUE),
-                                           lv_palette_main(LV_PALETTE_RED),
-                                           0, /*Light or dark mode*/
-                                           &lv_font_montserrat_14);      
+            theme_current = lv_theme_default_init(disp, 
+                                            lv_palette_main(LV_PALETTE_BLUE),
+                                            lv_palette_main(LV_PALETTE_RED),
+                                            0, /*Light or dark mode*/
+                                            &lv_font_montserrat_14);      
             bg_theme_color = lv_palette_lighten(LV_PALETTE_GREY, 1);
             lv_disp_set_theme(disp,theme_current);
             lv_label_set_text(udata, "Theme : Light");

@@ -16,7 +16,7 @@ set(COMPONENTS bootloader esptool_py main)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 
-project(ESP32S3-DISP-SDSPI)
+project(WT32-SC01-PLUS-LVGL-IDF)
 
 # Enable colors for compile output
 idf_build_set_property(COMPILE_OPTIONS "-fdiagnostics-color=always" APPEND)
