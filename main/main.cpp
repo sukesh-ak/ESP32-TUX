@@ -5,7 +5,7 @@
 #include "sdmmc_cmd.h"
 
 static const char *TAG = "lvgl_gui";
-//#define ENABLE_TEST_TIMER   // Enable/Disable TIMER used for testing
+#define ENABLE_TEST_TIMER   // Enable/Disable TIMER used for testing
 
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
@@ -103,10 +103,13 @@ static void once_timer_callback(void* arg)
     int64_t time_since_boot = esp_timer_get_time();
     ESP_LOGI(TAG, "Once timer, time since boot: %lld us", time_since_boot);
 
+    // Whatever you need to do just once after boot
+    // Check for OTA update?
+
     // Rotating the screen 180 deg just once
-    lvgl_acquire();
-    lv_disp_set_rotation(disp, LV_DISP_ROT_90);
-    lvgl_release();
+    // lvgl_acquire();
+    // lv_disp_set_rotation(disp, LV_DISP_ROT_90);
+    // lvgl_release();
 }
 
 static void periodic_timer_callback(void* arg)

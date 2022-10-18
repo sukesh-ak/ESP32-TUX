@@ -228,6 +228,8 @@ static void draw_ui()
     panel_container = lv_obj_create(screen_container);
     lv_obj_set_size(panel_container,screen_w,screen_h - HEADER_HEIGHT - FOOTER_HEIGHT); 
     lv_obj_align(panel_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
+    lv_obj_set_style_border_width(panel_container, 0, 0);   
+
     lv_obj_set_style_bg_opa(panel_container,LV_OPA_TRANSP,0);
     //lv_obj_set_style_bg_color(panel_container,lv_palette_main(LV_PALETTE_RED),0);
     lv_obj_set_flex_flow(panel_container, LV_FLEX_FLOW_ROW_WRAP);
