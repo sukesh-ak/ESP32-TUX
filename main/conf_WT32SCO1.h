@@ -43,7 +43,7 @@ public:
 
       //* Due to the ESP-IDF upgrade, the description of VSPI_HOST , HSPI_HOST will be deprecated, so if you get an error, use SPI2_HOST , SPI3_HOST instead.
       cfg.spi_mode = 0;          // Set SPI communication mode (0-3) 
-      cfg.freq_write = 40000000; // SPI clock on transmission (up to 80MHz, rounded to 80MHz divided by integer)
+      cfg.freq_write = 80000000; // SPI clock on transmission (up to 80MHz, rounded to 80MHz divided by integer)
       cfg.freq_read = 16000000;  // SPI clock on reception
       cfg.spi_3wire = true;      // Set true when receiving on the MOSI pin
       cfg.use_lock = true;       // set true if transaction lock is used

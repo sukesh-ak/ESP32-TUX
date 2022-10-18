@@ -1,7 +1,10 @@
 /*
     Free PNG icons => https://www.flaticon.com/search?word=charte&shape=outline&order_by=4
 */
-/* Create Custom symbols
+
+/* 
+    Create Custom symbols
+
 Download FontAwesome Free version or 
 take from lvgl\scripts\built_in_font\FontAwesome5-Solid+Brands+Regular.woff
 Automation done with this => https://github.com/lvgl/lv_font_conv
@@ -31,7 +34,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30 
-#define FOOTER_HEIGHT 30 
+#define FOOTER_HEIGHT 20 
 
 
 /******************
