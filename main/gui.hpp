@@ -1,3 +1,6 @@
+/*
+    Free PNG icons => https://www.flaticon.com/search?word=charte&shape=outline&order_by=4
+*/
 /* Create Custom symbols
 Download FontAwesome Free version or 
 take from lvgl\scripts\built_in_font\FontAwesome5-Solid+Brands+Regular.woff
