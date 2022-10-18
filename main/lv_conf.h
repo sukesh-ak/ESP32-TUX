@@ -139,7 +139,7 @@
     #endif
 
     /*Enable subpixel rendering*/
-    #define LV_DRAW_SW_FONT_SUBPX 0
+    #define LV_DRAW_SW_FONT_SUBPX 1
     #if LV_DRAW_SW_FONT_SUBPX
         /*Set the pixel order of the display. Physical order of RGB channels. Doesn't matter with "normal" fonts.*/
         #define LV_DRAW_SW_FONT_SUBPX_BGR 0  /*0: RGB; 1:BGR order*/

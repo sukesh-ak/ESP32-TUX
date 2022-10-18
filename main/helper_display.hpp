@@ -101,7 +101,6 @@ esp_err_t lv_display_init()
         return ESP_FAIL;
     }
 
-    esp_timer_start_periodic(lv_periodic_timer, LV_TICK_PERIOD_MS * 1000U);
     return ESP_OK;
 }
 

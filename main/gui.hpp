@@ -3,7 +3,6 @@ Download FontAwesome Free version or
 take from lvgl\scripts\built_in_font\FontAwesome5-Solid+Brands+Regular.woff
 Automation done with this => https://github.com/lvgl/lv_font_conv
 
-
 Goto conversion tool
 https://lvgl.io/tools/fontconverter
 
@@ -192,6 +191,7 @@ static void create_content(lv_obj_t *parent)
     // **************** Islands #1
     lv_obj_t *contentPanel2 = lv_obj_create(parent);
     lv_obj_set_size(contentPanel2, LV_PCT(100), 100);
+    lv_obj_set_style_bg_opa(contentPanel2,LV_OPA_50,0);
 
     // Rotate
     lv_obj_t *btn2 = lv_btn_create(contentPanel2);
@@ -203,7 +203,8 @@ static void create_content(lv_obj_t *parent)
 
     // **************** Islands #2
     lv_obj_t *contentPanel1 = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel1, LV_PCT(100), 100);
+    lv_obj_set_size(contentPanel1, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(contentPanel1,LV_OPA_50,0);
 
     lv_obj_set_flex_flow(contentPanel1, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(contentPanel1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -218,7 +219,8 @@ static void create_content(lv_obj_t *parent)
 
     // **************** Islands #3
     lv_obj_t *contentPanel = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel, LV_PCT(100), 200);
+    lv_obj_set_size(contentPanel, LV_PCT(100), 300);
+    lv_obj_set_style_bg_opa(contentPanel,LV_OPA_50,0);
     //lv_obj_set_style_bg_color(contentPanel, bg_theme_color, 0);
 
     // Button with counter
@@ -252,6 +254,7 @@ static void create_footer(lv_obj_t *parent)
 
 static void draw_ui()
 {
+    // screen_container is the root of the UX
     screen_container = lv_obj_create(lv_scr_act());
     lv_obj_set_size(screen_container,LV_PCT(100),LV_PCT(100));
     lv_obj_set_style_pad_all(screen_container, 0, 0);
@@ -269,8 +272,11 @@ static void draw_ui()
     lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
     lv_obj_set_style_border_width(content_container, 0, 0);   
 
+    // Comment the line below which sets transparency and then either set a background color or image
+    // Also set the island panels to 50% transparency
     lv_obj_set_style_bg_opa(content_container,LV_OPA_TRANSP,0);
     //lv_obj_set_style_bg_color(content_container,lv_palette_main(LV_PALETTE_RED),0);
+
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
     
     create_content(content_container);
