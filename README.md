@@ -6,29 +6,29 @@ Design adapts to different screen resolution without any code changes.
 
 ![device](datasheet/WT32-SC01.png)  
 
-> [Wireless Tag WT32-SC01 Plus (ESP32-S3 = 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html) 
+> [Wireless Tag WT32-SC01 Plus (ESP32-S3 + 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html) 
 
 ![device](datasheet/WT32-SC01-Plus.png)
 
 ## Features included 
+- [x] Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
+- [x] UI code separation into [gui.hpp](/main/gui.hpp)
+- [x] Same UI code which adapts to different resolutions
+- [x] Supports shared SPI bus for SD Card - [here](/main/helper_storage.hpp)
+- [x] This Readme below explains how to have same project target different ESP32 / ESP32-S3 controller.
+- [x] Switch between devices using just a header file inclusion 
+- [x] Add your own controller/display with just a header change 
+- [x] Shows battery meter animation using timer - [here](/main/main.cpp#L146)
+- [x] Shows SD card status change with icon
+- [x] Switch theme between Light & Dark - [here](/main/gui.hpp#L290)
+- [x] Scrolling long message in footer - [here](/main/gui.hpp#L331)
+- [x] Rotate screen Landscape/Portrait [here](/main/main.cpp#L257)
 
-- Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
-- UI code separation into [gui.hpp](/main/gui.hpp)
-- Same UI code which adapts to different resolutions
-- Supports shared SPI bus for SD Card - [here](/main/helper_storage.hpp)
-- This Readme below explains how to have same project target different ESP32 / ESP32-S3 controller.
-- Switch between devices using just a header file inclusion 
-- Add your own controller/display with just a header change 
-- Shows battery meter animation using timer - [here](/main/main.cpp#L146)
-- Shows SD card status change with icon
-- Switch theme between Light & Dark - [here](/main/gui.hpp#L290)
-- Scrolling long message in footer - [here](/main/gui.hpp#L331)
-- Rotate screen Landscape/Portrait [here](/main/main.cpp#L257)
-
-## Todo List
+### Todo List
 - [ ] Settings Page
 - [ ] Wi-Fi Config Page
 - [ ] BLE Config Page
+- [ ] OTA Update Page
 
 ## Demo of LVGL Widgets using Wireless Tag WT32-SC01 / Plus with Capacitive Touch
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html)   
