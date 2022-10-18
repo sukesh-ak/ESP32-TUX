@@ -11,8 +11,8 @@ static const char *TAG = "lvgl_gui";
 #include <LovyanGFX.hpp>
 
 // Enable one of the devices from below
-#include "conf_WT32SCO1.h"              // WT32-SC01 auto config
-// #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus with SD Card support
+#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
+// #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
 
 #include "helper_display.hpp"
 
@@ -24,6 +24,7 @@ static const char *TAG = "lvgl_gui";
 
 // UI design
 #include <gui.hpp>
+//#include <page_wifi_config.hpp>
 
 #ifdef ENABLE_TEST_TIMER
 static void once_timer_callback(void* arg);
@@ -104,7 +105,7 @@ static void once_timer_callback(void* arg)
 
     // Rotating the screen 180 deg just once
     lvgl_acquire();
-    lv_disp_set_rotation(disp, LV_DISP_ROT_180);
+    lv_disp_set_rotation(disp, LV_DISP_ROT_90);
     lvgl_release();
 }
 

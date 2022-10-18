@@ -25,6 +25,8 @@ static lv_obj_t *icon_storage;
 static lv_obj_t *icon_wifi;
 static lv_obj_t *icon_battery;
 
+static lv_coord_t screen_h;
+static lv_coord_t screen_w;
 
 /******************
  *  LVL STYLES
@@ -51,6 +53,7 @@ static void create_footer(lv_obj_t *parent);
 static void display_message(const char * fmt, ...);
 static void panel_status_eventhandler(lv_event_t* e);
 static void counter_event_handler(lv_event_t * e);
+static void rotate_event_handler(lv_event_t * e);
 static void theme_switch_event_handler(lv_event_t * e);
 
 void lv_setup_styles()
@@ -58,6 +61,9 @@ void lv_setup_styles()
     font_symbol = &lv_font_montserrat_14;
     font_normal = &lv_font_montserrat_14;
     font_large = &lv_font_montserrat_16;
+
+    screen_h = lv_obj_get_height(lv_scr_act());
+    screen_w = lv_obj_get_width(lv_scr_act());
     
     // DASHBOARD TITLE
     lv_style_init(&style_title);
@@ -117,7 +123,7 @@ static void create_header(lv_obj_t *parent)
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
     lv_obj_set_style_bg_opa(panel_status,LV_OPA_TRANSP,0);
-    lv_obj_set_size(panel_status,120,LV_PCT(100));
+    lv_obj_set_size(panel_status,120,LV_PCT(100)-2);
     lv_obj_set_style_pad_all(panel_status, 0, 0);
     lv_obj_set_style_border_width(panel_status, 0, 0);
     lv_obj_set_style_radius(panel_status, 0, 0);
@@ -144,24 +150,20 @@ static void create_header(lv_obj_t *parent)
 static void create_content(lv_obj_t *parent)
 {
     // **************** Islands #1
-    lv_obj_t *contentPanel = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel, LV_PCT(100), 100);
-    //lv_obj_set_style_bg_color(contentPanel, bg_theme_color, 0);
-    lv_obj_set_style_border_width(contentPanel, 0, 0);
+    lv_obj_t *contentPanel2 = lv_obj_create(parent);
+    lv_obj_set_size(contentPanel2, LV_PCT(100), 100);
 
-    // Button with counter
-    lv_obj_t *btn1 = lv_btn_create(contentPanel);
-    lv_obj_align(btn1,LV_ALIGN_CENTER,0,0);
-    lv_obj_add_event_cb(btn1, counter_event_handler, LV_EVENT_ALL, NULL);
-    lv_obj_t *lbl = lv_label_create(btn1);
-    lv_label_set_text(lbl, "Counter Button: 0");
-    lv_obj_center(lbl);
+    // Rotate
+    lv_obj_t *btn2 = lv_btn_create(contentPanel2);
+    lv_obj_align(btn2,LV_ALIGN_CENTER,0,0);
+    lv_obj_add_event_cb(btn2, rotate_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_t *lbl2 = lv_label_create(btn2);
+    lv_label_set_text(lbl2, "Set to Landscape");
+    lv_obj_center(lbl2);
 
     // **************** Islands #2
     lv_obj_t *contentPanel1 = lv_obj_create(parent);
     lv_obj_set_size(contentPanel1, LV_PCT(100), 100);
-    //lv_obj_set_style_bg_color(contentPanel1, bg_theme_color, 0);
-    lv_obj_set_style_border_width(contentPanel1, 0, 0);
 
     lv_obj_set_flex_flow(contentPanel1, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(contentPanel1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -175,29 +177,29 @@ static void create_content(lv_obj_t *parent)
     lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
 
     // **************** Islands #3
-    lv_obj_t *contentPanel2 = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel2, LV_PCT(100), 200);
-    //lv_obj_set_style_bg_color(contentPanel2, bg_theme_color, 0);
-    lv_obj_set_style_border_width(contentPanel2, 0, 0);
+    lv_obj_t *contentPanel = lv_obj_create(parent);
+    lv_obj_set_size(contentPanel, LV_PCT(100), 200);
+    //lv_obj_set_style_bg_color(contentPanel, bg_theme_color, 0);
 
     // Button with counter
-    lv_obj_t *btn2 = lv_btn_create(contentPanel2);
-    lv_obj_align(btn2,LV_ALIGN_CENTER,0,0);
-    lv_obj_add_event_cb(btn2, counter_event_handler, LV_EVENT_ALL, NULL);
-    lv_obj_t *lbl2 = lv_label_create(btn2);
-    lv_label_set_text(lbl2, "Click Me!");
-    lv_obj_center(lbl2);
+    lv_obj_t *btn1 = lv_btn_create(contentPanel);
+    lv_obj_align(btn1,LV_ALIGN_CENTER,0,0);
+    lv_obj_add_event_cb(btn1, counter_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_t *lbl = lv_label_create(btn1);
+    lv_label_set_text(lbl, "Counter Button: 0");
+    lv_obj_center(lbl);
+
 }
 
 static void create_footer(lv_obj_t *parent)
 {
     lv_obj_t *panel_footer = lv_obj_create(parent);
     lv_obj_set_size(panel_footer,LV_PCT(100),FOOTER_HEIGHT);
-    lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
     //lv_obj_set_style_bg_color(panel_footer, bg_theme_color, 0);
     lv_obj_set_style_pad_all(panel_footer, 0, 0);
     lv_obj_set_style_border_width(panel_footer, 0, 0);
     lv_obj_set_style_radius(panel_footer, 0, 0);
+    lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
 
     // Create Footer label and animate if longer
     label_message = lv_label_create(panel_footer);      // full screen as the parent
@@ -212,18 +214,25 @@ static void create_footer(lv_obj_t *parent)
 static void draw_ui()
 {
     screen_container = lv_obj_create(lv_scr_act());
-    lv_obj_set_size(screen_container,LV_HOR_RES - 4,LV_VER_RES - HEADER_HEIGHT - FOOTER_HEIGHT - 4);
-    lv_obj_align(screen_container, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_size(screen_container,LV_PCT(100),LV_PCT(100));
+    lv_obj_set_style_pad_all(screen_container, 0, 0);
+    lv_obj_align(screen_container, LV_ALIGN_TOP_MID, 0, 0);
     lv_obj_set_style_bg_opa(screen_container,LV_OPA_TRANSP,0);
     lv_obj_set_style_border_width(screen_container, 0, 0);
-    
-    //lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_flex_flow(screen_container, LV_FLEX_FLOW_ROW_WRAP);
-    
+    lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
+
     // STATUS / TITLE BAR
-    create_header(lv_scr_act());
-    create_content(screen_container);//lv_scr_act());
-    create_footer(lv_scr_act());
+    create_header(screen_container);
+    create_footer(screen_container);    
+
+    panel_container = lv_obj_create(screen_container);
+    lv_obj_set_size(panel_container,screen_w,screen_h - HEADER_HEIGHT - FOOTER_HEIGHT); 
+    lv_obj_align(panel_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
+    lv_obj_set_style_bg_opa(panel_container,LV_OPA_TRANSP,0);
+    //lv_obj_set_style_bg_color(panel_container,lv_palette_main(LV_PALETTE_RED),0);
+    lv_obj_set_flex_flow(panel_container, LV_FLEX_FLOW_ROW_WRAP);
+    
+    create_content(panel_container);
 }
 
   /* Counter button event handler */
@@ -242,6 +251,39 @@ static void draw_ui()
       //LV_LOG_USER("Clicked");
     }
   }
+
+static void rotate_event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+    lv_obj_t *label = lv_obj_get_child(btn, 0);
+
+    if (code == LV_EVENT_CLICKED)
+    {
+        lvgl_acquire();
+
+        if (lv_disp_get_rotation(disp) == LV_DISP_ROT_NONE)
+        {
+            lv_disp_set_rotation(disp, LV_DISP_ROT_90);
+            lv_label_set_text(label, "Set to Portrait");
+        }
+        else
+        {
+            lv_disp_set_rotation(disp, LV_DISP_ROT_NONE);
+            lv_label_set_text(label, "Set to Landscape");
+        }
+
+        lvgl_release();
+
+        // Update 
+        screen_h = lv_obj_get_height(lv_scr_act());
+        screen_w = lv_obj_get_width(lv_scr_act());
+        lv_obj_set_size(panel_container,screen_w,screen_h-HEADER_HEIGHT-FOOTER_HEIGHT); 
+        
+        //display_message("%d,%d",screen_h,screen_w);
+    }
+}
+
 
 static void theme_switch_event_handler(lv_event_t * e)
 {
