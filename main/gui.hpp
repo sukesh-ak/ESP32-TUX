@@ -243,7 +243,7 @@ static void create_content(lv_obj_t *parent)
     
     // UI Island Title Text
     lv_obj_t *lbl_iTitle = lv_label_create(iTitle_Panel);
-    lv_label_set_text(lbl_iTitle, "Island Title");
+    lv_label_set_text(lbl_iTitle, LV_SYMBOL_BELL " UI ISLAND TITLE");
 
     // Button with counter
     lv_obj_t *btn1 = lv_btn_create(contentPanel);
