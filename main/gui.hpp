@@ -34,7 +34,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30 
-#define FOOTER_HEIGHT 20 
+#define FOOTER_HEIGHT 30 
 
 
 /******************
@@ -194,7 +194,9 @@ static void create_header(lv_obj_t *parent)
 
 static void create_content(lv_obj_t *parent)
 {
-    // **************** Islands #1
+    // Convert Islands to style (or a widget) to use everywhere
+
+    // **************** UI Islands #1
     lv_obj_t *contentPanel2 = lv_obj_create(parent);
     lv_obj_set_size(contentPanel2, LV_PCT(100), 100);
     lv_obj_set_style_bg_opa(contentPanel2,LV_OPA_50,0);
@@ -207,7 +209,7 @@ static void create_content(lv_obj_t *parent)
     lv_label_set_text(lbl2, "Set to Landscape");
     lv_obj_center(lbl2);
 
-    // **************** Islands #2
+    // **************** UI Islands #2
     lv_obj_t *contentPanel1 = lv_obj_create(parent);
     lv_obj_set_size(contentPanel1, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_set_style_bg_opa(contentPanel1,LV_OPA_50,0);
@@ -223,11 +225,25 @@ static void create_content(lv_obj_t *parent)
     lv_obj_t *sw = lv_switch_create(contentPanel1);
     lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
 
-    // **************** Islands #3
+    // **************** UI Islands #3
     lv_obj_t *contentPanel = lv_obj_create(parent);
     lv_obj_set_size(contentPanel, LV_PCT(100), 300);
     lv_obj_set_style_bg_opa(contentPanel,LV_OPA_50,0);
-    //lv_obj_set_style_bg_color(contentPanel, bg_theme_color, 0);
+
+    // UI Island Title
+    lv_obj_t *iTitle_Panel = lv_obj_create(contentPanel);
+    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -16);
+    lv_obj_set_style_border_width(iTitle_Panel, 0, 0);
+    lv_obj_set_style_pad_top(iTitle_Panel, 4, 0);
+    lv_obj_set_style_pad_bottom(iTitle_Panel, 3, 0);
+    lv_obj_set_style_radius(iTitle_Panel, 5, 0);
+    lv_obj_set_style_bg_color(iTitle_Panel,lv_palette_main(LV_PALETTE_CYAN),0); 
+    lv_obj_set_style_bg_opa(iTitle_Panel,LV_OPA_50,0);
+    lv_obj_set_size(iTitle_Panel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    
+    // UI Island Title Text
+    lv_obj_t *lbl_iTitle = lv_label_create(iTitle_Panel);
+    lv_label_set_text(lbl_iTitle, "Island Title");
 
     // Button with counter
     lv_obj_t *btn1 = lv_btn_create(contentPanel);
