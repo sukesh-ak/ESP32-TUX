@@ -232,13 +232,18 @@ static void create_content(lv_obj_t *parent)
 
     // UI Island Title
     lv_obj_t *iTitle_Panel = lv_obj_create(contentPanel);
-    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -13);
-    lv_obj_set_style_border_width(iTitle_Panel, 0, 0);
-    lv_obj_set_style_pad_top(iTitle_Panel, 4, 0);
+    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -14);
+    lv_obj_set_style_border_width(iTitle_Panel, 2, 0);
+    lv_obj_set_style_pad_top(iTitle_Panel, 3, 0);
     lv_obj_set_style_pad_bottom(iTitle_Panel, 3, 0);
     lv_obj_set_style_radius(iTitle_Panel, 3, 0);
-    lv_obj_set_style_bg_color(iTitle_Panel,lv_palette_main(LV_PALETTE_CYAN),0); 
-    lv_obj_set_style_bg_opa(iTitle_Panel,LV_OPA_50,0);
+
+    //lv_style_set_border_side(iTitle_Panel,  LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT);
+    lv_obj_set_style_border_side(iTitle_Panel,  LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT,0);
+    
+
+    //lv_obj_set_style_bg_color(iTitle_Panel,lv_palette_main(LV_PALETTE_CYAN),0); 
+    //lv_obj_set_style_bg_opa(iTitle_Panel,LV_OPA_50,0);
     lv_obj_set_size(iTitle_Panel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
     
     // UI Island Title Text
@@ -331,16 +336,15 @@ static void rotate_event_handler(lv_event_t * e)
     {
         lvgl_acquire();
 
-        if (lv_disp_get_rotation(disp) == LV_DISP_ROT_NONE)
-        {
-            lv_disp_set_rotation(disp, LV_DISP_ROT_90);
-            lv_label_set_text(label, "Set to Portrait");
-        }
-        else
-        {
+        if (lv_disp_get_rotation(disp) == LV_DISP_ROT_270)
             lv_disp_set_rotation(disp, LV_DISP_ROT_NONE);
-            lv_label_set_text(label, "Set to Landscape");
-        }
+        else
+            lv_disp_set_rotation(disp, (lv_disp_rot_t)(lv_disp_get_rotation(disp)+1));
+
+        if (LV_HOR_RES > LV_VER_RES)
+            lv_label_set_text(label, "Rotate to Portrait");
+        else
+            lv_label_set_text(label, "Rotate to Landscape");
 
         lvgl_release();
 

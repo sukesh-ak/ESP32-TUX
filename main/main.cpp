@@ -1,4 +1,7 @@
-
+/*
+*   TouchUX
+*   Espressif + LovyanGFX + LVGL
+*/
 
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
@@ -70,9 +73,8 @@ void app_main(void)
   
   /*********************** [END] TIMERS FOR TESTING *********************/
 #endif
+
     lv_setup_styles();
-
-
     draw_ui();
 
 
@@ -107,9 +109,9 @@ static void once_timer_callback(void* arg)
     // Check for OTA update?
 
     // Rotating the screen 180 deg just once
-    // lvgl_acquire();
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_180);
-    // lvgl_release();
+    lvgl_acquire();
+    lv_disp_set_rotation(disp, LV_DISP_ROT_180);
+    lvgl_release();
 }
 
 static void periodic_timer_callback(void* arg)
