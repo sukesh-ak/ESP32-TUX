@@ -1,7 +1,8 @@
 #  Wireless Tag WT32-SC01 / Plus (3.5" TFT Touch Display)
 Design adapts to different screen resolution without any code changes.   
+![As of 2022-10-21](assets/wt32-sc01-2022-10-21.png)
 
-## ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
+## Supported on ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
 
 ![device](datasheet/WT32-SC01.png)  
@@ -18,17 +19,20 @@ Design adapts to different screen resolution without any code changes.
 - [x] This Readme below explains how to have same project target different ESP32 / ESP32-S3 controller.
 - [x] Switch between devices using just a header file inclusion 
 - [x] Add your own controller/display with just a header change 
-- [x] Shows battery meter animation using timer - [here](/main/main.cpp#L146)
+- [x] Shows battery meter animation using timer - [here](/main/main.cpp)
 - [x] Shows SD card status change with icon
-- [x] Switch theme between Light & Dark - [here](/main/gui.hpp#L290)
-- [x] Scrolling long message in footer - [here](/main/gui.hpp#L331)
-- [x] Rotate screen Landscape/Portrait [here](/main/main.cpp#L257)
+- [x] Switch theme between Light & Dark - [here](/main/gui.hpp)
+- [x] Scrolling long message in footer - [here](/main/gui.hpp)
+- [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
 
 ### Todo List
 - [ ] Settings Page
 - [ ] Wi-Fi Config Page
 - [ ] BLE Config Page
 - [ ] OTA Update Page
+- [ ] Pages as modules
+- [ ] Change Navigation styles
+- [ ] UI Islands as modules
 
 ## Demo of LVGL Widgets using Wireless Tag WT32-SC01 / Plus with Capacitive Touch
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html)   

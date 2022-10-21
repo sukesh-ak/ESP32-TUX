@@ -232,11 +232,11 @@ static void create_content(lv_obj_t *parent)
 
     // UI Island Title
     lv_obj_t *iTitle_Panel = lv_obj_create(contentPanel);
-    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -16);
+    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -13);
     lv_obj_set_style_border_width(iTitle_Panel, 0, 0);
     lv_obj_set_style_pad_top(iTitle_Panel, 4, 0);
     lv_obj_set_style_pad_bottom(iTitle_Panel, 3, 0);
-    lv_obj_set_style_radius(iTitle_Panel, 5, 0);
+    lv_obj_set_style_radius(iTitle_Panel, 3, 0);
     lv_obj_set_style_bg_color(iTitle_Panel,lv_palette_main(LV_PALETTE_CYAN),0); 
     lv_obj_set_style_bg_opa(iTitle_Panel,LV_OPA_50,0);
     lv_obj_set_size(iTitle_Panel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
