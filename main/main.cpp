@@ -1,5 +1,5 @@
 
-#include <stdio.h>
+
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
@@ -23,8 +23,8 @@ static const char *TAG = "lvgl_gui";
 #endif
 
 // UI design
-#include <gui.hpp>
-//#include <page_wifi_config.hpp>
+#include "gui.hpp"
+//#include "page_wifi_config.hpp"
 
 #ifdef ENABLE_TEST_TIMER
 static void once_timer_callback(void* arg);
