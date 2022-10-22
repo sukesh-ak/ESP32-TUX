@@ -4,6 +4,31 @@
 
 #define LV_TICK_PERIOD_MS 1
     
+/*********************
+ *  THEME DEFINES
+ *********************/
+#define MODE_DARK 1
+#define RADIUS_DEFAULT (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 12) : lv_disp_dpx(theme.disp, 8))
+
+/*SCREEN*/
+#define LIGHT_COLOR_SCR        lv_palette_lighten(LV_PALETTE_GREY, 4)
+#define LIGHT_COLOR_CARD       lv_color_white()
+#define LIGHT_COLOR_TEXT       lv_palette_darken(LV_PALETTE_GREY, 4)
+#define LIGHT_COLOR_GREY       lv_palette_lighten(LV_PALETTE_GREY, 2)
+#define DARK_COLOR_SCR         lv_color_hex(0x15171A)
+#define DARK_COLOR_CARD        lv_color_hex(0x282b30)
+#define DARK_COLOR_TEXT        lv_palette_lighten(LV_PALETTE_GREY, 5)
+#define DARK_COLOR_GREY        lv_color_hex(0x2f3237)
+
+#define TRANSITION_TIME         LV_THEME_DEFAULT_TRANSITION_TIME
+#define BORDER_WIDTH            lv_disp_dpx(theme.disp, 2)
+#define OUTLINE_WIDTH           lv_disp_dpx(theme.disp, 3)
+
+#define PAD_DEF     (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 24) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 20) : lv_disp_dpx(theme.disp, 16))
+#define PAD_SMALL   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 14) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 12) : lv_disp_dpx(theme.disp, 10))
+#define PAD_TINY   (disp_size == DISP_LARGE ? lv_disp_dpx(theme.disp, 8) : disp_size == DISP_MEDIUM ? lv_disp_dpx(theme.disp, 6) : lv_disp_dpx(theme.disp, 2))
+
+
 /*** Setup screen resolution for LVGL ***/
 static const uint16_t screenWidth = TFT_WIDTH;
 static const uint16_t screenHeight = TFT_HEIGHT;
@@ -77,7 +102,8 @@ esp_err_t lv_display_init()
                                           &lv_font_montserrat_14);
 
     // lv_disp_set_theme(disp, th); /*Assign the theme to the display*/
-    bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 4) : lv_palette_lighten(LV_PALETTE_GREY, 1);
+    //bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 4) : lv_palette_lighten(LV_PALETTE_GREY, 1);
+    bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
 
     xGuiSemaphore = xSemaphoreCreateMutex();
     if (!xGuiSemaphore)  

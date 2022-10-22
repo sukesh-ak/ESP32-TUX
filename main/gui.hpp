@@ -26,6 +26,7 @@ then define constants for us like
 #define FA_BLE_SYMBOL "\xEF\x8A\x94"
 */
 
+#include "widgets/lv_panel.h"
 
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"    // 0xf294
@@ -71,6 +72,8 @@ static lv_style_t style_wifi;
 static lv_style_t style_ble;
 static lv_style_t style_battery;
 
+static lv_style_t style_ui_island;
+static lv_style_t style_ui_island_title;
 
 /******************
  *  LVL ANIMATION
@@ -137,13 +140,31 @@ void lv_setup_styles()
 
     lv_style_init(&style_message);
     lv_style_set_anim(&style_message, &anim_labelscroll);   // Set animation for the style
-
     //lv_style_set_text_color(&style_message, lv_palette_main(LV_PALETTE_RED));
     lv_style_set_opa(&style_message, LV_OPA_COVER);
     lv_style_set_text_font(&style_message, font_normal);
     lv_style_set_align(&style_message, LV_ALIGN_LEFT_MID);
     lv_style_set_pad_left(&style_message, 15);    
     lv_style_set_pad_right(&style_message, 15);    
+
+    // UI ISLANDS
+    lv_style_init(&style_ui_island);
+    //lv_style_set_bg_color(&style_ui_island,bg_theme_color);
+    lv_style_set_bg_opa(&style_ui_island, LV_OPA_50);
+    //lv_style_set_border_color(&style_ui_island,color_grey);
+    lv_style_set_border_width(&style_ui_island,2);
+    lv_style_set_radius(&style_ui_island,5);
+    //lv_style_set_size(&style_ui_island,LV_PCT(100),LV_SIZE_CONTENT);
+
+    // UI ISLAND TITLE
+    lv_style_init(&style_ui_island_title);
+    lv_style_set_align(&style_ui_island_title,LV_ALIGN_TOP_LEFT);
+    lv_style_set_border_width(&style_ui_island_title,2);
+    lv_style_set_pad_top(&style_ui_island_title,3);
+    lv_style_set_pad_bottom(&style_ui_island_title,3);
+    lv_style_set_radius(&style_ui_island_title,3);
+    lv_style_set_border_side(&style_ui_island_title,LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT);
+    lv_style_set_size(&style_ui_island_title,LV_SIZE_CONTENT,LV_SIZE_CONTENT);
 }
 
 static void create_header(lv_obj_t *parent)
@@ -157,7 +178,7 @@ static void create_header(lv_obj_t *parent)
     lv_obj_set_align(panel_header, LV_ALIGN_TOP_MID);
 
     label_title = lv_label_create(panel_header);
-    lv_label_set_text(label_title, LV_SYMBOL_HOME " DASHBOARD");
+    lv_label_set_text(label_title, LV_SYMBOL_BARS " DASHBOARD");
     lv_obj_add_style(label_title, &style_title, 0);
 
     // HEADER STATUS ICON PANEL
@@ -196,67 +217,53 @@ static void create_content(lv_obj_t *parent)
 {
     // Convert Islands to style (or a widget) to use everywhere
 
-    // **************** UI Islands #1
-    lv_obj_t *contentPanel2 = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel2, LV_PCT(100), 100);
-    lv_obj_set_style_bg_opa(contentPanel2,LV_OPA_50,0);
+    lv_obj_t* island_0 = lv_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
+    lv_obj_add_style(island_0->parent,&style_ui_island,0);
 
-    // Rotate
-    lv_obj_t *btn2 = lv_btn_create(contentPanel2);
-    lv_obj_align(btn2,LV_ALIGN_CENTER,0,0);
-    lv_obj_add_event_cb(btn2, rotate_event_handler, LV_EVENT_ALL, NULL);
-    lv_obj_t *lbl2 = lv_label_create(btn2);
-    lv_label_set_text(lbl2, "Set to Landscape");
-    lv_obj_center(lbl2);
-
-    // **************** UI Islands #2
-    lv_obj_t *contentPanel1 = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel1, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(contentPanel1,LV_OPA_50,0);
-
-    lv_obj_set_flex_flow(contentPanel1, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(contentPanel1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-
-    lv_obj_t *label = lv_label_create(contentPanel1);
-    //lv_obj_set_style_text_color(label, lv_palette_main(LV_PALETTE_RED), 0);
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(label, "Theme : Dark");
-
-    lv_obj_t *sw = lv_switch_create(contentPanel1);
-    lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
-
-    // **************** UI Islands #3
-    lv_obj_t *contentPanel = lv_obj_create(parent);
-    lv_obj_set_size(contentPanel, LV_PCT(100), 300);
-    lv_obj_set_style_bg_opa(contentPanel,LV_OPA_50,0);
-
-    // UI Island Title
-    lv_obj_t *iTitle_Panel = lv_obj_create(contentPanel);
-    lv_obj_align(iTitle_Panel, LV_ALIGN_TOP_LEFT, 0, -14);
-    lv_obj_set_style_border_width(iTitle_Panel, 2, 0);
-    lv_obj_set_style_pad_top(iTitle_Panel, 3, 0);
-    lv_obj_set_style_pad_bottom(iTitle_Panel, 3, 0);
-    lv_obj_set_style_radius(iTitle_Panel, 3, 0);
-
-    //lv_style_set_border_side(iTitle_Panel,  LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT);
-    lv_obj_set_style_border_side(iTitle_Panel,  LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT,0);
+    //display_message("Children count: %d",lv_obj_get_child_cnt(island_0));
     
+    lv_obj_t *l = lv_label_create(island_0);
+    lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
+    lv_label_set_text(l, "Testing Islands");
 
-    //lv_obj_set_style_bg_color(iTitle_Panel,lv_palette_main(LV_PALETTE_CYAN),0); 
-    //lv_obj_set_style_bg_opa(iTitle_Panel,LV_OPA_50,0);
-    lv_obj_set_size(iTitle_Panel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    
-    // UI Island Title Text
-    lv_obj_t *lbl_iTitle = lv_label_create(iTitle_Panel);
-    lv_label_set_text(lbl_iTitle, LV_SYMBOL_BELL " UI ISLAND TITLE");
+    // ******** UI ISLAND #0
+    lv_obj_t *island_1 = lv_panel_create(parent, LV_SYMBOL_BELL " ALARM", 100);
+    lv_obj_add_style(island_1->parent,&style_ui_island,0);
+    lv_panel_set_title_color(island_1->parent, lv_palette_main(LV_PALETTE_RED));
+
+    lv_obj_set_layout(island_1, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(island_1, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(island_1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     // Button with counter
-    lv_obj_t *btn1 = lv_btn_create(contentPanel);
-    lv_obj_align(btn1,LV_ALIGN_CENTER,0,0);
+    lv_obj_t *btn1 = lv_btn_create(island_1);
+    lv_obj_align(btn1,LV_ALIGN_TOP_MID,0,0);
     lv_obj_add_event_cb(btn1, counter_event_handler, LV_EVENT_ALL, NULL);
     lv_obj_t *lbl = lv_label_create(btn1);
     lv_label_set_text(lbl, "Counter Button: 0");
     lv_obj_center(lbl);
+
+    // **************** UI Islands #1
+    lv_obj_t *island_2 = lv_panel_create(parent, FA_SYMBOL_SETTINGS " SETTINGS", 150);
+    lv_obj_add_style(island_2->parent,&style_ui_island,0);
+
+    lv_obj_set_flex_flow(island_2, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(island_2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+
+    // Rotate
+    lv_obj_t *btn2 = lv_btn_create(island_2);
+    lv_obj_align(btn2,LV_ALIGN_CENTER,0,0);
+    lv_obj_add_event_cb(btn2, rotate_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_t *lbl2 = lv_label_create(btn2);
+    lv_label_set_text(lbl2, "Rotate to Landscape");
+    lv_obj_center(lbl2);
+
+    lv_obj_t *label = lv_label_create(island_2);
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(label, "Theme : Dark");
+
+    lv_obj_t *sw = lv_switch_create(island_2);
+    lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
 
 }
 
@@ -374,6 +381,8 @@ static void theme_switch_event_handler(lv_event_t * e)
                                             &lv_font_montserrat_14);      
             bg_theme_color = lv_palette_lighten(LV_PALETTE_GREY, 1);
             lv_disp_set_theme(disp,theme_current);
+                bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
+
             lv_label_set_text(udata, "Theme : Light");
         }
         else
@@ -384,6 +393,8 @@ static void theme_switch_event_handler(lv_event_t * e)
                                 &lv_font_montserrat_14);      
             bg_theme_color = lv_palette_darken(LV_PALETTE_GREY, 4);
             lv_disp_set_theme(disp,theme_current);
+                bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
+
             lv_label_set_text(udata, "Theme : Dark");
         }
     }
