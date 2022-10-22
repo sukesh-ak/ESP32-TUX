@@ -541,6 +541,8 @@
 
 #define LV_USE_WIN        1
 
+#define LV_USE_PANEL    1
+
 /*==================
  * THEMES
  *==================*/

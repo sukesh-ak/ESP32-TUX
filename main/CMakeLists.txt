@@ -1,4 +1,4 @@
-idf_component_register(SRCS "main.cpp" "fonts/font_fa_14.c"
-                    	INCLUDE_DIRS "." "devices" "helpers" "pages"
+idf_component_register(SRCS "main.cpp" "widgets/lv_panel.c" "fonts/font_fa_14.c"
+                    	INCLUDE_DIRS "." "devices" "helpers" "pages" "widgets"
 				REQUIRES LovyanGFX lvgl fatfs
 				)
