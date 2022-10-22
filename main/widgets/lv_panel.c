@@ -28,9 +28,16 @@
  **********************/
 const lv_obj_class_t lv_panel_class = {
     .base_class = &lv_obj_class,
-    .width_def = LV_DPI_DEF * 2,
+    .width_def = LV_PCT(100), // LV_DPI_DEF * 2,
     .height_def = LV_SIZE_CONTENT,
     .instance_size = sizeof(lv_panel_t)
+};
+
+const lv_obj_class_t lv_panel_content_class = {
+    .base_class = &lv_obj_class,
+    .width_def = LV_PCT(100),
+    .height_def = LV_SIZE_CONTENT,
+    .instance_size = sizeof(lv_obj_t)
 };
 
  /**********************
@@ -39,7 +46,7 @@ const lv_obj_class_t lv_panel_class = {
 
 void default_panel_styles()
 {
-
+    //lv_theme_t * current_theme = 
 }
 
 lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t height)
@@ -50,35 +57,27 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
     lv_obj_class_init_obj(obj);
 
     lv_panel_t * _panel = (lv_panel_t *)obj;
-
     LV_ASSERT_MALLOC(obj);
     if (obj == NULL) return NULL;
 
-    // Main panel
-    _panel->content = lv_obj_create(obj);
-    lv_obj_set_height(_panel->content, height);
-    lv_obj_set_width(_panel->content, LV_PCT(100));
-    lv_obj_set_style_pad_top(_panel->content,0,0);
-    lv_obj_set_style_pad_bottom(_panel->content,3,0);
-    //lv_obj_set_scrollbar_mode(container, LV_SCROLLBAR_MODE_OFF);
+    // Widget Container
+    lv_obj_set_height(obj,height);
 
-    lv_obj_set_style_bg_opa(_panel->content,LV_OPA_50,0);
-
-    lv_obj_set_flex_flow(_panel->content, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW_WRAP);
     
     bool has_title = title && strlen(title) > 0;
     if (has_title) {
 
         // Title Panel
         _panel->title_panel = lv_obj_create(obj);
-
-        // lv_obj_set_style_pad_hor(_panel->title_panel,5,0);
-        // lv_obj_set_style_pad_ver(_panel->title_panel,2,0);
-        // lv_obj_set_style_radius(_panel->title_panel,3,0);
-        // lv_obj_set_style_border_width(_panel->title_panel,1,0);
-        // lv_obj_set_style_border_side(_panel->title_panel,LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT,0);
-        // lv_obj_set_size(_panel->title_panel,LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-        // lv_obj_set_size(_panel->title_panel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+        lv_obj_set_style_pad_hor(_panel->title_panel,5,0);
+        lv_obj_set_style_pad_ver(_panel->title_panel,2,0);
+        lv_obj_set_style_radius(_panel->title_panel,3,0);
+        //lv_obj_set_style_border_width(_panel->title_panel,0,0);
+        //lv_obj_set_style_border_side(_panel->title_panel,LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT,0);
+        lv_obj_set_size(_panel->title_panel,LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+        lv_obj_set_x(_panel->title_panel,30);
+        //lv_obj_set_style_align(_panel->title_panel, LV_ALIGN_TOP_LEFT,0);
 
         // Title Label
         _panel->title = lv_label_create(_panel->title_panel);
@@ -86,10 +85,16 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
         lv_label_set_long_mode(_panel->title, LV_LABEL_LONG_SCROLL_CIRCULAR);
         lv_obj_set_width(_panel->title, LV_SIZE_CONTENT);
         lv_obj_set_style_pad_all(_panel->title, 3,0);
+        lv_obj_set_style_align(_panel->title,LV_ALIGN_TOP_LEFT,0);
+
+        // // Add an event callback for this later
+        // lv_obj_t * icon_edit = lv_label_create(_panel->title_panel);
+        // lv_obj_set_style_align(icon_edit,LV_ALIGN_TOP_RIGHT,0);
+        // lv_label_set_text(icon_edit, LV_SYMBOL_SETTINGS);
     }
 
-    //lv_obj_set_size(_panel,lv_pct(100), height-42);
-    //lv_obj_set_style_border_width(_panel,1,0);
+    _panel->content = lv_obj_class_create_obj(&lv_panel_content_class, obj);
+    lv_obj_set_style_pad_all(_panel->content,5,0);
 
     return obj;
 }

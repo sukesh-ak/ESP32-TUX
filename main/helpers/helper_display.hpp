@@ -2,6 +2,7 @@
 #include "lv_conf.h"
 #include <lvgl.h>
 
+
 #define LV_TICK_PERIOD_MS 1
     
 /*********************
@@ -56,6 +57,7 @@ void display_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 void touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
 static void lv_tick_task(void *arg);
 
+
 esp_err_t lv_display_init()
 {
     esp_err_t ret;
@@ -63,7 +65,7 @@ esp_err_t lv_display_init()
     // if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 2);
 
     lcd.setBrightness(128);
-    lcd.setColorDepth(24);
+    lcd.setColorDepth(32);
 
     lcd.fillScreen(TFT_BLACK);
 
@@ -101,7 +103,7 @@ esp_err_t lv_display_init()
                                           LV_USE_THEME_DEFAULT, /*Light or dark mode*/
                                           &lv_font_montserrat_14);
 
-    // lv_disp_set_theme(disp, th); /*Assign the theme to the display*/
+    //lv_disp_set_theme(disp, theme_current); /*Assign the theme to the display*/
     //bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 4) : lv_palette_lighten(LV_PALETTE_GREY, 1);
     bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
 
