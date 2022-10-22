@@ -62,7 +62,6 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
 
     // Widget Container
     lv_obj_set_height(obj,height);
-
     lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW_WRAP);
     
     bool has_title = title && strlen(title) > 0;
@@ -73,11 +72,8 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
         lv_obj_set_style_pad_hor(_panel->title_panel,5,0);
         lv_obj_set_style_pad_ver(_panel->title_panel,2,0);
         lv_obj_set_style_radius(_panel->title_panel,3,0);
-        //lv_obj_set_style_border_width(_panel->title_panel,0,0);
-        //lv_obj_set_style_border_side(_panel->title_panel,LV_BORDER_SIDE_BOTTOM | LV_BORDER_SIDE_RIGHT | LV_BORDER_SIDE_LEFT,0);
         lv_obj_set_size(_panel->title_panel,LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-        lv_obj_set_x(_panel->title_panel,30);
-        //lv_obj_set_style_align(_panel->title_panel, LV_ALIGN_TOP_LEFT,0);
+        //lv_obj_set_x(_panel->title_panel,100);
 
         // Title Label
         _panel->title = lv_label_create(_panel->title_panel);
@@ -87,7 +83,7 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
         lv_obj_set_style_pad_all(_panel->title, 3,0);
         lv_obj_set_style_align(_panel->title,LV_ALIGN_TOP_LEFT,0);
 
-        // // Add an event callback for this later
+        // Add an event callback for this later (set _panel->title to LV_PCT(100))
         // lv_obj_t * icon_edit = lv_label_create(_panel->title_panel);
         // lv_obj_set_style_align(icon_edit,LV_ALIGN_TOP_RIGHT,0);
         // lv_label_set_text(icon_edit, LV_SYMBOL_SETTINGS);

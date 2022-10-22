@@ -156,7 +156,6 @@ void lv_setup_styles()
     lv_style_set_border_opa(&style_ui_island,LV_OPA_50);
     lv_style_set_border_width(&style_ui_island,1);
     lv_style_set_radius(&style_ui_island,5);
-
 }
 
 static void create_header(lv_obj_t *parent)
@@ -207,11 +206,11 @@ static void create_header(lv_obj_t *parent)
 
 static void create_content(lv_obj_t *parent)
 {
-    // Convert Islands to style (or a widget) to use everywhere
-
+    /* Widget called Panel */
+    // ******** UI ISLAND 
     lv_obj_t* island_0 = lv_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
     lv_obj_add_style(island_0,&style_ui_island,0);
-    
+
     lv_obj_t * cont_0 = lv_panel_get_content(island_0);
     display_message("Children count: %d",lv_obj_get_child_cnt(island_0));
     
@@ -219,10 +218,12 @@ static void create_content(lv_obj_t *parent)
     lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
     lv_label_set_text(l, "Testing Islands");
 
-    // ******** UI ISLAND #0
+    // ******** UI ISLAND 
     lv_obj_t *island_1 = lv_panel_create(parent, LV_SYMBOL_BELL " ALARM", 100);
     lv_obj_add_style(island_1,&style_ui_island,0);
-    lv_obj_t * cont_1 = lv_panel_get_content(island_0);
+    lv_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
+
+    lv_obj_t * cont_1 = lv_panel_get_content(island_1);
 
     lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
@@ -236,11 +237,11 @@ static void create_content(lv_obj_t *parent)
     lv_label_set_text(lbl, "Counter Button: 0");
     lv_obj_center(lbl);
 
-    // **************** UI Islands #1
+    // ******** UI ISLAND 
     lv_obj_t *island_2 = lv_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 150);
     lv_obj_add_style(island_2,&style_ui_island,0);
-    //lv_panel_set_title_color(island_2, lv_palette_main(LV_PALETTE_BLUE));
-    //lv_panel_set_title_bg_color(island_2,theme_current->color_primary);
+    lv_panel_set_title_color(island_2,lv_palette_main(LV_PALETTE_BLUE));
+
 
     // Get Content Area to add UI elements
     lv_obj_t * cont_2 = lv_panel_get_content(island_2);

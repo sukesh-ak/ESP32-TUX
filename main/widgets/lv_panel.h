@@ -1,5 +1,5 @@
 ﻿/**
- * @file lv_mbox.h
+ * @file lv_panel.h
  *
  */
 
@@ -47,7 +47,7 @@ extern "C" {
       * Create a message box object
       * @param parent        pointer to parent 
       * @param title         the title of the content box
-      * @param txt           the text of the content box
+      * @param height        the height of the content box
       * @return              pointer to the panel object
       */
     lv_obj_t* lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t height);
