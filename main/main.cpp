@@ -42,7 +42,10 @@ void app_main(void)
     }
 
     lv_setup_styles();
+
+    lvgl_acquire();
     draw_ui();
+    lvgl_release();
 
 #ifdef SD_ENABLED
     lvgl_acquire();

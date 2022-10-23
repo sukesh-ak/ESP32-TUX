@@ -86,8 +86,10 @@ static lv_anim_t anim_labelscroll;
 /******************
  *  LVL FUNCS & EVENTS
  ******************/
+static void create_page_home(lv_obj_t* parent);
+static void create_page_settings(lv_obj_t* parent);
+
 static void create_header(lv_obj_t *parent);
-static void create_content(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
 static void footer_message(const char * fmt, ...);
 static void panel_status_eventhandler(lv_event_t* e);
@@ -96,6 +98,10 @@ static void rotate_event_handler(lv_event_t * e);
 static void theme_switch_event_handler(lv_event_t * e);
 //static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 static void switch_theme(bool dark);
+
+static void esptouch_event_handler(lv_event_t* e);
+static void espblufi_event_handler(lv_event_t* e);
+static void checkupdates_event_handler(lv_event_t* e);
 
 void lv_setup_styles()
 {
@@ -226,7 +232,26 @@ static void create_header(lv_obj_t *parent)
     lv_obj_add_event_cb(panel_status, panel_status_eventhandler, LV_EVENT_CLICKED, NULL);
 }
 
-static void create_content(lv_obj_t *parent)
+static void create_footer(lv_obj_t *parent)
+{
+    lv_obj_t *panel_footer = lv_obj_create(parent);
+    lv_obj_set_size(panel_footer,LV_PCT(100),FOOTER_HEIGHT);
+    //lv_obj_set_style_bg_color(panel_footer, bg_theme_color, 0);
+    lv_obj_set_style_pad_all(panel_footer, 0, 0);
+    lv_obj_set_style_radius(panel_footer, 0, 0);
+    lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
+
+    // Create Footer label and animate if longer
+    label_message = lv_label_create(panel_footer);      // full screen as the parent
+    lv_obj_set_width(label_message, LV_PCT(100));
+    lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
+
+    // Show LVGL version
+    footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+}
+
+static void create_page_home(lv_obj_t *parent)
 {
     /* Widget called Panel */
     // ******** UI ISLAND 
@@ -286,23 +311,91 @@ static void create_content(lv_obj_t *parent)
     lv_obj_center(lbl2);
 }
 
-static void create_footer(lv_obj_t *parent)
+static void create_page_settings(lv_obj_t* parent)
 {
-    lv_obj_t *panel_footer = lv_obj_create(parent);
-    lv_obj_set_size(panel_footer,LV_PCT(100),FOOTER_HEIGHT);
-    //lv_obj_set_style_bg_color(panel_footer, bg_theme_color, 0);
-    lv_obj_set_style_pad_all(panel_footer, 0, 0);
-    lv_obj_set_style_radius(panel_footer, 0, 0);
-    lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
+    /******** PROVISION WIFI ********/
+    lv_obj_t* island_wifi1 = lv_panel_create(parent, LV_SYMBOL_WIFI " PROVISION WIFI", 200);
+    lv_obj_add_style(island_wifi1, &style_ui_island, 0);
+    lv_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
+    
+    // Get Content Area to add UI elements
+    lv_obj_t* cont_1 = lv_panel_get_content(island_wifi1);
+    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
-    // Create Footer label and animate if longer
-    label_message = lv_label_create(panel_footer);      // full screen as the parent
-    lv_obj_set_width(label_message, LV_PCT(100));
-    lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
-    lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
+    /* ESP-TOUCH */
+    lv_obj_t* esp_touch = lv_obj_create(cont_1);
+    lv_obj_set_size(esp_touch, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_touch, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(esp_touch, 0, 0);
 
-    // Show LVGL version
-    footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    lv_obj_t* label_1 = lv_label_create(esp_touch);
+    lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_label_set_text(label_1, "Using ESP-Touch (WiFi)");
+
+    lv_obj_t* sw_1 = lv_switch_create(esp_touch);
+    lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
+    
+
+    /* ESP-BLUFI */
+    lv_obj_t* esp_blufi = lv_obj_create(cont_1);
+    lv_obj_set_size(esp_blufi, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_blufi, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(esp_blufi, 0, 0);
+
+    lv_obj_t* label_2 = lv_label_create(esp_blufi);
+    lv_obj_align(label_2, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_label_set_text(label_2, "Using ESP-BluFi (BLE)");
+
+    lv_obj_t* sw_2 = lv_switch_create(esp_blufi);
+    lv_obj_align(sw_2, LV_ALIGN_RIGHT_MID, 0, 0);
+
+    /* ESP TOUCH/BLUFI STATUS*/
+    lv_obj_t* esp_status = lv_obj_create(cont_1);
+    lv_obj_set_size(esp_status, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_status, LV_OPA_10, 0);
+    lv_obj_set_style_border_width(esp_status, 0, 0);
+
+    lv_obj_t* lbl_status = lv_label_create(esp_status);
+    lv_obj_align(lbl_status, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(lbl_status, "Waiting for credentials...");
+
+    lv_obj_add_event_cb(sw_1, esptouch_event_handler, LV_EVENT_ALL, lbl_status);
+    lv_obj_add_event_cb(sw_2, espblufi_event_handler, LV_EVENT_ALL, lbl_status);
+
+
+    /******** OTA UPDATES ********/
+    lv_obj_t* island_ota = lv_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
+    lv_obj_add_style(island_ota, &style_ui_island, 0);
+
+    // Get Content Area to add UI elements
+    lv_obj_t* cont_ota = lv_panel_get_content(island_ota);
+    lv_obj_set_flex_flow(cont_ota, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(cont_ota, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+
+    // Current Firmware version
+    lv_obj_t* lbl_version = lv_label_create(cont_ota);
+    lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
+    lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
+
+    // Check for Updates button
+    lv_obj_t* btn_checkupdates = lv_btn_create(cont_ota);
+    lv_obj_set_size(btn_checkupdates, LV_SIZE_CONTENT, 40);
+    lv_obj_align(btn_checkupdates, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_add_event_cb(btn_checkupdates, checkupdates_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_t* lbl2 = lv_label_create(btn_checkupdates);
+    lv_label_set_text(lbl2, "Check for Updates");
+    lv_obj_center(lbl2);
+
+    lv_obj_t* esp_updatestatus = lv_obj_create(cont_ota);
+    lv_obj_set_size(esp_updatestatus, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_updatestatus, LV_OPA_10, 0);
+    lv_obj_set_style_border_width(esp_updatestatus, 0, 0);
+
+    lv_obj_t* lbl_update_status = lv_label_create(esp_updatestatus);
+    lv_obj_set_style_text_color(lbl_update_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
+    lv_obj_align(lbl_update_status, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(lbl_update_status, "New version available - v 1.2.0");
 }
 
 static void draw_ui()
@@ -333,7 +426,9 @@ static void draw_ui()
 
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
     
-    create_content(content_container);
+    //create_page_home(content_container);
+    create_page_settings(content_container);
+
 }
 
   /* Counter button event handler */
@@ -460,3 +555,55 @@ void switch_theme(bool dark)
 //     }
     
 // }
+
+static void esptouch_event_handler(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* obj = lv_event_get_target(e);
+    lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
+
+    if (code == LV_EVENT_VALUE_CHANGED) {
+        LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
+        if (lv_obj_has_state(obj, LV_STATE_CHECKED))
+        {
+            lv_label_set_text_fmt(lbl, "ESP-TOUCH Scanning...ON");
+        }
+        else
+        {
+            lv_label_set_text_fmt(lbl, "ESP-TOUCH Scanning...OFF");
+        }
+    }
+}
+
+static void espblufi_event_handler(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* obj = lv_event_get_target(e);
+    lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
+
+    if (code == LV_EVENT_VALUE_CHANGED) {
+        LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
+        if (lv_obj_has_state(obj, LV_STATE_CHECKED))
+        {
+            lv_label_set_text_fmt(lbl, "ESP-BLUFI Scanning...ON");
+        }
+        else
+        {
+            lv_label_set_text_fmt(lbl, "ESP-BLUFI Scanning...OFF");
+        }
+    }
+}
+
+inline void checkupdates_event_handler(lv_event_t* e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t* btn = lv_event_get_target(e);
+    if (code == LV_EVENT_CLICKED)
+    {
+        /*Get the first child of the button which is the label and change its text*/
+        lv_obj_t* label = lv_obj_get_child(btn, 0);
+
+        lv_label_set_text_fmt(label, "Checking for updates...");
+        LV_LOG_USER("Clicked");
+    }
+}
