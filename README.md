@@ -2,15 +2,6 @@
 Design adapts to different screen resolution without any code changes.   
 ![As of 2022-10-21](assets/wt32-sc01-2022-10-21.png)
 
-## Supported on ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
-> [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
-
-![device](datasheet/WT32-SC01.png)  
-
-> [Wireless Tag WT32-SC01 Plus (ESP32-S3 + 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html) 
-
-![device](datasheet/WT32-SC01-Plus.png)
-
 ## Features included 
 - [x] Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
 - [x] UI code separation into [gui.hpp](/main/gui.hpp)
@@ -26,17 +17,23 @@ Design adapts to different screen resolution without any code changes.
 - [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
 
 ### Todo List
-- [ ] Settings Page
-- [ ] Wi-Fi Config Page
+- [x] Settings Page
+- [x] Wi-Fi Config Page
+- [x] OTA Update Page
 - [ ] BLE Config Page
-- [ ] OTA Update Page
 - [ ] Pages as modules
-- [ ] Change Navigation styles
-- [ ] UI Islands as modules
+- [ ] Multiple Navigation styles
+- [x] UI Islands (Widget - Panel)
 
-## Demo of LVGL Widgets using Wireless Tag WT32-SC01 / Plus with Capacitive Touch
-> [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html)   
-> [Wireless Tag WT32-SC01 Plus (ESP32-S3 = 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html)
+## Supported on ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
+> [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
+
+![device](datasheet/WT32-SC01.png)  
+
+> [Wireless Tag WT32-SC01 Plus (ESP32-S3 + 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html) 
+
+![device](datasheet/WT32-SC01-Plus.png)
+
 
 ## Get Started
 > Git clone and recursively update submodule
