@@ -78,7 +78,7 @@ lv_obj_t * lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heigh
         // Title Label
         _panel->title = lv_label_create(_panel->title_panel);
         lv_label_set_text(_panel->title, title);
-        lv_label_set_long_mode(_panel->title, LV_LABEL_LONG_SCROLL_CIRCULAR);
+        //lv_label_set_long_mode(_panel->title, LV_LABEL_LONG_SCROLL_CIRCULAR);
         lv_obj_set_width(_panel->title, LV_SIZE_CONTENT);
         lv_obj_set_style_pad_all(_panel->title, 3,0);
         lv_obj_set_style_align(_panel->title,LV_ALIGN_TOP_LEFT,0);

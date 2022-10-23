@@ -69,6 +69,7 @@ static lv_style_t style_content_bg;
 
 static lv_style_t style_message;
 static lv_style_t style_title;
+static lv_style_t style_iconstatus;
 static lv_style_t style_storage;
 static lv_style_t style_wifi;
 static lv_style_t style_ble;
@@ -126,29 +127,39 @@ void lv_setup_styles()
     lv_style_set_align(&style_title, LV_ALIGN_LEFT_MID);
     lv_style_set_pad_left(&style_title, 15);
 
+    // HEADER STATUS ICON PANEL
+    lv_style_init(&style_iconstatus);
+    lv_style_set_size(&style_iconstatus,LV_SIZE_CONTENT,LV_SIZE_CONTENT);// 26);
+    lv_style_set_pad_all(&style_iconstatus,0);
+    lv_style_set_border_width(&style_iconstatus,0);
+    lv_style_set_align(&style_iconstatus, LV_ALIGN_RIGHT_MID);
+    lv_style_set_pad_right(&style_iconstatus, 15);
+
+    lv_style_set_layout(&style_iconstatus,LV_LAYOUT_FLEX);
+    lv_style_set_flex_flow(&style_iconstatus, LV_FLEX_FLOW_ROW);
+    lv_style_set_flex_main_place(&style_iconstatus,LV_FLEX_ALIGN_CENTER);
+    lv_style_set_flex_track_place(&style_iconstatus,LV_FLEX_ALIGN_SPACE_BETWEEN);
+    lv_style_set_pad_row(&style_iconstatus,3);
+
     // BATTERY
     lv_style_init(&style_battery);
     lv_style_set_text_font(&style_battery, font_symbol);
     lv_style_set_align(&style_battery, LV_ALIGN_RIGHT_MID);
-    lv_style_set_pad_right(&style_battery, 15);
 
     // SD CARD
     lv_style_init(&style_storage);
     lv_style_set_text_font(&style_storage, font_symbol);
     lv_style_set_align(&style_storage, LV_ALIGN_RIGHT_MID);
-    lv_style_set_pad_right(&style_storage, 45);
 
     // WIFI
     lv_style_init(&style_wifi);
     lv_style_set_text_font(&style_wifi, font_symbol);
     lv_style_set_align(&style_wifi, LV_ALIGN_RIGHT_MID);
-    lv_style_set_pad_right(&style_wifi, 65);
 
     // BLE
     lv_style_init(&style_ble);
     lv_style_set_text_font(&style_ble, font_fa);
     lv_style_set_align(&style_ble, LV_ALIGN_RIGHT_MID);
-    lv_style_set_pad_right(&style_ble, 90); // Symbol is narrow
 
     // FOOTER MESSAGE & ANIMATION
     lv_anim_init(&anim_labelscroll);
@@ -189,22 +200,18 @@ static void create_header(lv_obj_t *parent)
 
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
-    lv_obj_set_style_bg_opa(panel_status,LV_OPA_TRANSP,0);
-    lv_obj_set_size(panel_status,120,LV_PCT(100)-2);
-    lv_obj_set_style_pad_all(panel_status, 0, 0);
-    lv_obj_set_style_border_width(panel_status, 0, 0);
-    lv_obj_set_style_radius(panel_status, 0, 0);
-    lv_obj_set_style_align(panel_status,LV_ALIGN_RIGHT_MID,0);
-
-    // WIFI
-    icon_wifi = lv_label_create(panel_status);
-    lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
-    lv_obj_add_style(icon_wifi, &style_wifi, 0);
+    lv_obj_add_style(panel_status, &style_iconstatus, 0);
+    lv_obj_set_scrollbar_mode(panel_status, LV_SCROLLBAR_MODE_OFF);
 
     // BLE
     icon_ble = lv_label_create(panel_status);
     lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
     lv_obj_add_style(icon_ble, &style_ble, 0);
+
+    // WIFI
+    icon_wifi = lv_label_create(panel_status);
+    lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+    lv_obj_add_style(icon_wifi, &style_wifi, 0);
 
     // SD CARD
     icon_storage = lv_label_create(panel_status);
