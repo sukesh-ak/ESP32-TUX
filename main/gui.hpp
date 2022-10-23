@@ -65,6 +65,8 @@ static lv_coord_t screen_w;
 /******************
  *  LVL STYLES
  ******************/
+static lv_style_t style_content_bg;
+
 static lv_style_t style_message;
 static lv_style_t style_title;
 static lv_style_t style_storage;
@@ -103,6 +105,20 @@ void lv_setup_styles()
 
     screen_h = lv_obj_get_height(lv_scr_act());
     screen_w = lv_obj_get_width(lv_scr_act());
+
+    // Content container background
+    lv_style_init(&style_content_bg);
+    lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
+    lv_style_set_radius(&style_content_bg, 0);
+
+    static lv_grad_dsc_t grad;
+    grad.dir = LV_GRAD_DIR_HOR;
+    grad.stops_count = 2;
+    grad.stops[0].color = lv_palette_main(LV_PALETTE_GREY);
+    grad.stops[1].color = theme_current->color_primary;
+    grad.stops[0].frac  = 128;
+    grad.stops[1].frac  = 192;
+    lv_style_set_bg_grad(&style_content_bg, &grad);
 
     // DASHBOARD TITLE
     lv_style_init(&style_title);
@@ -306,8 +322,9 @@ static void draw_ui()
 
     // Comment the line below which sets transparency and then either set a background color or image
     // Also set the island panels to 50% transparency
-    lv_obj_set_style_bg_opa(content_container,LV_OPA_TRANSP,0);
+    //lv_obj_set_style_bg_opa(content_container,LV_OPA_TRANSP,0);
     //lv_obj_set_style_bg_color(content_container,lv_palette_main(LV_PALETTE_RED),0);
+    lv_obj_add_style(content_container, &style_content_bg, 0);
 
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
     
