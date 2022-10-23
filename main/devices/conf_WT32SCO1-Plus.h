@@ -2,6 +2,9 @@
 #define WT32_SC01_PLUS
 #define SD_ENABLED 
 
+#define LGFX_USE_V1
+#include <LovyanGFX.hpp>
+
 // Portrait
 #define TFT_WIDTH   320
 #define TFT_HEIGHT  480

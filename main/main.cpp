@@ -8,10 +8,6 @@
 #include "sdmmc_cmd.h"
 
 static const char *TAG = "lvgl_gui";
-#define ENABLE_TEST_TIMER   // Enable/Disable TIMER used for testing
-
-#define LGFX_USE_V1
-#include <LovyanGFX.hpp>
 
 // Enable one of the devices from below
 #include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
@@ -29,14 +25,10 @@ static const char *TAG = "lvgl_gui";
 #include "gui.hpp"
 //#include "page_wifi_config.hpp"
 
-#ifdef ENABLE_TEST_TIMER
-static void once_timer_callback(void* arg);
-static void periodic_timer_callback(void* arg);
+static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
-
 static bool wifi_on = false;
 static int battery_value = 0;
-#endif
 
 extern "C" { void app_main(); }
 
@@ -49,35 +41,8 @@ void app_main(void)
         ESP_LOGE(TAG, "LVGL setup failed!!!");
     }
 
-#ifdef ENABLE_TEST_TIMER
-/*********************** [START] TIMERS FOR TESTING *********************/
-
-    // Timer which trigger only once
-    const esp_timer_create_args_t once_timer_args = {
-            .callback = &once_timer_callback,
-            .name = "once"
-    };
-    esp_timer_handle_t once_timer;
-    ESP_ERROR_CHECK(esp_timer_create(&once_timer_args, &once_timer));
-    ESP_ERROR_CHECK(esp_timer_start_once(once_timer, 5000000)); 
-
-    // Timer which trigger periodically
-    const esp_timer_create_args_t periodic_timer_args = {
-            .callback = &periodic_timer_callback,
-            .name = "periodic"
-    };
-
-    esp_timer_handle_t periodic_timer;
-    ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
-    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 1000000));
-  
-  /*********************** [END] TIMERS FOR TESTING *********************/
-#endif
-
-
     lv_setup_styles();
     draw_ui();
-
 
 #ifdef SD_ENABLED
     lvgl_acquire();
@@ -91,56 +56,39 @@ void app_main(void)
     lvgl_release();
 #endif
 
-/*
-    // How to stop and delete the timers
-    ESP_ERROR_CHECK(esp_timer_stop(periodic_timer));
-    ESP_ERROR_CHECK(esp_timer_delete(periodic_timer));
-    ESP_ERROR_CHECK(esp_timer_stop(once_timer));
-    ESP_ERROR_CHECK(esp_timer_delete(once_timer));
-*/    
+    // Status icon animation timer
+    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    lv_timer_ready(timer_status);
+    
+
 }
 
-#ifdef ENABLE_TEST_TIMER
-static void once_timer_callback(void* arg)
+static void periodic_timer_callback(lv_timer_t * timer)
 {
-    int64_t time_since_boot = esp_timer_get_time();
-    ESP_LOGI(TAG, "Once timer, time since boot: %lld us", time_since_boot);
-
-    // Whatever you need to do just once after boot
-    // Check for OTA update?
-
-    // // Rotating the screen 180 deg just once
-    // lvgl_acquire();
-    // lv_disp_set_rotation(disp, LV_DISP_ROT_180);
-    // lvgl_release();
-}
-
-static void periodic_timer_callback(void* arg)
-{
-    int64_t time_since_boot = esp_timer_get_time();
-    ESP_LOGI(TAG, "Periodic timer, time since boot: %lld us", time_since_boot);
+    ESP_LOGI(TAG, "periodic_timer_callback called\n");
 
     if (battery_value>100) battery_value=0;
     // Just blinking the Wifi icon between GREY & BLUE
     if (wifi_on)
     {
-        lvgl_acquire();
+        lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_GREY));
+        lv_label_set_text(icon_wifi, FA_SYMBOL_BLE);
+
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
-        lv_obj_refresh_style(icon_wifi, LV_PART_ANY, LV_STYLE_PROP_ANY);
+        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
 
         lv_update_battery(battery_value);
-        lvgl_release();
         wifi_on = !wifi_on;
         battery_value+=10;
     }
     else
     {
-        lvgl_acquire();
+        lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_BLUE));
+        lv_label_set_text(icon_wifi, FA_SYMBOL_BLE);
+
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
-        lv_obj_refresh_style(icon_wifi, LV_PART_ANY, LV_STYLE_PROP_ANY);
-        
+        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
         lv_update_battery(battery_value);
-        lvgl_release();
         wifi_on = !wifi_on;
         battery_value+=10;
     }
@@ -174,4 +122,3 @@ static void lv_update_battery(uint batval)
         lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_FULL);
     }
 }
-#endif

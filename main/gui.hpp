@@ -93,7 +93,7 @@ static void panel_status_eventhandler(lv_event_t* e);
 static void counter_event_handler(lv_event_t * e);
 static void rotate_event_handler(lv_event_t * e);
 static void theme_switch_event_handler(lv_event_t * e);
-static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
+//static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 static void switch_theme(bool dark);
 
 void lv_setup_styles()
@@ -179,7 +179,6 @@ static void create_header(lv_obj_t *parent)
     // HEADER PANEL
     panel_header = lv_obj_create(parent);
     lv_obj_set_size(panel_header,LV_PCT(100),HEADER_HEIGHT);
-    //lv_obj_set_style_bg_color(panel_header, bg_theme_color, 0);
     lv_obj_set_style_pad_all(panel_header, 0, 0);
     lv_obj_set_style_radius(panel_header, 0, 0);
     lv_obj_set_align(panel_header, LV_ALIGN_TOP_MID);
@@ -443,15 +442,15 @@ void switch_theme(bool dark)
     }
 }
 
-/*Will be called when the styles of the base theme are already added
-  to add new styles*/
-static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj)
-{
-    LV_UNUSED(th);
+// /*Will be called when the styles of the base theme are already added
+//   to add new styles*/
+// static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj)
+// {
+//     LV_UNUSED(th);
 
-    if(lv_obj_check_type(obj, &lv_panel_class)) {
-        lv_obj_add_style(obj, &style_ui_island, 0);
-        //lv_style_set_bg_color(&style_ui_island,theme_current->color_primary);
-    }
+//     if(lv_obj_check_type(obj, &lv_panel_class)) {
+//         lv_obj_add_style(obj, &style_ui_island, 0);
+//         //lv_style_set_bg_color(&style_ui_island,theme_current->color_primary);
+//     }
     
-}
+// }

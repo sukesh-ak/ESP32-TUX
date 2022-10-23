@@ -60,7 +60,6 @@ static void lv_tick_task(void *arg);
 
 esp_err_t lv_display_init()
 {
-    esp_err_t ret;
     // Setting display to landscape
     // if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 2);
 
@@ -94,7 +93,11 @@ esp_err_t lv_display_init()
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t lv_periodic_timer_args = {
         .callback = &lv_tick_task,
-        .name = "periodic_gui"};
+        .arg = NULL,
+        .dispatch_method = ESP_TIMER_TASK,
+        .name = "periodic_gui",
+        .skip_unhandled_events  = true
+        };
     esp_timer_handle_t lv_periodic_timer;
     ESP_ERROR_CHECK(esp_timer_create(&lv_periodic_timer_args, &lv_periodic_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(lv_periodic_timer, LV_TICK_PERIOD_MS * 1000));

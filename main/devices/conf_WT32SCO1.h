@@ -1,5 +1,8 @@
 //#define LGFX_WT32_SC01 // Wireless Tag / Seeed WT32-SC01
 
+#define LGFX_USE_V1
+#include <LovyanGFX.hpp>
+
 // Portrait
 #define TFT_WIDTH   320
 #define TFT_HEIGHT  480
