@@ -64,6 +64,8 @@ esp_err_t lv_display_init()
     // Setting display to landscape
     // if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 2);
 
+    lcd.setRotation(2);
+
     lcd.setBrightness(128);
     lcd.setColorDepth(32);
 

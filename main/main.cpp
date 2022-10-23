@@ -74,6 +74,7 @@ void app_main(void)
   /*********************** [END] TIMERS FOR TESTING *********************/
 #endif
 
+
     lv_setup_styles();
     draw_ui();
 
@@ -108,10 +109,10 @@ static void once_timer_callback(void* arg)
     // Whatever you need to do just once after boot
     // Check for OTA update?
 
-    // Rotating the screen 180 deg just once
-    lvgl_acquire();
-    lv_disp_set_rotation(disp, LV_DISP_ROT_180);
-    lvgl_release();
+    // // Rotating the screen 180 deg just once
+    // lvgl_acquire();
+    // lv_disp_set_rotation(disp, LV_DISP_ROT_180);
+    // lvgl_release();
 }
 
 static void periodic_timer_callback(void* arg)

@@ -212,7 +212,7 @@ static void create_content(lv_obj_t *parent)
     lv_obj_add_style(island_0,&style_ui_island,0);
 
     lv_obj_t * cont_0 = lv_panel_get_content(island_0);
-    display_message("Children count: %d",lv_obj_get_child_cnt(island_0));
+    //display_message("Children count: %d",lv_obj_get_child_cnt(island_0));
     
     lv_obj_t *l = lv_label_create(cont_0);
     lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
