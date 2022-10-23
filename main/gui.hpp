@@ -88,7 +88,7 @@ static lv_anim_t anim_labelscroll;
 static void create_header(lv_obj_t *parent);
 static void create_content(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
-static void display_message(const char * fmt, ...);
+static void footer_message(const char * fmt, ...);
 static void panel_status_eventhandler(lv_event_t* e);
 static void counter_event_handler(lv_event_t * e);
 static void rotate_event_handler(lv_event_t * e);
@@ -227,7 +227,7 @@ static void create_content(lv_obj_t *parent)
     lv_obj_add_style(island_0,&style_ui_island,0);
 
     lv_obj_t * cont_0 = lv_panel_get_content(island_0);
-    //display_message("Children count: %d",lv_obj_get_child_cnt(island_0));
+    //footer_message("Children count: %d",lv_obj_get_child_cnt(island_0));
     
     lv_obj_t *l = lv_label_create(cont_0);
     lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
@@ -256,7 +256,6 @@ static void create_content(lv_obj_t *parent)
     lv_obj_t *island_2 = lv_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 150);
     lv_obj_add_style(island_2,&style_ui_island,0);
     lv_panel_set_title_color(island_2,lv_palette_main(LV_PALETTE_BLUE));
-
 
     // Get Content Area to add UI elements
     lv_obj_t * cont_2 = lv_panel_get_content(island_2);
@@ -296,7 +295,7 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
 
     // Show LVGL version
-    display_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
 }
 
 static void draw_ui()
@@ -374,7 +373,7 @@ static void rotate_event_handler(lv_event_t * e)
         screen_w = lv_obj_get_width(lv_scr_act());
         lv_obj_set_size(content_container,screen_w,screen_h-HEADER_HEIGHT-FOOTER_HEIGHT); 
         
-        //display_message("%d,%d",screen_h,screen_w);
+        //footer_message("%d,%d",screen_h,screen_w);
     }
 }
 
@@ -399,7 +398,7 @@ static void theme_switch_event_handler(lv_event_t * e)
     }
 }
 
-static void display_message(const char * fmt, ...)
+static void footer_message(const char * fmt, ...)
 {
     char buffer[200];
     va_list args;
@@ -411,7 +410,7 @@ static void display_message(const char * fmt, ...)
 
 static void panel_status_eventhandler(lv_event_t* e)
 {
-    display_message("Status icons touched but this is a very long message to show scroll animation!");
+    footer_message("Status icons touched but this is a very long message to show scroll animation!");
 }
 
 
