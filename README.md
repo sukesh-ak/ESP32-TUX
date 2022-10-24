@@ -12,7 +12,7 @@
 - [x] UI code separation into [gui.hpp](/main/gui.hpp)
 - [x] Same UI code which adapts to different resolutions
 - [x] Supports shared SPI bus for SD Card - [here](/main/helper_storage.hpp)
-- [x] This Readme below explains how to have same project target different ESP32 / ESP32-S3 controller.
+- [x] Instructions below on how to compile and use same project target different ESP32 / ESP32-S3 controllers.
 - [x] Switch between devices using just a header file inclusion 
 - [x] Add your own controller/display with just a header change 
 - [x] Shows battery meter animation using timer - [here](/main/main.cpp)
@@ -21,16 +21,17 @@
 - [x] Scrolling long message in footer - [here](/main/gui.hpp)
 - [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
 
-### Todo List
 - [x] Settings Page
-- [x] Wi-Fi Config Page
-- [x] OTA Update Page
+- [x] UI Islands (Widget - Panel)
+
+### Todo List
+- [ ] Wi-Fi Config Page
+- [ ] OTA Update Page
 - [ ] BLE Config Page
 - [ ] Pages as modules
 - [ ] Multiple Navigation styles
-- [x] UI Islands (Widget - Panel)
 
-## Supported Devices 
+## Currently Supported Devices 
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
 
 ![device](datasheet/WT32-SC01.png)  
