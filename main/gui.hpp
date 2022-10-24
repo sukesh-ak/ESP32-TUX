@@ -47,6 +47,7 @@ static const lv_font_t *font_symbol;
 static const lv_font_t *font_fa;
 
 static lv_obj_t * panel_header;
+static lv_obj_t * panel_title;
 static lv_obj_t * panel_status; // Status icons in the header
 static lv_obj_t * content_container;
 static lv_obj_t * screen_container;
@@ -96,19 +97,20 @@ static void create_page_settings(lv_obj_t* parent);
 static void create_header(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
 
-
 static void footer_message(const char * fmt, ...);
-static void panel_status_eventhandler(lv_event_t* e);
-static void counter_event_handler(lv_event_t * e);
-static void rotate_event_handler(lv_event_t * e);
-static void theme_switch_event_handler(lv_event_t * e);
-//static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t* parent);
 
+static void counter_event_handler(lv_event_t * e);
+static void rotate_event_handler(lv_event_t * e);
+static void theme_switch_event_handler(lv_event_t * e);
 //static void espwifi_event_handler(lv_event_t* e);
 static void espble_event_handler(lv_event_t* e);
 static void checkupdates_event_handler(lv_event_t* e);
+static void home_clicked_eventhandler(lv_event_t* e);
+static void status_clicked_eventhandler(lv_event_t* e);
+
+//static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 
 void lv_setup_styles()
 {
@@ -139,10 +141,12 @@ void lv_setup_styles()
     lv_style_set_text_font(&style_title, font_large);
     lv_style_set_align(&style_title, LV_ALIGN_LEFT_MID);
     lv_style_set_pad_left(&style_title, 15);
+    lv_style_set_border_width(&style_title,0);
+    lv_style_set_size(&style_title,LV_SIZE_CONTENT,LV_SIZE_CONTENT);
 
     // HEADER STATUS ICON PANEL
     lv_style_init(&style_iconstatus);
-    lv_style_set_size(&style_iconstatus,LV_SIZE_CONTENT,LV_SIZE_CONTENT);// 26);
+    lv_style_set_size(&style_iconstatus,LV_SIZE_CONTENT,LV_SIZE_CONTENT);
     lv_style_set_pad_all(&style_iconstatus,0);
     lv_style_set_border_width(&style_iconstatus,0);
     lv_style_set_align(&style_iconstatus, LV_ALIGN_RIGHT_MID);
@@ -206,10 +210,16 @@ static void create_header(lv_obj_t *parent)
     lv_obj_set_style_pad_all(panel_header, 0, 0);
     lv_obj_set_style_radius(panel_header, 0, 0);
     lv_obj_set_align(panel_header, LV_ALIGN_TOP_MID);
+    lv_obj_set_scrollbar_mode(panel_header, LV_SCROLLBAR_MODE_OFF);
 
-    label_title = lv_label_create(panel_header);
+    // HEADER TITLE PANEL
+    panel_title = lv_obj_create(panel_header);
+    lv_obj_add_style(panel_title, &style_title, 0);
+    lv_obj_set_scrollbar_mode(panel_title, LV_SCROLLBAR_MODE_OFF);
+
+    // HEADER TITLE
+    label_title = lv_label_create(panel_title);
     lv_label_set_text(label_title, LV_SYMBOL_BARS " DASHBOARD");
-    lv_obj_add_style(label_title, &style_title, 0);
 
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
@@ -236,7 +246,8 @@ static void create_header(lv_obj_t *parent)
     lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_EMPTY);
     lv_obj_add_style(icon_battery, &style_battery, 0);
 
-    lv_obj_add_event_cb(panel_status, panel_status_eventhandler, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(panel_title, home_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(panel_status, status_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
 }
 
 static void create_footer(lv_obj_t *parent)
@@ -455,9 +466,9 @@ static void draw_ui()
     lv_obj_add_style(content_container, &style_content_bg, 0);
 
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
-    
-    //create_page_home(content_container);
-    create_page_settings(content_container);
+        
+    create_page_home(content_container);
+    // create_page_settings(content_container);
 
 }
 
@@ -540,7 +551,12 @@ static void footer_message(const char * fmt, ...)
     va_end(args);
 }
 
-static void panel_status_eventhandler(lv_event_t* e)
+static void home_clicked_eventhandler(lv_event_t* e)
+{
+    footer_message("Home clicked!");
+}
+
+static void status_clicked_eventhandler(lv_event_t* e)
 {
     footer_message("Status icons touched but this is a very long message to show scroll animation!");
 }
