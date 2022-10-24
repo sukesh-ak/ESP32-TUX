@@ -1,10 +1,10 @@
 ﻿/**
- * @file lv_panel.h
+ * @file tux_panel.h
  *
  */
 
-#ifndef LV_PANEL_H
-#define LV_PANEL_H
+#ifndef tux_panel_H
+#define tux_panel_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,7 +19,7 @@ extern "C" {
 
 /*Testing of dependencies*/
 #if LV_USE_LABEL == 0
-#error "lv_panel: lv_label is required. Enable it in lv_conf.h (LV_USE_LABEL  1) "
+#error "tux_panel: lv_label is required. Enable it in lv_conf.h (LV_USE_LABEL  1) "
 #endif
 
 /*********************
@@ -35,9 +35,9 @@ extern "C" {
         lv_obj_t* title_panel;  // title panel
         lv_obj_t* title;        // title label
         lv_obj_t* content;      // content panel
-    } lv_panel_t;
+    } tux_panel_t;
 
-    extern const lv_obj_class_t lv_panel_class;
+    extern const lv_obj_class_t tux_panel_class;
 
     /**********************
      * GLOBAL PROTOTYPES
@@ -50,13 +50,13 @@ extern "C" {
       * @param height        the height of the content box
       * @return              pointer to the panel object
       */
-    lv_obj_t* lv_panel_create(lv_obj_t* parent, const char* title, lv_coord_t height);
-    lv_obj_t* lv_panel_get_title(lv_obj_t* obj);
-    lv_obj_t* lv_panel_get_title_panel(lv_obj_t* obj);
-    lv_obj_t* lv_panel_get_content(lv_obj_t* obj);
+    lv_obj_t* tux_panel_create(lv_obj_t* parent, const char* title, lv_coord_t height);
+    lv_obj_t* tux_panel_get_title(lv_obj_t* obj);
+    lv_obj_t* tux_panel_get_title_panel(lv_obj_t* obj);
+    lv_obj_t* tux_panel_get_content(lv_obj_t* obj);
 
-    void lv_panel_set_title_color(lv_obj_t* obj,lv_color_t value);
-    void lv_panel_set_title_bg_color(lv_obj_t* obj,lv_color_t value);
+    void tux_panel_set_title_color(lv_obj_t* obj,lv_color_t value);
+    void tux_panel_set_title_bg_color(lv_obj_t* obj,lv_color_t value);
 
     /**********************
      *      MACROS
@@ -68,4 +68,4 @@ extern "C" {
 } /*extern "C"*/
 #endif
 
-#endif /*LV_panel_H*/
+#endif /*tux_panel_H*/

@@ -26,7 +26,7 @@ then define constants for us like
 #define FA_BLE_SYMBOL "\xEF\x8A\x94"
 */
 
-#include "widgets/lv_panel.h"
+#include "widgets/tux_panel.h"
 
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"    // 0xf294
@@ -255,10 +255,10 @@ static void create_page_home(lv_obj_t *parent)
 {
     /* Widget called Panel */
     // ******** UI ISLAND 
-    lv_obj_t* island_0 = lv_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
+    lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
     lv_obj_add_style(island_0,&style_ui_island,0);
 
-    lv_obj_t * cont_0 = lv_panel_get_content(island_0);
+    lv_obj_t * cont_0 = tux_panel_get_content(island_0);
     //footer_message("Children count: %d",lv_obj_get_child_cnt(island_0));
     
     lv_obj_t *l = lv_label_create(cont_0);
@@ -266,11 +266,11 @@ static void create_page_home(lv_obj_t *parent)
     lv_label_set_text(l, "Testing Islands");
 
     // ******** UI ISLAND 
-    lv_obj_t *island_1 = lv_panel_create(parent, LV_SYMBOL_BELL " ALARM", 100);
+    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_BELL " ALARM", 100);
     lv_obj_add_style(island_1,&style_ui_island,0);
-    lv_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
+    tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
 
-    lv_obj_t * cont_1 = lv_panel_get_content(island_1);
+    lv_obj_t * cont_1 = tux_panel_get_content(island_1);
 
     lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
@@ -285,12 +285,12 @@ static void create_page_home(lv_obj_t *parent)
     lv_obj_center(lbl);
 
     // ******** UI ISLAND 
-    lv_obj_t *island_2 = lv_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 150);
+    lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 150);
     lv_obj_add_style(island_2,&style_ui_island,0);
-    lv_panel_set_title_color(island_2,lv_palette_main(LV_PALETTE_BLUE));
+    tux_panel_set_title_color(island_2,lv_palette_main(LV_PALETTE_BLUE));
 
     // Get Content Area to add UI elements
-    lv_obj_t * cont_2 = lv_panel_get_content(island_2);
+    lv_obj_t * cont_2 = tux_panel_get_content(island_2);
 
     lv_obj_set_flex_flow(cont_2, LV_FLEX_FLOW_COLUMN_WRAP);
     lv_obj_set_flex_align(cont_2, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -314,12 +314,12 @@ static void create_page_home(lv_obj_t *parent)
 static void create_page_settings(lv_obj_t* parent)
 {
     /******** PROVISION WIFI ********/
-    lv_obj_t* island_wifi1 = lv_panel_create(parent, LV_SYMBOL_WIFI " PROVISION WIFI", 200);
+    lv_obj_t* island_wifi1 = tux_panel_create(parent, LV_SYMBOL_WIFI " PROVISION WIFI", 200);
     lv_obj_add_style(island_wifi1, &style_ui_island, 0);
-    lv_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
+    tux_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
     
     // Get Content Area to add UI elements
-    lv_obj_t* cont_1 = lv_panel_get_content(island_wifi1);
+    lv_obj_t* cont_1 = tux_panel_get_content(island_wifi1);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
     /* ESP-TOUCH */
@@ -364,11 +364,11 @@ static void create_page_settings(lv_obj_t* parent)
 
 
     /******** OTA UPDATES ********/
-    lv_obj_t* island_ota = lv_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
+    lv_obj_t* island_ota = tux_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
     lv_obj_add_style(island_ota, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
-    lv_obj_t* cont_ota = lv_panel_get_content(island_ota);
+    lv_obj_t* cont_ota = tux_panel_get_content(island_ota);
     lv_obj_set_flex_flow(cont_ota, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(cont_ota, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
@@ -549,7 +549,7 @@ void switch_theme(bool dark)
 // {
 //     LV_UNUSED(th);
 
-//     if(lv_obj_check_type(obj, &lv_panel_class)) {
+//     if(lv_obj_check_type(obj, &tux_panel_class)) {
 //         lv_obj_add_style(obj, &style_ui_island, 0);
 //         //lv_style_set_bg_color(&style_ui_island,theme_current->color_primary);
 //     }
