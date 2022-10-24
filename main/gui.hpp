@@ -94,6 +94,14 @@ static lv_anim_t anim_labelscroll;
 static void create_page_home(lv_obj_t* parent);
 static void create_page_settings(lv_obj_t* parent);
 
+// Home page islands
+
+
+// Setting page islands
+static void panel_wifi_island(lv_obj_t* parent);
+static void panel_ota_island(lv_obj_t* parent);
+static void panel_devinfo_island(lv_obj_t* parent);
+
 static void create_header(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
 
@@ -311,7 +319,7 @@ static void create_page_home(lv_obj_t *parent)
     lv_obj_t * cont_2 = tux_panel_get_content(island_2);
 
     lv_obj_set_flex_flow(cont_2, LV_FLEX_FLOW_COLUMN_WRAP);
-    lv_obj_set_flex_align(cont_2, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_flex_align(cont_2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     lv_obj_t *label = lv_label_create(cont_2);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
@@ -327,20 +335,22 @@ static void create_page_home(lv_obj_t *parent)
     lv_obj_t *lbl2 = lv_label_create(btn2);
     lv_label_set_text(lbl2, "Rotate to Landscape");
     lv_obj_center(lbl2);
+
 }
 
-static void create_page_settings(lv_obj_t* parent)
+// Provision WIFI
+static void panel_wifi_island(lv_obj_t* parent)
 {
     /******** PROVISION WIFI ********/
     island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI PROVISIONING", 100);
     lv_obj_add_style(island_wifi, &style_ui_island, 0);
-    //tux_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
+    tux_panel_set_title_color(island_wifi, lv_palette_main(LV_PALETTE_BLUE));
     
     // Get Content Area to add UI elements
     lv_obj_t* cont_1 = tux_panel_get_content(island_wifi);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
-    ///* ESP-WIFI */
+    ///* ESP-WIFI - Wifi SoftAP Provisioning */
     //lv_obj_t* esp_wifi = lv_obj_create(cont_1);
     //lv_obj_set_size(esp_wifi, LV_PCT(100), LV_SIZE_CONTENT);
     //lv_obj_set_style_bg_opa(esp_wifi, LV_OPA_TRANSP, 0);
@@ -379,6 +389,10 @@ static void create_page_settings(lv_obj_t* parent)
 
     lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
 
+}
+
+static void panel_ota_island(lv_obj_t* parent)
+{
     /******** OTA UPDATES ********/
     island_ota = tux_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
     lv_obj_add_style(island_ota, &style_ui_island, 0);
@@ -412,9 +426,19 @@ static void create_page_settings(lv_obj_t* parent)
     lv_obj_set_style_text_color(lbl_update_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
     lv_obj_align(lbl_update_status, LV_ALIGN_CENTER, 0, 0);
     lv_label_set_text(lbl_update_status, "New version available - v 1.2.0");
+}
 
+static void panel_devinfo_island(lv_obj_t* parent)
+{
     island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 100);
     lv_obj_add_style(island_devinfo, &style_ui_island, 0);
+}
+
+static void create_page_settings(lv_obj_t* parent)
+{
+    panel_wifi_island(parent);
+    panel_ota_island(parent);
+    panel_devinfo_island(parent);
 }
 
 // Show QR Code for BLE based Wifi Provisioning
@@ -426,7 +450,8 @@ static void qrcode_ui(lv_obj_t* parent)
 
     lv_obj_t* qr = lv_qrcode_create(parent, 100, fg_color, bg_color);
 
-    /* Set data */
+    /* Set data - format of BLE provisioning data */
+    // {"ver":"v1","name":"TUX_4F4440","pop":"abcd1234","transport":"ble"}
     const char* data = "https://www.sukesh.me";
     lv_qrcode_update(qr, data, strlen(data));
 
@@ -462,10 +487,11 @@ static void draw_ui()
     // Background gradient / change to image later
     lv_obj_add_style(content_container, &style_content_bg, 0);
 
-    lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
 
     // Home page visible        
     create_page_home(content_container);
+    
 }
 
   /* Counter button event handler */
