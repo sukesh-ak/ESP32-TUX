@@ -27,6 +27,7 @@ then define constants for us like
 */
 
 #include "widgets/tux_panel.h"
+LV_IMG_DECLARE(dev_bg)
 
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"    // 0xf294
@@ -202,7 +203,7 @@ void lv_setup_styles()
 
     // UI ISLANDS
     lv_style_init(&style_ui_island);
-    lv_style_set_bg_color(&style_ui_island,lv_palette_main(LV_PALETTE_BLUE_GREY));
+    lv_style_set_bg_color(&style_ui_island, lv_palette_main(LV_PALETTE_BLUE_GREY));// lv_palette_darken(LV_PALETTE_GREY,5));
     lv_style_set_bg_opa(&style_ui_island, LV_OPA_50);
     lv_style_set_border_color(&style_ui_island,bg_theme_color);
     lv_style_set_border_opa(&style_ui_island,LV_OPA_50);
@@ -279,6 +280,11 @@ static void create_footer(lv_obj_t *parent)
 
 static void create_page_home(lv_obj_t *parent)
 {
+
+    // lv_obj_t * img_src = lv_img_create(content_container); /*Crate an image object*/
+    // lv_img_set_src(img_src, &dev_bg);  /*Set the created file as image (a red fl  ower)*/
+    // lv_obj_set_pos(img_src, 0, 0);      /*Set the positions*/
+
     /* Widget called Panel */
     // ******** UI ISLAND 
     lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
@@ -485,9 +491,12 @@ static void draw_ui()
     lv_obj_set_style_border_width(content_container, 0, 0);   
 
     // Background gradient / change to image later
-    lv_obj_add_style(content_container, &style_content_bg, 0);
+    //lv_obj_add_style(content_container, &style_content_bg, 0);
 
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
+
+    lv_obj_set_style_bg_img_src(content_container,&dev_bg,0);
+    lv_obj_set_style_bg_img_opa(content_container,LV_OPA_50,0);
 
     // Home page visible        
     create_page_home(content_container);
