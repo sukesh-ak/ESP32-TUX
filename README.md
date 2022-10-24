@@ -22,7 +22,7 @@
 - [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
 
 - [x] Settings Page
-- [x] UI Islands (Widget - Panel)
+- [x] UI Islands (Widget - tux_panel)
 
 ### Todo List
 - [ ] Wi-Fi Config Page

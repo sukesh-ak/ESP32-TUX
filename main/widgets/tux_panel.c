@@ -83,7 +83,8 @@ lv_obj_t * tux_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heig
         lv_obj_set_style_pad_all(_panel->title, 3,0);
         lv_obj_set_style_align(_panel->title,LV_ALIGN_TOP_LEFT,0);
 
-        // Add an event callback for this later (set _panel->title to LV_PCT(100))
+        // Add an event callback for this later Min/Max content icon option
+        // (set _panel->title to LV_PCT(100))
         // lv_obj_t * icon_edit = lv_label_create(_panel->title_panel);
         // lv_obj_set_style_align(icon_edit,LV_ALIGN_TOP_RIGHT,0);
         // lv_label_set_text(icon_edit, LV_SYMBOL_SETTINGS);
@@ -93,6 +94,12 @@ lv_obj_t * tux_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heig
     lv_obj_set_style_pad_all(_panel->content,5,0);
 
     return obj;
+}
+
+void tux_panel_set_height(lv_obj_t* obj, lv_coord_t value)
+{
+    tux_panel_t* _panel = (tux_panel_t*)obj;
+    lv_obj_set_height(_panel, value);
 }
 
 void tux_panel_set_title_color(lv_obj_t* obj,lv_color_t value)

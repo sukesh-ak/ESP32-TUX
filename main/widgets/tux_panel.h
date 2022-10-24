@@ -57,7 +57,8 @@ extern "C" {
 
     void tux_panel_set_title_color(lv_obj_t* obj,lv_color_t value);
     void tux_panel_set_title_bg_color(lv_obj_t* obj,lv_color_t value);
-
+    void tux_panel_set_height(lv_obj_t* obj, lv_coord_t value);
+    
     /**********************
      *      MACROS
      **********************/

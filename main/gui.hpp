@@ -46,18 +46,22 @@ static const lv_font_t *font_normal;
 static const lv_font_t *font_symbol;
 static const lv_font_t *font_fa;
 
-static lv_obj_t *panel_header;
-static lv_obj_t *panel_status; // Status icons in the header
-static lv_obj_t *content_container;
-static lv_obj_t *screen_container;
+static lv_obj_t * panel_header;
+static lv_obj_t * panel_status; // Status icons in the header
+static lv_obj_t * content_container;
+static lv_obj_t * screen_container;
 
-static lv_obj_t *label_title;
-static lv_obj_t *label_message;
+static lv_obj_t * island_wifi;
+static lv_obj_t * island_ota;
+static lv_obj_t * island_devinfo;
 
-static lv_obj_t *icon_storage;
-static lv_obj_t *icon_wifi;
-static lv_obj_t *icon_ble;
-static lv_obj_t *icon_battery;
+static lv_obj_t * label_title;
+static lv_obj_t * label_message;
+
+static lv_obj_t * icon_storage;
+static lv_obj_t * icon_wifi;
+static lv_obj_t * icon_ble;
+static lv_obj_t * icon_battery;
 
 static lv_coord_t screen_h;
 static lv_coord_t screen_w;
@@ -91,6 +95,8 @@ static void create_page_settings(lv_obj_t* parent);
 
 static void create_header(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
+
+
 static void footer_message(const char * fmt, ...);
 static void panel_status_eventhandler(lv_event_t* e);
 static void counter_event_handler(lv_event_t * e);
@@ -98,9 +104,10 @@ static void rotate_event_handler(lv_event_t * e);
 static void theme_switch_event_handler(lv_event_t * e);
 //static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 static void switch_theme(bool dark);
+static void qrcode_ui(lv_obj_t* parent);
 
-static void esptouch_event_handler(lv_event_t* e);
-static void espblufi_event_handler(lv_event_t* e);
+//static void espwifi_event_handler(lv_event_t* e);
+static void espble_event_handler(lv_event_t* e);
 static void checkupdates_event_handler(lv_event_t* e);
 
 void lv_setup_styles()
@@ -314,57 +321,54 @@ static void create_page_home(lv_obj_t *parent)
 static void create_page_settings(lv_obj_t* parent)
 {
     /******** PROVISION WIFI ********/
-    lv_obj_t* island_wifi1 = tux_panel_create(parent, LV_SYMBOL_WIFI " PROVISION WIFI", 200);
-    lv_obj_add_style(island_wifi1, &style_ui_island, 0);
-    tux_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
+    island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI PROVISIONING", 100);
+    lv_obj_add_style(island_wifi, &style_ui_island, 0);
+    //tux_panel_set_title_color(island_wifi1, lv_palette_main(LV_PALETTE_BLUE));
     
     // Get Content Area to add UI elements
-    lv_obj_t* cont_1 = tux_panel_get_content(island_wifi1);
+    lv_obj_t* cont_1 = tux_panel_get_content(island_wifi);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
-    /* ESP-TOUCH */
-    lv_obj_t* esp_touch = lv_obj_create(cont_1);
-    lv_obj_set_size(esp_touch, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_touch, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(esp_touch, 0, 0);
+    ///* ESP-WIFI */
+    //lv_obj_t* esp_wifi = lv_obj_create(cont_1);
+    //lv_obj_set_size(esp_wifi, LV_PCT(100), LV_SIZE_CONTENT);
+    //lv_obj_set_style_bg_opa(esp_wifi, LV_OPA_TRANSP, 0);
+    //lv_obj_set_style_border_width(esp_wifi, 0, 0);
 
-    lv_obj_t* label_1 = lv_label_create(esp_touch);
-    lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
-    lv_label_set_text(label_1, "Using ESP-Touch (WiFi)");
+    //lv_obj_t* label_1 = lv_label_create(esp_wifi);
+    //lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
+    //lv_label_set_text(label_1, "Using WiFi SoftAP");
 
-    lv_obj_t* sw_1 = lv_switch_create(esp_touch);
-    lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
+    //lv_obj_t* sw_1 = lv_switch_create(esp_wifi);
+    //lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
     
 
-    /* ESP-BLUFI */
-    lv_obj_t* esp_blufi = lv_obj_create(cont_1);
-    lv_obj_set_size(esp_blufi, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_blufi, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(esp_blufi, 0, 0);
+    /* ESP-BLE */
+    lv_obj_t* esp_ble = lv_obj_create(cont_1);
+    lv_obj_set_size(esp_ble, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_ble, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_pad_ver(esp_ble, 3, 0);
+    lv_obj_set_style_border_width(esp_ble, 0, 0);
 
-    lv_obj_t* label_2 = lv_label_create(esp_blufi);
+    lv_obj_t* label_2 = lv_label_create(esp_ble);
     lv_obj_align(label_2, LV_ALIGN_LEFT_MID, 0, 0);
-    lv_label_set_text(label_2, "Using ESP-BluFi (BLE)");
+    lv_label_set_text(label_2, "Provision using Bluetooth");
 
-    lv_obj_t* sw_2 = lv_switch_create(esp_blufi);
+    lv_obj_t* sw_2 = lv_switch_create(esp_ble);
     lv_obj_align(sw_2, LV_ALIGN_RIGHT_MID, 0, 0);
 
-    /* ESP TOUCH/BLUFI STATUS*/
+    /* ESP TOUCH/ble STATUS*/
     lv_obj_t* esp_status = lv_obj_create(cont_1);
     lv_obj_set_size(esp_status, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_status, LV_OPA_10, 0);
+    lv_obj_set_style_bg_opa(esp_status, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(esp_status, 0, 0);
+    lv_obj_set_flex_flow(esp_status, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(esp_status, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-    lv_obj_t* lbl_status = lv_label_create(esp_status);
-    lv_obj_align(lbl_status, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(lbl_status, "Waiting for credentials...");
-
-    lv_obj_add_event_cb(sw_1, esptouch_event_handler, LV_EVENT_ALL, lbl_status);
-    lv_obj_add_event_cb(sw_2, espblufi_event_handler, LV_EVENT_ALL, lbl_status);
-
+    lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
 
     /******** OTA UPDATES ********/
-    lv_obj_t* island_ota = tux_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
+    island_ota = tux_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
     lv_obj_add_style(island_ota, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
@@ -396,6 +400,32 @@ static void create_page_settings(lv_obj_t* parent)
     lv_obj_set_style_text_color(lbl_update_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
     lv_obj_align(lbl_update_status, LV_ALIGN_CENTER, 0, 0);
     lv_label_set_text(lbl_update_status, "New version available - v 1.2.0");
+
+    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 100);
+    lv_obj_add_style(island_devinfo, &style_ui_island, 0);
+}
+
+// Show QR Code for BLE based Wifi Provisioning
+static void qrcode_ui(lv_obj_t* parent)
+{
+    /* QR CODE */
+    lv_color_t bg_color = lv_palette_lighten(LV_PALETTE_GREY, 4);
+    lv_color_t fg_color = lv_palette_darken(LV_PALETTE_BLUE, 4);
+
+    lv_obj_t* qr = lv_qrcode_create(parent, 100, fg_color, bg_color);
+
+    /* Set data */
+    const char* data = "https://www.sukesh.me";
+    lv_qrcode_update(qr, data, strlen(data));
+
+    /*Add a border with bg_color*/
+    lv_obj_set_style_border_color(qr, bg_color, 0);
+    lv_obj_set_style_border_width(qr, 5, 0);
+
+    lv_obj_t* lbl_status = lv_label_create(parent);
+    lv_label_set_text(lbl_status, "Install ESP BLE Prov App");
+
+    //lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, lbl_status);
 }
 
 static void draw_ui()
@@ -556,40 +586,42 @@ void switch_theme(bool dark)
     
 // }
 
-static void esptouch_event_handler(lv_event_t* e)
+// static void espwifi_event_handler(lv_event_t* e)
+// {
+//     lv_event_code_t code = lv_event_get_code(e);
+//     lv_obj_t* obj = lv_event_get_target(e);
+//     lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
+
+//     if (code == LV_EVENT_VALUE_CHANGED) {
+//         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
+//         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
+//         {
+//             lv_label_set_text_fmt(lbl, "WiFi Provisioning...ON");
+//         }
+//         else
+//         {
+//             lv_label_set_text_fmt(lbl, "WiFi Provisioning...OFF");
+//         }
+//     }
+// }
+
+static void espble_event_handler(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t* obj = lv_event_get_target(e);
-    lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
+    lv_obj_t* esp_status_panel = (lv_obj_t*)lv_event_get_user_data(e);
 
     if (code == LV_EVENT_VALUE_CHANGED) {
         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
         {
-            lv_label_set_text_fmt(lbl, "ESP-TOUCH Scanning...ON");
+            tux_panel_set_height(island_wifi, 250);
+            qrcode_ui(esp_status_panel);
         }
         else
         {
-            lv_label_set_text_fmt(lbl, "ESP-TOUCH Scanning...OFF");
-        }
-    }
-}
-
-static void espblufi_event_handler(lv_event_t* e)
-{
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t* obj = lv_event_get_target(e);
-    lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
-
-    if (code == LV_EVENT_VALUE_CHANGED) {
-        LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
-        if (lv_obj_has_state(obj, LV_STATE_CHECKED))
-        {
-            lv_label_set_text_fmt(lbl, "ESP-BLUFI Scanning...ON");
-        }
-        else
-        {
-            lv_label_set_text_fmt(lbl, "ESP-BLUFI Scanning...OFF");
+            tux_panel_set_height(island_wifi, 100);
+            lv_obj_clean(esp_status_panel);
         }
     }
 }
