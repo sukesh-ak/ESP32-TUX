@@ -1,5 +1,10 @@
-#  Wireless Tag WT32-SC01 / Plus (3.5" TFT Touch Display)
-Design adapts to different screen resolution without any code changes.   
+# ESP32 TOUCH UX
+### A Touch UX template to get you started.  
+- Supported Devices : [WT32-SC01](https://www.alibaba.com/product-detail/WT32-SC01-3-5-3-5inch_1600120762835.html?spm=a2747.product_upgrade.0.0.636971d29EHKiD) / [WT32-SC01 Plus](https://www.alibaba.com/product-detail/Upgrade-WT32-SC01-plus-16MB-hmi_1600609718238.html?spm=a2756.order-detail-ta-bn-s.0.0.6f3f2fc2RYpL8H)
+- Graphics & Touch Driver : [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
+- UI / Widgets : [LVGL9.x](https://github.com/lvgl/lvgl)
+- Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
+
 ![As of 2022-10-21](assets/wt32-sc01-2022-10-21.png)
 
 ## Features included 
@@ -25,7 +30,7 @@ Design adapts to different screen resolution without any code changes.
 - [ ] Multiple Navigation styles
 - [x] UI Islands (Widget - Panel)
 
-## Supported on ESP32/ESP32-S3 + ESP-IDF + LVGL9.X + LOVYANGFX
+## Supported Devices 
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
 
 ![device](datasheet/WT32-SC01.png)  
@@ -39,11 +44,11 @@ Design adapts to different screen resolution without any code changes.
 > Git clone and recursively update submodule
 ```cmake
 # Clone repo and update submodules (LovyanGFX + LVGL)
-git clone https://github.com/sukesh-ak/WT32-SC01-PLUS-LVGL-IDF.git
-cd WT32-SC01-PLUS-LVGL-IDF
+git clone https://github.com/sukesh-ak/TUX.git
+cd TUX
 git submodule update --init --recursive
 
-# Update submodules (LovyanGFX + LVGL)
+# Update submodules to the latest (LovyanGFX + LVGL)
 git submodule foreach git pull
 ```
 
@@ -90,3 +95,5 @@ message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMAKE_BINARY_DIR = ${CMAKE_BINARY_DIR}")
 message(STATUS "---------------------------------------")
 ```
+## 3D Printable enclosure (STL)  
+[WT32-SC01 - 3D enclosure on SketchFab website](https://sketchfab.com/3d-models/wt32-sc01-case-cfec05638de540b0acccff2091508500)
