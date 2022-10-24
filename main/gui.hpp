@@ -353,6 +353,7 @@ static void create_page_settings(lv_obj_t* parent)
     //lv_obj_t* sw_1 = lv_switch_create(esp_wifi);
     //lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
     
+    //lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, lbl_status);
 
     /* ESP-BLE */
     lv_obj_t* esp_ble = lv_obj_create(cont_1);
@@ -434,9 +435,8 @@ static void qrcode_ui(lv_obj_t* parent)
     lv_obj_set_style_border_width(qr, 5, 0);
 
     lv_obj_t* lbl_status = lv_label_create(parent);
-    lv_label_set_text(lbl_status, "Install ESP BLE Prov App");
+    lv_label_set_text(lbl_status, "Install ESP BLE Prov App & Scan");
 
-    //lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, lbl_status);
 }
 
 static void draw_ui()
@@ -459,17 +459,13 @@ static void draw_ui()
     lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
     lv_obj_set_style_border_width(content_container, 0, 0);   
 
-    // Comment the line below which sets transparency and then either set a background color or image
-    // Also set the island panels to 50% transparency
-    //lv_obj_set_style_bg_opa(content_container,LV_OPA_TRANSP,0);
-    //lv_obj_set_style_bg_color(content_container,lv_palette_main(LV_PALETTE_RED),0);
+    // Background gradient / change to image later
     lv_obj_add_style(content_container, &style_content_bg, 0);
 
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_ROW_WRAP);
-        
-    create_page_home(content_container);
-    // create_page_settings(content_container);
 
+    // Home page visible        
+    create_page_home(content_container);
 }
 
   /* Counter button event handler */
@@ -553,12 +549,18 @@ static void footer_message(const char * fmt, ...)
 
 static void home_clicked_eventhandler(lv_event_t* e)
 {
-    footer_message("Home clicked!");
+    //footer_message("Home clicked!");
+    // Clean the content container first
+    lv_obj_clean(content_container);
+    create_page_home(content_container);
 }
 
 static void status_clicked_eventhandler(lv_event_t* e)
 {
-    footer_message("Status icons touched but this is a very long message to show scroll animation!");
+    //footer_message("Status icons touched but this is a very long message to show scroll animation!");
+    // Clean the content container first
+    lv_obj_clean(content_container);
+    create_page_settings(content_container);
 }
 
 
