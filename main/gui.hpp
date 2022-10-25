@@ -1,37 +1,24 @@
-/*
-    Free PNG icons => https://www.flaticon.com/search?word=charte&shape=outline&order_by=4
-*/
-
-/* 
-    Create Custom symbols
-
-Download FontAwesome Free version or 
-take from lvgl\scripts\built_in_font\FontAwesome5-Solid+Brands+Regular.woff
-Automation done with this => https://github.com/lvgl/lv_font_conv
-
-Goto conversion tool
-https://lvgl.io/tools/fontconverter
-
-Name eg. font_fa_14
-Size : 14
-Bpp : 4 bit-per-pixel
-
-Select 'fa-brands-400.ttf' from download
-Range: Provide the symbol hex values with comma separated
-
-Use this site to convert Unicode to Hex UTF-8 bytes
-https://www.cogsci.ed.ac.uk/~richard/utf-8.cgi?input=f294&mode=hex
-
-then define constants for us like
-#define FA_BLE_SYMBOL "\xEF\x8A\x94"
-*/
 
 #include "widgets/tux_panel.h"
 LV_IMG_DECLARE(dev_bg)
+LV_IMG_DECLARE(weather_clear_day)
+LV_IMG_DECLARE(weather_clear_night)
+LV_IMG_DECLARE(weather_cloudy_snowing)
+
+// LV_FONT_DECLARE(font_7seg_16)
+// LV_FONT_DECLARE(font_7seg_24)
+// LV_FONT_DECLARE(font_7seg_28)
+// LV_FONT_DECLARE(font_7seg_32)
+
+LV_FONT_DECLARE(font_7seg_48)
+LV_FONT_DECLARE(font_7seg_56)
+LV_FONT_DECLARE(font_7seg_64)
 
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"    // 0xf294
 #define FA_SYMBOL_SETTINGS "\xEF\x80\x93" // 0xf0ad
+
+
 /*********************
  *      DEFINES
  *********************/
@@ -110,7 +97,6 @@ static void footer_message(const char * fmt, ...);
 static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t* parent);
 
-static void counter_event_handler(lv_event_t * e);
 static void rotate_event_handler(lv_event_t * e);
 static void theme_switch_event_handler(lv_event_t * e);
 //static void espwifi_event_handler(lv_event_t* e);
@@ -131,17 +117,22 @@ void lv_setup_styles()
     screen_h = lv_obj_get_height(lv_scr_act());
     screen_w = lv_obj_get_width(lv_scr_act());
 
-    // Content container background
+    /* CONTENT CONTAINER BACKGROUND */
     lv_style_init(&style_content_bg);
-    lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
+    //lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
     lv_style_set_radius(&style_content_bg, 0);
 
+    // Image Background
+    lv_style_set_bg_img_src(&style_content_bg,&dev_bg);
+    //lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
+
+    // Gradient Background
     static lv_grad_dsc_t grad;
-    grad.dir = LV_GRAD_DIR_HOR;
+    grad.dir = LV_GRAD_DIR_VER;
     grad.stops_count = 2;
     grad.stops[0].color = lv_palette_main(LV_PALETTE_GREY);
     grad.stops[1].color = theme_current->color_primary;
-    grad.stops[0].frac  = 128;
+    grad.stops[0].frac  = 100;
     grad.stops[1].frac  = 192;
     lv_style_set_bg_grad(&style_content_bg, &grad);
 
@@ -203,8 +194,8 @@ void lv_setup_styles()
 
     // UI ISLANDS
     lv_style_init(&style_ui_island);
-    lv_style_set_bg_color(&style_ui_island, lv_palette_main(LV_PALETTE_BLUE_GREY));// lv_palette_darken(LV_PALETTE_GREY,5));
-    lv_style_set_bg_opa(&style_ui_island, LV_OPA_50);
+    lv_style_set_bg_color(&style_ui_island, lv_palette_darken(LV_PALETTE_GREY,5));
+    lv_style_set_bg_opa(&style_ui_island, LV_OPA_60);
     lv_style_set_border_color(&style_ui_island,bg_theme_color);
     lv_style_set_border_opa(&style_ui_island,LV_OPA_50);
     lv_style_set_border_width(&style_ui_island,1);
@@ -280,14 +271,9 @@ static void create_footer(lv_obj_t *parent)
 
 static void create_page_home(lv_obj_t *parent)
 {
-
-    // lv_obj_t * img_src = lv_img_create(content_container); /*Crate an image object*/
-    // lv_img_set_src(img_src, &dev_bg);  /*Set the created file as image (a red fl  ower)*/
-    // lv_obj_set_pos(img_src, 0, 0);      /*Set the positions*/
-
-    /* Widget called Panel */
+    /* HOME PAGE PANELS */
     // ******** UI ISLAND 
-    lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_HOME " LIVING ROOM", 100);
+    lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_BELL " CLOCK", 120);
     lv_obj_add_style(island_0,&style_ui_island,0);
 
     lv_obj_t * cont_0 = tux_panel_get_content(island_0);
@@ -295,31 +281,53 @@ static void create_page_home(lv_obj_t *parent)
     
     lv_obj_t *l = lv_label_create(cont_0);
     lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
-    lv_label_set_text(l, "Testing Islands");
+    lv_obj_set_style_text_font(l,&font_7seg_64,0);
+    // Lime green = lv_color_make(50,205,50)
+    // lv_obj_set_style_shadow_width(l,50,0);
+    // lv_obj_set_style_shadow_color(l,lv_palette_main(LV_PALETTE_BLUE),0);
+    lv_obj_set_style_text_color(l,lv_color_make(50,205,50),0);  
+    lv_label_set_text(l, "20:25");
 
     // ******** UI ISLAND 
-    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_BELL " ALARM", 100);
+    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_TINT " WEATHER", 150);
     lv_obj_add_style(island_1,&style_ui_island,0);
-    tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
+    //tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
 
     lv_obj_t * cont_1 = tux_panel_get_content(island_1);
 
     lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(cont_1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-    // Button with counter
-    lv_obj_t *btn1 = lv_btn_create(cont_1);
-    lv_obj_align(btn1,LV_ALIGN_TOP_MID,0,0);
-    lv_obj_add_event_cb(btn1, counter_event_handler, LV_EVENT_ALL, NULL);
-    lv_obj_t *lbl = lv_label_create(btn1);
-    lv_label_set_text(lbl, "Counter Button: 0");
-    lv_obj_center(lbl);
+    // static lv_style_t imgstyle;
+    // lv_style_init(&imgstyle);
+
+    lv_obj_t * img1 = lv_img_create(cont_1);
+    lv_img_set_src(img1, &weather_clear_day);
+
+    lv_obj_t * img2 = lv_img_create(cont_1);
+    lv_img_set_src(img2, &weather_clear_night);
+    
+    lv_obj_t * img3 = lv_img_create(cont_1);
+    lv_img_set_src(img3, &weather_cloudy_snowing);
+
+
+    lv_obj_set_style_img_opa(img1, LV_OPA_COVER,0);
+    lv_obj_set_style_img_recolor(img1, lv_color_white(),0);
+    lv_obj_set_style_img_recolor_opa(img1, LV_OPA_COVER,0);
+
+    lv_obj_set_style_img_opa(img2, LV_OPA_COVER,0);
+    lv_obj_set_style_img_recolor(img2, lv_palette_main(LV_PALETTE_YELLOW),0);
+    lv_obj_set_style_img_recolor_opa(img2, LV_OPA_COVER,0);
+
+    lv_obj_set_style_img_opa(img3, LV_OPA_COVER,0);
+    lv_obj_set_style_img_recolor(img3, lv_palette_main(LV_PALETTE_CYAN),0);
+    lv_obj_set_style_img_recolor_opa(img3, LV_OPA_COVER,0);
+
 
     // ******** UI ISLAND 
     lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 150);
     lv_obj_add_style(island_2,&style_ui_island,0);
-    tux_panel_set_title_color(island_2,lv_palette_main(LV_PALETTE_BLUE));
 
     // Get Content Area to add UI elements
     lv_obj_t * cont_2 = tux_panel_get_content(island_2);
@@ -350,7 +358,7 @@ static void panel_wifi_island(lv_obj_t* parent)
     /******** PROVISION WIFI ********/
     island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI PROVISIONING", 100);
     lv_obj_add_style(island_wifi, &style_ui_island, 0);
-    tux_panel_set_title_color(island_wifi, lv_palette_main(LV_PALETTE_BLUE));
+    //tux_panel_set_title_color(island_wifi, lv_palette_main(LV_PALETTE_BLUE));
     
     // Get Content Area to add UI elements
     lv_obj_t* cont_1 = tux_panel_get_content(island_wifi);
@@ -442,6 +450,7 @@ static void panel_devinfo_island(lv_obj_t* parent)
 
 static void create_page_settings(lv_obj_t* parent)
 {
+    /* SETTINGS PAGE PANELS */
     panel_wifi_island(parent);
     panel_ota_island(parent);
     panel_devinfo_island(parent);
@@ -481,44 +490,24 @@ static void draw_ui()
     lv_obj_set_style_border_width(screen_container, 0, 0);
     lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
 
-    // STATUS / TITLE BAR
+    /* HEADER & FOOTER*/
     create_header(screen_container);
     create_footer(screen_container);    
 
+    /* CONTENT CONTAINER */
     content_container = lv_obj_create(screen_container);
     lv_obj_set_size(content_container,screen_w,screen_h - HEADER_HEIGHT - FOOTER_HEIGHT); 
     lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
     lv_obj_set_style_border_width(content_container, 0, 0);   
 
-    // Background gradient / change to image later
-    //lv_obj_add_style(content_container, &style_content_bg, 0);
-
+    // Gradient / Image Background for content container
+    lv_obj_add_style(content_container, &style_content_bg, 0);
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
 
-    lv_obj_set_style_bg_img_src(content_container,&dev_bg,0);
-    lv_obj_set_style_bg_img_opa(content_container,LV_OPA_50,0);
-
-    // Home page visible        
-    create_page_home(content_container);
-    
+    // Show Home Page
+    create_page_home(content_container);    
 }
 
-  /* Counter button event handler */
-  static void counter_event_handler(lv_event_t * e)
-  {
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *btn = lv_event_get_target(e);
-    if (code == LV_EVENT_CLICKED)
-    {
-      static uint8_t cnt = 0;
-      cnt++;
-
-      /*Get the first child of the button which is the label and change its text*/
-      lv_obj_t *label = lv_obj_get_child(btn, 0);
-      lv_label_set_text_fmt(label, "Counter Button: %d", cnt);
-      //LV_LOG_USER("Clicked");
-    }
-  }
 
 static void rotate_event_handler(lv_event_t * e)
 {

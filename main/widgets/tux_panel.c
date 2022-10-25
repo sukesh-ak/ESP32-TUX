@@ -114,6 +114,12 @@ void tux_panel_set_title_bg_color(lv_obj_t* obj,lv_color_t value)
     lv_obj_set_style_bg_color(_panel->title_panel,value,0);
 }
 
+void tux_panel_set_content_bg_color(lv_obj_t* obj,lv_color_t value)
+{
+    tux_panel_t* _panel = (tux_panel_t*)obj;
+    lv_obj_set_style_bg_color(_panel->content,value,0);
+}
+
 lv_obj_t * tux_panel_get_title(lv_obj_t * obj)
 {
     LV_ASSERT_OBJ(obj, MY_CLASS);
