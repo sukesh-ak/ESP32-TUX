@@ -119,7 +119,7 @@ void lv_setup_styles()
 
     /* CONTENT CONTAINER BACKGROUND */
     lv_style_init(&style_content_bg);
-    //lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
+    lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
     lv_style_set_radius(&style_content_bg, 0);
 
     // Image Background
@@ -195,9 +195,9 @@ void lv_setup_styles()
     // UI ISLANDS
     lv_style_init(&style_ui_island);
     lv_style_set_bg_color(&style_ui_island, lv_palette_darken(LV_PALETTE_GREY,5));
-    lv_style_set_bg_opa(&style_ui_island, LV_OPA_60);
+    lv_style_set_bg_opa(&style_ui_island, LV_OPA_80);
     lv_style_set_border_color(&style_ui_island,bg_theme_color);
-    lv_style_set_border_opa(&style_ui_island,LV_OPA_50);
+    lv_style_set_border_opa(&style_ui_island,LV_OPA_80);
     lv_style_set_border_width(&style_ui_island,1);
     lv_style_set_radius(&style_ui_island,5);
 }
@@ -219,7 +219,7 @@ static void create_header(lv_obj_t *parent)
 
     // HEADER TITLE
     label_title = lv_label_create(panel_title);
-    lv_label_set_text(label_title, LV_SYMBOL_BARS " DASHBOARD");
+    lv_label_set_text(label_title, LV_SYMBOL_HOME " DASHBOARD");
 
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
@@ -273,7 +273,7 @@ static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
     // ******** UI ISLAND 
-    lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_BELL " CLOCK", 120);
+    lv_obj_t* island_0 = tux_panel_create(parent, LV_SYMBOL_BELL " CLOCK", 150);
     lv_obj_add_style(island_0,&style_ui_island,0);
 
     lv_obj_t * cont_0 = tux_panel_get_content(island_0);
