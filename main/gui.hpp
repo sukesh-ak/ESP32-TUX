@@ -10,8 +10,8 @@ LV_IMG_DECLARE(weather_cloudy_snowing)
 // LV_FONT_DECLARE(font_7seg_28)
 // LV_FONT_DECLARE(font_7seg_32)
 
-LV_FONT_DECLARE(font_7seg_48)
-LV_FONT_DECLARE(font_7seg_56)
+// LV_FONT_DECLARE(font_7seg_48)
+// LV_FONT_DECLARE(font_7seg_56)
 LV_FONT_DECLARE(font_7seg_64)
 
 LV_FONT_DECLARE(font_fa_14)
