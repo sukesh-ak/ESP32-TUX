@@ -123,6 +123,7 @@ void lv_setup_styles()
     lv_style_set_radius(&style_content_bg, 0);
 
     // Image Background
+    // CF_INDEXED_8_BIT for smaller size - resolution 480x480
     lv_style_set_bg_img_src(&style_content_bg,&dev_bg);
     //lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
 
@@ -134,7 +135,7 @@ void lv_setup_styles()
     grad.stops[1].color = theme_current->color_primary;
     grad.stops[0].frac  = 100;
     grad.stops[1].frac  = 192;
-    lv_style_set_bg_grad(&style_content_bg, &grad);
+    //lv_style_set_bg_grad(&style_content_bg, &grad);
 
     // DASHBOARD TITLE
     lv_style_init(&style_title);
@@ -452,8 +453,8 @@ static void create_page_settings(lv_obj_t* parent)
 {
     /* SETTINGS PAGE PANELS */
     panel_devinfo_island(parent);
-    panel_ota_island(parent);
     panel_wifi_island(parent);
+    panel_ota_island(parent);
 }
 
 // Show QR Code for BLE based Wifi Provisioning

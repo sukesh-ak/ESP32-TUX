@@ -68,7 +68,7 @@ esp_err_t lv_display_init()
     lcd.setRotation(2);
 
     lcd.setBrightness(128);
-    lcd.setColorDepth(32);
+    lcd.setColorDepth(16);
 
     lcd.fillScreen(TFT_BLACK);
 
