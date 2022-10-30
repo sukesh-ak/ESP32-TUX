@@ -5,7 +5,8 @@
 - UI / Widgets : [LVGL9.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
-![As of 2022-10-21](assets/wt32-sc01-2022-10-21.png)
+![As of 2022-10-21](assets/home.jpg)
+![As of 2022-10-21](assets/settings.jpg)
 
 ## Features included 
 - [x] Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
