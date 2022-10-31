@@ -454,7 +454,7 @@ static void create_page_settings(lv_obj_t* parent)
     /* SETTINGS PAGE PANELS */
     panel_devinfo_island(parent);
     panel_wifi_island(parent);
-    panel_ota_island(parent);
+    // panel_ota_island(parent);
 }
 
 // Show QR Code for BLE based Wifi Provisioning
