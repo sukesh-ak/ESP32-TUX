@@ -1,9 +1,10 @@
 {
     "C_Cpp.intelliSenseEngine": "Tag Parser",
-    "idf.portWin": "COM9",
+    "idf.portWin": "COM5",
     "idf.flashType": "UART",
-    "files.associations": {
-      "lv_flex.h": "c",
-      "lv_color.h": "c"
-    }
+    "idf.adapterTargetName": "esp32",
+    "idf.openOcdConfigs": [
+      "interface/ftdi/esp32_devkitj_v1.cfg",
+      "target/esp32.cfg"
+    ]
   }
