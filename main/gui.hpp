@@ -684,3 +684,47 @@ inline void checkupdates_event_handler(lv_event_t *e)
         LV_LOG_USER("Clicked");
     }
 }
+
+static void device_info()
+{
+    /* Print chip information */
+    esp_chip_info_t chip_info;
+    uint32_t flash_size;
+    esp_chip_info(&chip_info);
+
+    std::string s_chip_info = "";
+    s_chip_info += "\nController     : " + string(CONFIG_IDF_TARGET);  
+    //s_chip_info += "\nModel          : " +  to_string(chip_info.model); // esp_chip_model_t type
+    s_chip_info += "\nCPU Cores      : " +  to_string(chip_info.cores);
+
+    // CPU Speed - 80Mhz / 160 Mhz / 240Mhz
+    rtc_cpu_freq_config_t conf;
+    rtc_clk_cpu_freq_get_config(&conf);
+    s_chip_info += "\nCPU Speed      : " + to_string(conf.freq_mhz) + "Mhz";
+
+    s_chip_info += "\nSilicon Rev    : " +  to_string(chip_info.revision);
+    s_chip_info += "\nWIFI           : " +  string((chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "2.4GHz WIFI" : "NA");
+    s_chip_info += "\nBT Classic     : " +  string((chip_info.features & CHIP_FEATURE_BT) ? "BT" : "NA");
+    s_chip_info += "\nBLE            : " +  string((chip_info.features & CHIP_FEATURE_BLE) ? "BLE" : "NA");
+    s_chip_info += "\nIEEE 802.15.4  : " +  string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA");
+
+    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
+    s_chip_info += "\nFlash Size     : " +  to_string(flash_size / (1024 * 1024)) + "MB" 
+                                            + ((chip_info.features & CHIP_FEATURE_EMB_FLASH) ? " [embedded]" : " [external]");
+    }
+
+    multi_heap_info_t info;    
+	heap_caps_get_info(&info, MALLOC_CAP_SPIRAM);
+
+    float psramsize = (info.total_free_bytes + info.total_allocated_bytes) / (1024.0 * 1024.0);
+    s_chip_info += "\nPSRAM Size     : " +  to_string(static_cast<int>(round(psramsize))) + "MB"  
+                                            + ((chip_info.features & CHIP_FEATURE_EMB_PSRAM) ? " [embedded]" : " [external]");
+
+    s_chip_info += "\nESP-IDF Version: " + string(esp_get_idf_version());
+
+    ESP_LOGE(TAG,"%s",s_chip_info.c_str());
+
+    //printf("Free heap size: %d bytes\n", std::round(esp_get_free_heap_size() / (1024.0*1024.0)));
+
+    fflush(stdout);
+}

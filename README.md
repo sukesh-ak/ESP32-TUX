@@ -49,12 +49,12 @@
 > Git clone and recursively update submodule
 ```cmake
 # Clone repo and update submodules (LovyanGFX + LVGL)
-git clone https://github.com/sukesh-ak/TUX.git
-cd TUX
+git clone https://github.com/sukesh-ak/ESP32-TUX.git
+cd ESP32-TUX
 git submodule update --init --recursive
 
-# Update submodules to the latest (LovyanGFX + LVGL)
-git submodule foreach git pull
+# Update submodules to the latest if required (LovyanGFX + LVGL)
+# git submodule foreach git pull
 ```
 
 ## Separate build folder for ESP32 & ESP32-S3
@@ -101,4 +101,8 @@ message(STATUS "CMAKE_BINARY_DIR = ${CMAKE_BINARY_DIR}")
 message(STATUS "---------------------------------------")
 ```
 ## 3D Printable enclosure (STL)  
-[WT32-SC01 - 3D enclosure on SketchFab website](https://sketchfab.com/3d-models/wt32-sc01-case-cfec05638de540b0acccff2091508500)
+[FREE - WT32-SC01 - 3D enclosure on SketchFab website](https://sketchfab.com/3d-models/wt32-sc01-case-cfec05638de540b0acccff2091508500)  
+[FREE - WT32-SC01 - 3D enclosure on Cults3d by DUANEORTON](https://cults3d.com/en/3d-model/tool/desk-enclosure-for-wt32-sc01)  
+[PAID - WT32-SC01 - 3D enclosure on Cults3d by PRINTMINION](https://cults3d.com/en/design-collections/printminion/various-cases-for-wt32-sc01-by-wireless-tag)  
+[PAID - WT32-SC01 - 3D enclosure on Cults3d by TOMCASA](https://cults3d.com/en/3d-model/gadget/boite-pour-wt32-sc01-esp32-tft-tactile)
+

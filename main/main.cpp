@@ -7,6 +7,12 @@
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
 
+#include <cmath>
+#include <inttypes.h>
+#include <string>
+using namespace std ;
+#include "soc/rtc.h"
+
 static const char *TAG = "lvgl_gui";
 
 // Enable one of the devices from below
@@ -34,6 +40,9 @@ extern "C" { void app_main(); }
 
 void app_main(void)
 {
+
+    device_info();
+
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
     if (lv_display_init() != ESP_OK) // Configure LVGL
