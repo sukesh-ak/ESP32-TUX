@@ -111,8 +111,8 @@ esp_err_t lv_display_init()
                                           &lv_font_montserrat_14);
 
     //lv_disp_set_theme(disp, theme_current); /*Assign the theme to the display*/
-    //bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 4) : lv_palette_lighten(LV_PALETTE_GREY, 1);
-    bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
+    //bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
+    bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 5) : lv_color_hex(0xBFBFBD);
 
     xGuiSemaphore = xSemaphoreCreateMutex();
     if (!xGuiSemaphore)  

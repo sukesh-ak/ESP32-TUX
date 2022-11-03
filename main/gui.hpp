@@ -191,7 +191,7 @@ void lv_setup_styles()
 
     // UI ISLANDS
     lv_style_init(&style_ui_island);
-    lv_style_set_bg_color(&style_ui_island, lv_palette_darken(LV_PALETTE_GREY, 5));
+    lv_style_set_bg_color(&style_ui_island, bg_theme_color);
     lv_style_set_bg_opa(&style_ui_island, LV_OPA_80);
     lv_style_set_border_color(&style_ui_island, bg_theme_color);
     lv_style_set_border_opa(&style_ui_island, LV_OPA_80);
@@ -542,12 +542,12 @@ static void theme_switch_event_handler(lv_event_t *e)
         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
         {
-            switch_theme(true);
+            switch_theme(false);
             lv_label_set_text(udata, "Theme : Light");
         }
         else
         {
-            switch_theme(false);
+            switch_theme(true);
             lv_label_set_text(udata, "Theme : Dark");
         }
     }
@@ -583,26 +583,37 @@ void switch_theme(bool dark)
 {
     if (dark)
     {
+        theme_current = lv_theme_default_init(disp, lv_palette_main(LV_PALETTE_BLUE),
+                                              lv_palette_main(LV_PALETTE_GREEN),
+                                              1, /*Light or dark mode*/
+                                              &lv_font_montserrat_14);
+        bg_theme_color = lv_palette_darken(LV_PALETTE_GREY, 5);
+        lv_disp_set_theme(disp, theme_current);
+        //bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? lv_palette_darken(LV_PALETTE_GREY, 5) : lv_palette_lighten(LV_PALETTE_GREY, 2);
+        // lv_theme_set_apply_cb(theme_current, new_theme_apply_cb);
+
+        lv_style_set_bg_color(&style_ui_island, bg_theme_color);
+        //lv_style_set_bg_opa(&style_ui_island, LV_OPA_80);
+
+        ESP_LOGI(TAG,"Dark theme set");
+    }
+    else
+    {
         theme_current = lv_theme_default_init(disp,
                                               lv_palette_main(LV_PALETTE_BLUE),
                                               lv_palette_main(LV_PALETTE_RED),
                                               0, /*Light or dark mode*/
                                               &lv_font_montserrat_14);
-        // bg_theme_color = lv_palette_lighten(LV_PALETTE_GREY, 1);
+        //bg_theme_color = lv_palette_lighten(LV_PALETTE_GREY, 5);    // #BFBFBD
+        // bg_theme_color = lv_color_make(0,0,255); 
+        bg_theme_color = lv_color_hex(0xBFBFBD); //383837
+
+
         lv_disp_set_theme(disp, theme_current);
-        bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
         // lv_theme_set_apply_cb(theme_current, new_theme_apply_cb);
-    }
-    else
-    {
-        theme_current = lv_theme_default_init(disp, lv_palette_main(LV_PALETTE_BLUE),
-                                              lv_palette_main(LV_PALETTE_GREEN),
-                                              1, /*Light or dark mode*/
-                                              &lv_font_montserrat_14);
-        // bg_theme_color = lv_palette_darken(LV_PALETTE_GREY, 4);
-        lv_disp_set_theme(disp, theme_current);
-        bg_theme_color = theme_current->flags & LV_USE_THEME_DEFAULT ? DARK_COLOR_CARD : LIGHT_COLOR_CARD;
-        // lv_theme_set_apply_cb(theme_current, new_theme_apply_cb);
+        lv_style_set_bg_color(&style_ui_island, bg_theme_color);
+        ESP_LOGI(TAG,"Light theme set");        
+
     }
 }
 

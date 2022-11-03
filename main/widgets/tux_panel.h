@@ -15,7 +15,7 @@ extern "C" {
      *********************/
 #include "../../lvgl/src/core/lv_obj.h"
 
-#if LV_USE_PANEL
+#if TUX_USE_PANEL
 
 /*Testing of dependencies*/
 #if LV_USE_LABEL == 0

@@ -7,7 +7,7 @@
   *      INCLUDES
   *********************/
 #include "tux_panel.h"
-#if LV_USE_PANEL
+#if TUX_USE_PANEL
 
 #include "../../components/lvgl/src/widgets/label/lv_label.h"
 #include "../../components/lvgl/src/misc/lv_assert.h"

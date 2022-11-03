@@ -28,11 +28,12 @@
 - [x] UI Islands (Widget - tux_panel)
 
 ### Todo List
-- [ ] Wi-Fi Config Page
-- [ ] OTA Update Page
-- [ ] BLE Config Page
+- [ ] Wi-Fi Config 
+- [ ] OTA Update 
+- [ ] BLE Config 
 - [ ] Pages as modules
 - [ ] Multiple Navigation styles
+- [ ] Integration with SquareLine Studio
 
 ## Currently Supported Devices 
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
