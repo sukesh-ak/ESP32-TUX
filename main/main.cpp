@@ -10,8 +10,14 @@
 #include <cmath>
 #include <inttypes.h>
 #include <string>
+
+#include <fmt/core.h>
+#include <fmt/format.h>
+
 using namespace std ;
 #include "soc/rtc.h"
+#include "esp_ota_ops.h"
+#include "esp_app_format.h"
 
 static const char *TAG = "lvgl_gui";
 
@@ -75,8 +81,6 @@ void app_main(void)
 
 static void periodic_timer_callback(lv_timer_t * timer)
 {
-    ESP_LOGI(TAG, "periodic_timer_callback called\n");
-
     if (battery_value>100) battery_value=0;
     // Just blinking the Wifi icon between GREY & BLUE
     if (wifi_on)
@@ -90,6 +94,8 @@ static void periodic_timer_callback(lv_timer_t * timer)
         lv_update_battery(battery_value);
         wifi_on = !wifi_on;
         battery_value+=10;
+
+        ESP_LOGI(TAG, "periodic_timer_callback : WiFi = ON\n");
     }
     else
     {
@@ -101,6 +107,8 @@ static void periodic_timer_callback(lv_timer_t * timer)
         lv_update_battery(battery_value);
         wifi_on = !wifi_on;
         battery_value+=10;
+
+        ESP_LOGI(TAG, "periodic_timer_callback : WiFi = OFF\n");
     }
 }
 

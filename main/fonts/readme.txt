@@ -11,6 +11,7 @@ https://lvgl.io/tools/fontconverter
 Name eg. font_fa_14
 Size : 14
 Bpp : 4 bit-per-pixel
+Symbols: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0987654321: *.,-[]()/'
 
 Select 'fa-brands-400.ttf' from download
 Range: Provide the symbol hex values with comma separated

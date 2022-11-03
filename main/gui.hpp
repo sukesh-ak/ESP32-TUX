@@ -13,6 +13,8 @@ LV_IMG_DECLARE(weather_cloudy_snowing)
 // LV_FONT_DECLARE(font_7seg_48)
 // LV_FONT_DECLARE(font_7seg_56)
 LV_FONT_DECLARE(font_7seg_64)
+LV_FONT_DECLARE(font_robotomono_12)
+LV_FONT_DECLARE(font_robotomono_13)
 
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"      // 0xf294
@@ -92,6 +94,7 @@ static void create_footer(lv_obj_t *parent);
 static void footer_message(const char *fmt, ...);
 static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t *parent);
+static string device_info();
 
 static void rotate_event_handler(lv_event_t *e);
 static void theme_switch_event_handler(lv_event_t *e);
@@ -437,8 +440,17 @@ static void panel_ota_island(lv_obj_t *parent)
 
 static void panel_devinfo_island(lv_obj_t *parent)
 {
-    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 100);
+    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 180);
     lv_obj_add_style(island_devinfo, &style_ui_island, 0);
+
+    // Get Content Area to add UI elements
+    lv_obj_t *cont_devinfo = tux_panel_get_content(island_devinfo);
+
+    lv_obj_t * label1 = lv_label_create(cont_devinfo);
+    lv_obj_set_style_text_font(label1,&font_robotomono_13,0); // Monoaspace font for alignment
+    lv_label_set_text(label1, device_info().c_str());
+
+    //lv_obj_align(label1, LV_ALIGN_TOP_LEFT, 0, 0);
 }
 
 static void create_page_settings(lv_obj_t *parent)
@@ -497,7 +509,8 @@ static void draw_ui()
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
 
     // Show Home Page
-    create_page_home(content_container);
+    //create_page_home(content_container);
+    create_page_settings(content_container);
 }
 
 static void rotate_event_handler(lv_event_t *e)
@@ -685,46 +698,52 @@ inline void checkupdates_event_handler(lv_event_t *e)
     }
 }
 
-static void device_info()
+static string device_info()
 {
+    std::string s_chip_info = "";
+
     /* Print chip information */
     esp_chip_info_t chip_info;
     uint32_t flash_size;
     esp_chip_info(&chip_info);
 
-    std::string s_chip_info = "";
-    s_chip_info += "\nController     : " + string(CONFIG_IDF_TARGET);  
-    //s_chip_info += "\nModel          : " +  to_string(chip_info.model); // esp_chip_model_t type
-    s_chip_info += "\nCPU Cores      : " +  to_string(chip_info.cores);
-
     // CPU Speed - 80Mhz / 160 Mhz / 240Mhz
     rtc_cpu_freq_config_t conf;
     rtc_clk_cpu_freq_get_config(&conf);
-    s_chip_info += "\nCPU Speed      : " + to_string(conf.freq_mhz) + "Mhz";
-
-    s_chip_info += "\nSilicon Rev    : " +  to_string(chip_info.revision);
-    s_chip_info += "\nWIFI           : " +  string((chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "2.4GHz WIFI" : "NA");
-    s_chip_info += "\nBT Classic     : " +  string((chip_info.features & CHIP_FEATURE_BT) ? "BT" : "NA");
-    s_chip_info += "\nBLE            : " +  string((chip_info.features & CHIP_FEATURE_BLE) ? "BLE" : "NA");
-    s_chip_info += "\nIEEE 802.15.4  : " +  string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA");
-
-    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
-    s_chip_info += "\nFlash Size     : " +  to_string(flash_size / (1024 * 1024)) + "MB" 
-                                            + ((chip_info.features & CHIP_FEATURE_EMB_FLASH) ? " [embedded]" : " [external]");
-    }
 
     multi_heap_info_t info;    
 	heap_caps_get_info(&info, MALLOC_CAP_SPIRAM);
-
     float psramsize = (info.total_free_bytes + info.total_allocated_bytes) / (1024.0 * 1024.0);
-    s_chip_info += "\nPSRAM Size     : " +  to_string(static_cast<int>(round(psramsize))) + "MB"  
-                                            + ((chip_info.features & CHIP_FEATURE_EMB_PSRAM) ? " [embedded]" : " [external]");
 
-    s_chip_info += "\nESP-IDF Version: " + string(esp_get_idf_version());
+    const esp_partition_t *running = esp_ota_get_running_partition();
+    esp_app_desc_t running_app_info;
+    
+    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
+        s_chip_info += fmt::format("Firmware Ver : {}\n",running_app_info.version);
+        s_chip_info += fmt::format("Project Name : {}\n",running_app_info.project_name);
+        // running_app_info.time
+        // running_app_info.date
+    }
+    s_chip_info += fmt::format("IDF Version  : {}\n\n",esp_get_idf_version());
 
-    ESP_LOGE(TAG,"%s",s_chip_info.c_str());
+    s_chip_info += fmt::format("Controller   : {} Rev.{}\n",CONFIG_IDF_TARGET,chip_info.revision);  
+    //s_chip_info += fmt::format("\nModel         : {}",chip_info.model); // esp_chip_model_t type
+    s_chip_info += fmt::format("CPU Cores    : {}\n",chip_info.cores);
+    s_chip_info += fmt::format("CPU Speed    : {}Mhz\n",conf.freq_mhz);
+    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
+    s_chip_info += fmt::format("Flash Size   : {}MB {}\n",flash_size / (1024 * 1024),
+                                            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "[embedded]" : "[external]");
+    }
+    s_chip_info += fmt::format("PSRAM Size   : {}MB {}\n",static_cast<int>(round(psramsize)),
+                                            (chip_info.features & CHIP_FEATURE_EMB_PSRAM) ? "[embedded]" : "[external]");
 
-    //printf("Free heap size: %d bytes\n", std::round(esp_get_free_heap_size() / (1024.0*1024.0)));
-
+    s_chip_info += fmt::format("Connectivity : {}{}{}\n",(chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "2.4GHz WIFI" : "NA",
+                                                    (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+                                                    (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    //s_chip_info += fmt::format("\nIEEE 802.15.4 : {}",string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA"));
+    
+    ESP_LOGE(TAG,"\n%s",s_chip_info.c_str());
     fflush(stdout);
+
+    return s_chip_info;
 }

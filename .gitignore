@@ -4,3 +4,4 @@ build/
 sdkconfig
 sdkconfig.old
 .vs/
+managed_components/
