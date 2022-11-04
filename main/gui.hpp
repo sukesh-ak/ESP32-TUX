@@ -25,7 +25,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30
-#define FOOTER_HEIGHT 50
+#define FOOTER_HEIGHT 30
 
 /******************
  *  LV DEFINES
@@ -273,6 +273,17 @@ static void create_footer(lv_obj_t *parent)
 
     // Show LVGL version
     footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+
+    /* REPLACE STATUS BAR WITH BUTTON PANEL FOR NAVIGATION */
+    // static const char * btnm_map[] = {LV_SYMBOL_HOME, FA_SYMBOL_SETTINGS, LV_SYMBOL_DOWNLOAD, ""};
+    // lv_obj_t * btnm1 = lv_btnmatrix_create(panel_footer);
+    // lv_btnmatrix_set_map(btnm1, btnm_map);
+    // lv_obj_set_style_bg_opa(btnm1,LV_OPA_TRANSP,0);
+    // lv_btnmatrix_set_btn_ctrl_all(btnm1, LV_BTNMATRIX_CTRL_POPOVER);//LV_BTNMATRIX_CTRL_CHECKABLE);
+    
+    // lv_obj_align(btnm1, LV_ALIGN_CENTER, 0, 0);
+    // //lv_obj_add_event_cb(btnm1, event_handler, LV_EVENT_ALL, NULL);    
+
 }
 
 static void tux_panel_clock(lv_obj_t *parent)
