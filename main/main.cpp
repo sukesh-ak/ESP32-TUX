@@ -35,7 +35,6 @@ static const char *TAG = "lvgl_gui";
 
 // UI design
 #include "gui.hpp"
-//#include "page_wifi_config.hpp"
 
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
@@ -47,19 +46,18 @@ extern "C" { void app_main(); }
 void app_main(void)
 {
 
-    device_info();
-
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
     if (lv_display_init() != ESP_OK) // Configure LVGL
     {
         ESP_LOGE(TAG, "LVGL setup failed!!!");
     }
-
+    
+    create_splash_screen();
     lv_setup_styles();
 
     lvgl_acquire();
-    draw_ui();
+    show_ui();
     lvgl_release();
 
 #ifdef SD_ENABLED
@@ -75,8 +73,8 @@ void app_main(void)
 #endif
 
     // Status icon animation timer
-    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
-    lv_timer_ready(timer_status);
+    // lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    // lv_timer_ready(timer_status);
 }
 
 static void periodic_timer_callback(lv_timer_t * timer)

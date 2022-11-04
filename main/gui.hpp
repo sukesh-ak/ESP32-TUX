@@ -4,6 +4,7 @@ LV_IMG_DECLARE(dev_bg)
 LV_IMG_DECLARE(weather_clear_day)
 LV_IMG_DECLARE(weather_clear_night)
 LV_IMG_DECLARE(weather_cloudy_snowing)
+LV_IMG_DECLARE(tux_logo)
 
 // LV_FONT_DECLARE(font_7seg_16)
 // LV_FONT_DECLARE(font_7seg_24)
@@ -24,7 +25,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30
-#define FOOTER_HEIGHT 30
+#define FOOTER_HEIGHT 50
 
 /******************
  *  LV DEFINES
@@ -82,18 +83,23 @@ static void create_page_home(lv_obj_t *parent);
 static void create_page_settings(lv_obj_t *parent);
 
 // Home page islands
+static void tux_panel_clock(lv_obj_t *parent);
+static void tux_panel_weather(lv_obj_t *parent);
+static void tux_panel_config(lv_obj_t *parent);
 
 // Setting page islands
-static void panel_wifi_island(lv_obj_t *parent);
-static void panel_ota_island(lv_obj_t *parent);
-static void panel_devinfo_island(lv_obj_t *parent);
+static void tux_panel_wifi(lv_obj_t *parent);
+static void tux_panel_ota(lv_obj_t *parent);
+static void tux_panel_devinfo(lv_obj_t *parent);
 
 static void create_header(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
 
 static void footer_message(const char *fmt, ...);
+static void create_splash_screen();
 static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t *parent);
+static void show_ui();
 static string device_info();
 
 static void rotate_event_handler(lv_event_t *e);
@@ -269,10 +275,9 @@ static void create_footer(lv_obj_t *parent)
     footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
 }
 
-static void create_page_home(lv_obj_t *parent)
+static void tux_panel_clock(lv_obj_t *parent)
 {
-    /* HOME PAGE PANELS */
-    // ******** UI ISLAND
+    /******** CLOCK ********/
     lv_obj_t *island_0 = tux_panel_create(parent, LV_SYMBOL_BELL " CLOCK", 120);
     lv_obj_add_style(island_0, &style_ui_island, 0);
 
@@ -287,8 +292,11 @@ static void create_page_home(lv_obj_t *parent)
     // lv_obj_set_style_shadow_color(l,lv_palette_main(LV_PALETTE_BLUE),0);
     lv_obj_set_style_text_color(l, lv_color_make(50, 205, 50), 0);
     lv_label_set_text(l, "20:25");
+}
 
-    // ******** UI ISLAND
+static void tux_panel_weather(lv_obj_t *parent)
+{
+    /******** WEATHER UPDATES ********/
     lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_TINT " WEATHER", 120);
     lv_obj_add_style(island_1, &style_ui_island, 0);
     // tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
@@ -323,8 +331,12 @@ static void create_page_home(lv_obj_t *parent)
     lv_obj_set_style_img_recolor(img3, lv_palette_main(LV_PALETTE_CYAN), 0);
     lv_obj_set_style_img_recolor_opa(img3, LV_OPA_COVER, 0);
 
-    // ******** UI ISLAND
-    lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIGURE", 135);
+}
+
+static void tux_panel_config(lv_obj_t *parent)
+{
+    /******** CONFIG & TESTING ********/
+    lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIG", 135);
     lv_obj_add_style(island_2, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
@@ -350,7 +362,7 @@ static void create_page_home(lv_obj_t *parent)
 }
 
 // Provision WIFI
-static void panel_wifi_island(lv_obj_t *parent)
+static void tux_panel_wifi(lv_obj_t *parent)
 {
     /******** PROVISION WIFI ********/
     island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI PROVISIONING", 100);
@@ -401,7 +413,7 @@ static void panel_wifi_island(lv_obj_t *parent)
     lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
 }
 
-static void panel_ota_island(lv_obj_t *parent)
+static void tux_panel_ota(lv_obj_t *parent)
 {
     /******** OTA UPDATES ********/
     island_ota = tux_panel_create(parent, LV_SYMBOL_DOWNLOAD " OTA UPDATES", 180);
@@ -438,7 +450,7 @@ static void panel_ota_island(lv_obj_t *parent)
     lv_label_set_text(lbl_update_status, "New version available - v 1.2.0");
 }
 
-static void panel_devinfo_island(lv_obj_t *parent)
+static void tux_panel_devinfo(lv_obj_t *parent)
 {
     island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 180);
     lv_obj_add_style(island_devinfo, &style_ui_island, 0);
@@ -447,18 +459,25 @@ static void panel_devinfo_island(lv_obj_t *parent)
     lv_obj_t *cont_devinfo = tux_panel_get_content(island_devinfo);
 
     lv_obj_t * label1 = lv_label_create(cont_devinfo);
-    lv_obj_set_style_text_font(label1,&font_robotomono_13,0); // Monoaspace font for alignment
+    // Monoaspace font for alignment
+    lv_obj_set_style_text_font(label1,&font_robotomono_13,0); 
     lv_label_set_text(label1, device_info().c_str());
+}
 
-    //lv_obj_align(label1, LV_ALIGN_TOP_LEFT, 0, 0);
+static void create_page_home(lv_obj_t *parent)
+{
+    /* HOME PAGE PANELS */
+    tux_panel_clock(parent);
+    tux_panel_weather(parent);
+    tux_panel_config(parent);
 }
 
 static void create_page_settings(lv_obj_t *parent)
 {
     /* SETTINGS PAGE PANELS */
-    panel_devinfo_island(parent);
-    panel_wifi_island(parent);
-    panel_ota_island(parent);
+    tux_panel_devinfo(parent);
+    tux_panel_wifi(parent);
+    tux_panel_ota(parent);
 }
 
 // Show QR Code for BLE based Wifi Provisioning
@@ -483,10 +502,23 @@ static void qrcode_ui(lv_obj_t *parent)
     lv_label_set_text(lbl_status, "Install 'ESP BLE Prov' App & Scan");
 }
 
-static void draw_ui()
+static void create_splash_screen()
+{
+    lv_obj_t * splash_screen = lv_scr_act();
+    lv_obj_set_style_bg_color(splash_screen, lv_color_black(),0);
+    lv_obj_t * splash_img = lv_img_create(splash_screen);
+    lv_img_set_src(splash_img, &tux_logo);
+    lv_obj_align(splash_img, LV_ALIGN_CENTER, 0, 0);
+
+    //lv_scr_load_anim(splash_screen, LV_SCR_LOAD_ANIM_FADE_IN, 5000, 10, true);
+    lv_scr_load(splash_screen);
+}
+
+static void show_ui()
 {
     // screen_container is the root of the UX
-    screen_container = lv_obj_create(lv_scr_act());
+    screen_container = lv_obj_create(NULL);
+
     lv_obj_set_size(screen_container, LV_PCT(100), LV_PCT(100));
     lv_obj_set_style_pad_all(screen_container, 0, 0);
     lv_obj_align(screen_container, LV_ALIGN_TOP_MID, 0, 0);
@@ -494,11 +526,11 @@ static void draw_ui()
     lv_obj_set_style_border_width(screen_container, 0, 0);
     lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
 
-    /* HEADER & FOOTER*/
+    // HEADER & FOOTER
     create_header(screen_container);
     create_footer(screen_container);
 
-    /* CONTENT CONTAINER */
+    // CONTENT CONTAINER 
     content_container = lv_obj_create(screen_container);
     lv_obj_set_size(content_container, screen_w, screen_h - HEADER_HEIGHT - FOOTER_HEIGHT);
     lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
@@ -511,6 +543,9 @@ static void draw_ui()
     // Show Home Page
     //create_page_home(content_container);
     create_page_settings(content_container);
+
+    // Load main screen with animation
+    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_OUT, 2000,3000, true);
 }
 
 static void rotate_event_handler(lv_event_t *e)

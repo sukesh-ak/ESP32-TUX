@@ -5,3 +5,4 @@ sdkconfig
 sdkconfig.old
 .vs/
 managed_components/
+cp-deploy.cmd

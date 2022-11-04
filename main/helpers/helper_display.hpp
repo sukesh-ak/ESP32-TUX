@@ -66,11 +66,9 @@ esp_err_t lv_display_init()
     // if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 2);
 
     lcd.setRotation(2);
-
-    lcd.setBrightness(128);
     lcd.setColorDepth(16);
-
-    lcd.fillScreen(TFT_BLACK);
+    lcd.setBrightness(128);
+    //lcd.fillScreen(TFT_BLACK);
 
     /* LVGL : Setting up buffer to use for display */
     lv_disp_draw_buf_init(&draw_buf, buf, buf2, screenWidth * BUFF_SIZE);
