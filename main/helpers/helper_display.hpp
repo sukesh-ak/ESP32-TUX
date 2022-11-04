@@ -38,7 +38,7 @@ static const uint16_t screenHeight = TFT_HEIGHT;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * BUFF_SIZE];
-static lv_color_t buf2[screenWidth * BUFF_SIZE];
+//static lv_color_t buf2[screenWidth * BUFF_SIZE];
 
 static lv_disp_t *disp;
 static lv_theme_t *theme_current;
@@ -71,7 +71,7 @@ esp_err_t lv_display_init()
     //lcd.fillScreen(TFT_BLACK);
 
     /* LVGL : Setting up buffer to use for display */
-    lv_disp_draw_buf_init(&draw_buf, buf, buf2, screenWidth * BUFF_SIZE);
+    lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * BUFF_SIZE);
 
     /*** LVGL : Setup & Initialize the display device driver ***/
     static lv_disp_drv_t disp_drv;

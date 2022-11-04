@@ -104,8 +104,8 @@ static string device_info();
 
 static void rotate_event_handler(lv_event_t *e);
 static void theme_switch_event_handler(lv_event_t *e);
-// static void espwifi_event_handler(lv_event_t* e);
-static void espble_event_handler(lv_event_t *e);
+static void espwifi_event_handler(lv_event_t* e);
+//static void espble_event_handler(lv_event_t *e);
 static void checkupdates_event_handler(lv_event_t *e);
 static void home_clicked_eventhandler(lv_event_t *e);
 static void status_clicked_eventhandler(lv_event_t *e);
@@ -225,7 +225,7 @@ static void create_header(lv_obj_t *parent)
 
     // HEADER TITLE
     label_title = lv_label_create(panel_title);
-    lv_label_set_text(label_title, LV_SYMBOL_HOME " DASHBOARD");
+    lv_label_set_text(label_title, LV_SYMBOL_HOME " ESP32-TUX");
 
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
@@ -272,7 +272,7 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
 
     // Show LVGL version
-    footer_message("LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
 
     /* REPLACE STATUS BAR WITH BUTTON PANEL FOR NAVIGATION */
     // static const char * btnm_map[] = {LV_SYMBOL_HOME, FA_SYMBOL_SETTINGS, LV_SYMBOL_DOWNLOAD, ""};
@@ -303,6 +303,8 @@ static void tux_panel_clock(lv_obj_t *parent)
     // lv_obj_set_style_shadow_color(l,lv_palette_main(LV_PALETTE_BLUE),0);
     lv_obj_set_style_text_color(l, lv_color_make(50, 205, 50), 0);
     lv_label_set_text(l, "20:25");
+
+
 }
 
 static void tux_panel_weather(lv_obj_t *parent)
@@ -344,32 +346,63 @@ static void tux_panel_weather(lv_obj_t *parent)
 
 }
 
+static lv_obj_t * slider_label;
+static void slider_event_cb(lv_event_t * e)
+{
+    lv_obj_t * slider = lv_event_get_target(e);
+    lv_label_set_text_fmt(slider_label,"Brightness : %d",(int)lv_slider_get_value(slider));
+    lv_obj_align_to(slider_label, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 15);
+    lcd.setBrightness((int)lv_slider_get_value(slider));
+}
+
 static void tux_panel_config(lv_obj_t *parent)
 {
     /******** CONFIG & TESTING ********/
-    lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIG", 135);
+    lv_obj_t *island_2 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIG", 200);
     lv_obj_add_style(island_2, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
     lv_obj_t *cont_2 = tux_panel_get_content(island_2);
 
-    lv_obj_set_flex_flow(cont_2, LV_FLEX_FLOW_COLUMN_WRAP);
-    lv_obj_set_flex_align(cont_2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_flex_flow(cont_2, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_style_pad_row(cont_2, 10, 0);
+    //lv_obj_set_style_pad_column(cont_2, 5, 0);
+    lv_obj_set_flex_align(cont_2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
 
+    // Screen Brightness
+    /*Create a label below the slider*/
+    slider_label = lv_label_create(cont_2);
+    lv_label_set_text_fmt(slider_label, "Brightness : %d", lcd.getBrightness());   
+
+    lv_obj_t * slider = lv_slider_create(cont_2);
+    lv_obj_center(slider);
+    lv_obj_set_size(slider, LV_PCT(90), 20);
+    lv_slider_set_range(slider, 50 , 255);
+    lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_align_to(slider_label, slider, LV_ALIGN_OUT_TOP_MID, 0, 30);
+    lv_bar_set_value(slider,lcd.getBrightness(),LV_ANIM_ON);
+
+    // THEME Selection
     lv_obj_t *label = lv_label_create(cont_2);
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
     lv_label_set_text(label, "Theme : Dark");
-
+    //lv_obj_set_size(label, LV_PCT(90), 20);
+    lv_obj_align_to(label,slider,LV_ALIGN_OUT_TOP_MID,0,15);
+    //lv_obj_center(slider);
+    
     lv_obj_t *sw = lv_switch_create(cont_2);
     lv_obj_add_event_cb(sw, theme_switch_event_handler, LV_EVENT_ALL, label);
+    lv_obj_align_to(label, sw, LV_ALIGN_OUT_TOP_MID, 0, 20);
+    //lv_obj_align(sw,LV_ALIGN_RIGHT_MID,0,0);
 
-    // Rotate
+    // Rotate to Portait/Landscape
     lv_obj_t *btn2 = lv_btn_create(cont_2);
     lv_obj_align(btn2, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_size(btn2, LV_SIZE_CONTENT, 30);
     lv_obj_add_event_cb(btn2, rotate_event_handler, LV_EVENT_ALL, NULL);
     lv_obj_t *lbl2 = lv_label_create(btn2);
     lv_label_set_text(lbl2, "Rotate to Landscape");
-    lv_obj_center(lbl2);
+    //lv_obj_center(lbl2);
+    lv_obj_align_to(btn2, sw, LV_ALIGN_OUT_BOTTOM_MID, 0, 15);
 }
 
 // Provision WIFI
@@ -384,44 +417,45 @@ static void tux_panel_wifi(lv_obj_t *parent)
     lv_obj_t *cont_1 = tux_panel_get_content(island_wifi);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
-    ///* ESP-WIFI - Wifi SoftAP Provisioning */
-    // lv_obj_t* esp_wifi = lv_obj_create(cont_1);
-    // lv_obj_set_size(esp_wifi, LV_PCT(100), LV_SIZE_CONTENT);
-    // lv_obj_set_style_bg_opa(esp_wifi, LV_OPA_TRANSP, 0);
-    // lv_obj_set_style_border_width(esp_wifi, 0, 0);
+    /* ESP-WIFI - Wifi SoftAP Provisioning */
+    lv_obj_t* esp_wifi = lv_obj_create(cont_1);
+    lv_obj_set_size(esp_wifi, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(esp_wifi, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(esp_wifi, 0, 0);
 
-    // lv_obj_t* label_1 = lv_label_create(esp_wifi);
-    // lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
-    // lv_label_set_text(label_1, "Using WiFi SoftAP");
+    lv_obj_t* label_1 = lv_label_create(esp_wifi);
+    lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_label_set_text(label_1, "Provision using SoftAP");
 
-    // lv_obj_t* sw_1 = lv_switch_create(esp_wifi);
-    // lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
+    lv_obj_t* sw_1 = lv_switch_create(esp_wifi);
+    lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
 
-    // lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, lbl_status);
 
     /* ESP-BLE */
-    lv_obj_t *esp_ble = lv_obj_create(cont_1);
-    lv_obj_set_size(esp_ble, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_ble, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_pad_ver(esp_ble, 3, 0);
-    lv_obj_set_style_border_width(esp_ble, 0, 0);
+    // lv_obj_t *esp_ble = lv_obj_create(cont_1);
+    // lv_obj_set_size(esp_ble, LV_PCT(100), LV_SIZE_CONTENT);
+    // lv_obj_set_style_bg_opa(esp_ble, LV_OPA_TRANSP, 0);
+    // lv_obj_set_style_pad_ver(esp_ble, 3, 0);
+    // lv_obj_set_style_border_width(esp_ble, 0, 0);
 
-    lv_obj_t *label_2 = lv_label_create(esp_ble);
-    lv_obj_align(label_2, LV_ALIGN_LEFT_MID, 0, 0);
-    lv_label_set_text(label_2, "Provision using Bluetooth");
+    // lv_obj_t *label_2 = lv_label_create(esp_ble);
+    // lv_obj_align(label_2, LV_ALIGN_LEFT_MID, 0, 0);
+    // lv_label_set_text(label_2, "Provision using Bluetooth");
 
-    lv_obj_t *sw_2 = lv_switch_create(esp_ble);
-    lv_obj_align(sw_2, LV_ALIGN_RIGHT_MID, 0, 0);
+    // lv_obj_t *sw_2 = lv_switch_create(esp_ble);
+    // lv_obj_align(sw_2, LV_ALIGN_RIGHT_MID, 0, 0);
 
     /* ESP TOUCH/ble STATUS*/
     lv_obj_t *esp_status = lv_obj_create(cont_1);
     lv_obj_set_size(esp_status, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_set_style_bg_opa(esp_status, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_pad_ver(esp_wifi, 3, 0);
     lv_obj_set_style_border_width(esp_status, 0, 0);
     lv_obj_set_flex_flow(esp_status, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(esp_status, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-    lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
+    lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, esp_status);
+    //lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
 }
 
 static void tux_panel_ota(lv_obj_t *parent)
@@ -510,7 +544,7 @@ static void qrcode_ui(lv_obj_t *parent)
     lv_obj_set_style_border_width(qr, 5, 0);
 
     lv_obj_t *lbl_status = lv_label_create(parent);
-    lv_label_set_text(lbl_status, "Install 'ESP BLE Prov' App & Scan");
+    lv_label_set_text(lbl_status, "Install 'ESP SoftAP Prov' App & Scan");
 }
 
 static void create_splash_screen()
@@ -552,8 +586,8 @@ static void show_ui()
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
 
     // Show Home Page
-    //create_page_home(content_container);
-    create_page_settings(content_container);
+    create_page_home(content_container);
+    //create_page_settings(content_container);
 
     // Load main screen with animation
     lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_OUT, 2000,3000, true);
@@ -689,30 +723,11 @@ void switch_theme(bool dark)
 
 // }
 
-// static void espwifi_event_handler(lv_event_t* e)
-// {
-//     lv_event_code_t code = lv_event_get_code(e);
-//     lv_obj_t* obj = lv_event_get_target(e);
-//     lv_obj_t* lbl = (lv_obj_t*)lv_event_get_user_data(e);
-
-//     if (code == LV_EVENT_VALUE_CHANGED) {
-//         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
-//         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
-//         {
-//             lv_label_set_text_fmt(lbl, "WiFi Provisioning...ON");
-//         }
-//         else
-//         {
-//             lv_label_set_text_fmt(lbl, "WiFi Provisioning...OFF");
-//         }
-//     }
-// }
-
-static void espble_event_handler(lv_event_t *e)
+static void espwifi_event_handler(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *obj = lv_event_get_target(e);
-    lv_obj_t *esp_status_panel = (lv_obj_t *)lv_event_get_user_data(e);
+    lv_obj_t* obj = lv_event_get_target(e);
+    lv_obj_t* esp_status_panel = (lv_obj_t*)lv_event_get_user_data(e);
 
     if (code == LV_EVENT_VALUE_CHANGED)
     {
@@ -729,6 +744,28 @@ static void espble_event_handler(lv_event_t *e)
         }
     }
 }
+
+// static void espble_event_handler(lv_event_t *e)
+// {
+//     lv_event_code_t code = lv_event_get_code(e);
+//     lv_obj_t *obj = lv_event_get_target(e);
+//     lv_obj_t *esp_status_panel = (lv_obj_t *)lv_event_get_user_data(e);
+
+//     if (code == LV_EVENT_VALUE_CHANGED)
+//     {
+//         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
+//         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
+//         {
+//             tux_panel_set_height(island_wifi, 250);
+//             qrcode_ui(esp_status_panel);
+//         }
+//         else
+//         {
+//             tux_panel_set_height(island_wifi, 100);
+//             lv_obj_clean(esp_status_panel);
+//         }
+//     }
+// }
 
 inline void checkupdates_event_handler(lv_event_t *e)
 {
