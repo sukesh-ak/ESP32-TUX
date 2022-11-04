@@ -728,7 +728,7 @@ static string device_info()
 
     s_chip_info += fmt::format("Controller   : {} Rev.{}\n",CONFIG_IDF_TARGET,chip_info.revision);  
     //s_chip_info += fmt::format("\nModel         : {}",chip_info.model); // esp_chip_model_t type
-    s_chip_info += fmt::format("CPU Cores    : {}\n",chip_info.cores);
+    s_chip_info += fmt::format("CPU Cores    : {}\n", (chip_info.cores==2)? "Dual Core" : "Single Core");
     s_chip_info += fmt::format("CPU Speed    : {}Mhz\n",conf.freq_mhz);
     if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
     s_chip_info += fmt::format("Flash Size   : {}MB {}\n",flash_size / (1024 * 1024),
@@ -747,3 +747,4 @@ static string device_info()
 
     return s_chip_info;
 }
+    
