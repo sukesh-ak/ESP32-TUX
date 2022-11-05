@@ -78,6 +78,7 @@ static lv_anim_t anim_labelscroll;
  ******************/
 static void create_page_home(lv_obj_t *parent);
 static void create_page_settings(lv_obj_t *parent);
+static void create_page_remote(lv_obj_t *parent);
 
 // Home page islands
 static void tux_panel_clock_weather(lv_obj_t *parent);
@@ -507,6 +508,49 @@ static void tux_panel_devinfo(lv_obj_t *parent)
     lv_label_set_text(label1, device_info().c_str());
 }
 
+static void create_page_remote(lv_obj_t *parent)
+{
+    static lv_style_t style;
+    lv_style_init(&style);
+
+    /*Set a background color and a radius*/
+    lv_style_set_radius(&style, 10);
+    // lv_style_set_bg_opa(&style, LV_OPA_COVER);
+    // lv_style_set_bg_color(&style, lv_palette_lighten(LV_PALETTE_GREY, 1));
+
+    /*Add a shadow*/
+    lv_style_set_shadow_width(&style, 55);
+    lv_style_set_shadow_color(&style, lv_palette_main(LV_PALETTE_BLUE));
+    //    lv_style_set_shadow_ofs_x(&style, 10);
+    //    lv_style_set_shadow_ofs_y(&style, 20);
+
+    lv_obj_t * island_remote = tux_panel_create(parent, LV_SYMBOL_KEYBOARD " REMOTE", LV_PCT(100));
+    lv_obj_add_style(island_remote, &style_ui_island, 0);
+
+    // Get Content Area to add UI elements
+    lv_obj_t *cont_remote = tux_panel_get_content(island_remote);
+
+    //lv_obj_set_style_bg_opa(cont,LV_OPA_50,0);
+
+    //lv_obj_center(cont_remote);
+    lv_obj_set_flex_flow(cont_remote, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(cont_remote, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_column(cont_remote, 5, 0);
+    lv_obj_set_style_pad_row(cont_remote, 5, 0);
+
+    uint32_t i;
+    for(i = 0; i <12; i++) {
+        lv_obj_t * obj = lv_btn_create(cont_remote);
+        lv_obj_add_style(obj, &style, LV_STATE_PRESSED);
+        lv_obj_set_size(obj, 80, 80);
+        
+
+        lv_obj_t * label = lv_label_create(obj);
+        lv_label_set_text_fmt(label, "%" LV_PRIu32, i);
+        lv_obj_center(label);
+    }
+}
+
 static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
@@ -585,6 +629,7 @@ static void show_ui()
     // Show Home Page
     create_page_home(content_container);
     //create_page_settings(content_container);
+    
 
     // Load main screen with animation
     //lv_scr_load(screen_container);
@@ -668,6 +713,7 @@ static void status_clicked_eventhandler(lv_event_t *e)
     //  Clean the content container first
     lv_obj_clean(content_container);
     create_page_settings(content_container);
+    //create_page_remote(content_container);
 }
 
 void switch_theme(bool dark)
