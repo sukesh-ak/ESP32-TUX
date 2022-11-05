@@ -6,12 +6,6 @@ idf_component_register(SRCS "main.cpp"
 
 							"fonts/font_7seg_64.c"
 
-							"images/dev_bg.c"
-							"images/weather_clear_night.c"
-							"images/weather_clear_day.c"
-							"images/weather_cloudy_snowing.c"
-							"images/tux_logo.c"
-
                     	INCLUDE_DIRS "." "devices" "helpers" "pages" "widgets" "images"
 				REQUIRES LovyanGFX lvgl fatfs fmt app_update
 				)

@@ -67,9 +67,10 @@ void app_main(void)
     lv_print_readme_txt();
 
     create_splash_screen();
-    lv_setup_styles();
+
 
     lvgl_acquire();
+    lv_setup_styles();    
     show_ui();
     lvgl_release();
 

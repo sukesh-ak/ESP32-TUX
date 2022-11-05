@@ -1,9 +1,6 @@
 
 #include "widgets/tux_panel.h"
 LV_IMG_DECLARE(dev_bg)
-LV_IMG_DECLARE(weather_clear_day)
-LV_IMG_DECLARE(weather_clear_night)
-LV_IMG_DECLARE(weather_cloudy_snowing)
 LV_IMG_DECLARE(tux_logo)
 
 // LV_FONT_DECLARE(font_7seg_16)
@@ -83,14 +80,13 @@ static void create_page_home(lv_obj_t *parent);
 static void create_page_settings(lv_obj_t *parent);
 
 // Home page islands
-static void tux_panel_clock(lv_obj_t *parent);
-static void tux_panel_weather(lv_obj_t *parent);
+static void tux_panel_clock_weather(lv_obj_t *parent);
 static void tux_panel_config(lv_obj_t *parent);
 
 // Setting page islands
-static void tux_panel_wifi(lv_obj_t *parent);
-static void tux_panel_ota(lv_obj_t *parent);
 static void tux_panel_devinfo(lv_obj_t *parent);
+static void tux_panel_ota(lv_obj_t *parent);
+static void tux_panel_wifi(lv_obj_t *parent);
 
 static void create_header(lv_obj_t *parent);
 static void create_footer(lv_obj_t *parent);
@@ -129,7 +125,7 @@ void lv_setup_styles()
 
     // Image Background
     // CF_INDEXED_8_BIT for smaller size - resolution 480x480
-    lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
+    lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg1.bin");//&dev_bg);
     // lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
 
     // Gradient Background
@@ -203,9 +199,9 @@ void lv_setup_styles()
     lv_style_set_bg_color(&style_ui_island, bg_theme_color);
     lv_style_set_bg_opa(&style_ui_island, LV_OPA_80);
     lv_style_set_border_color(&style_ui_island, bg_theme_color);
-    lv_style_set_border_opa(&style_ui_island, LV_OPA_80);
+    //lv_style_set_border_opa(&style_ui_island, LV_OPA_80);
     lv_style_set_border_width(&style_ui_island, 1);
-    lv_style_set_radius(&style_ui_island, 5);
+    lv_style_set_radius(&style_ui_island, 10);
 }
 
 static void create_header(lv_obj_t *parent)
@@ -283,64 +279,69 @@ static void create_footer(lv_obj_t *parent)
     
     // lv_obj_align(btnm1, LV_ALIGN_CENTER, 0, 0);
     // //lv_obj_add_event_cb(btnm1, event_handler, LV_EVENT_ALL, NULL);    
-
 }
 
-static void tux_panel_clock(lv_obj_t *parent)
+static void tux_panel_clock_weather(lv_obj_t *parent)
 {
-    /******** CLOCK ********/
-    lv_obj_t *island_0 = tux_panel_create(parent, LV_SYMBOL_BELL " CLOCK", 120);
-    lv_obj_add_style(island_0, &style_ui_island, 0);
+    lv_obj_t *island_clock_weather = tux_panel_create(parent, "", 130);
+    lv_obj_add_style(island_clock_weather, &style_ui_island, 0);
 
-    lv_obj_t *cont_0 = tux_panel_get_content(island_0);
-    // footer_message("Children count: %d",lv_obj_get_child_cnt(island_0));
+    lv_obj_t *cont_panel = tux_panel_get_content(island_clock_weather);
+    //lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
+    //lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
 
-    lv_obj_t *l = lv_label_create(cont_0);
-    lv_obj_align(l, LV_ALIGN_TOP_MID, 0, 0);
-    lv_obj_set_style_text_font(l, &font_7seg_64, 0);
-    // Lime green = lv_color_make(50,205,50)
-    // lv_obj_set_style_shadow_width(l,50,0);
-    // lv_obj_set_style_shadow_color(l,lv_palette_main(LV_PALETTE_BLUE),0);
-    lv_obj_set_style_text_color(l, lv_color_make(50, 205, 50), 0);
-    lv_label_set_text(l, "20:25");
-}
+    //lv_obj_center(cont_panel);
+    //lv_obj_set_style_bg_opa(cont_panel,LV_OPA_TRANSP,0);
 
-static void tux_panel_weather(lv_obj_t *parent)
-{
-    /******** WEATHER UPDATES ********/
-    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_TINT " WEATHER", 150);
-    lv_obj_add_style(island_1, &style_ui_island, 0);
-    // tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
+    // Date/Time panel
+    lv_obj_t *cont_datetime = lv_obj_create(cont_panel);
+    lv_obj_set_size(cont_datetime,170,120);
+    lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
+    lv_obj_set_scrollbar_mode(cont_datetime, LV_SCROLLBAR_MODE_OFF);
+    lv_obj_align(cont_datetime,LV_ALIGN_LEFT_MID,0,0);
+    lv_obj_set_style_bg_opa(cont_datetime,LV_OPA_TRANSP,0);
+    lv_obj_set_style_border_opa(cont_datetime,LV_OPA_TRANSP,0);
+    lv_obj_set_style_pad_gap(cont_datetime,10,0);
+    //lv_obj_set_style_pad_all(cont_datetime,0,0);
 
-    lv_obj_t *cont_1 = tux_panel_get_content(island_1);
+    // Time
+    lv_obj_t *lbl_time = lv_label_create(cont_datetime);
+    lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_MID, 0);
+    lv_obj_set_style_text_font(lbl_time, &font_7seg_64, 0);
+    lv_label_set_text(lbl_time, "20:25");
+    
+    // Date
+    lv_obj_t *lbl_date = lv_label_create(cont_datetime);
+    lv_obj_set_style_align(lbl_date, LV_ALIGN_BOTTOM_MID, 0);
+    lv_obj_set_style_text_font(lbl_date, font_normal, 0);
+    lv_label_set_text(lbl_date, "Sat, 05 Nov 2022");
 
-    //lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(cont_1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    // Weather panel (panel widen with weekly forecast in landscape)
+    lv_obj_t *cont_weather = lv_obj_create(cont_panel);
+    lv_obj_set_size(cont_weather,100,120);
+    lv_obj_set_flex_flow(cont_weather, LV_FLEX_FLOW_ROW_WRAP);
+    lv_obj_set_flex_align(cont_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
+    lv_obj_set_scrollbar_mode(cont_weather, LV_SCROLLBAR_MODE_OFF);
+    lv_obj_align_to(cont_weather,cont_datetime,LV_ALIGN_OUT_RIGHT_MID,10,0);
+    lv_obj_set_style_bg_opa(cont_weather,LV_OPA_TRANSP,0);
+    lv_obj_set_style_border_opa(cont_weather,LV_OPA_TRANSP,0);
+    lv_obj_set_style_pad_gap(cont_weather,0,0);
+    lv_obj_set_style_pad_all(cont_weather,0,0);
 
-    // static lv_style_t imgstyle;
-    // lv_style_init(&imgstyle);
+    // This only for landscape
+    // lv_obj_t *lbl_unit = lv_label_create(cont_weather);
+    // lv_obj_set_style_text_font(lbl_unit, font_normal, 0);
+    // lv_label_set_text(lbl_unit, "Light rain");
 
-    lv_obj_t *img1 = lv_img_create(cont_1);
-    lv_img_set_src(img1, "F:/weather/13d@2x.png");
+    // Weather icon
+    lv_obj_t *img1 = lv_img_create(cont_weather);
+    lv_img_set_src(img1, "F:/weather/10d@2x.bin");
 
-    lv_obj_t *img2 = lv_img_create(cont_1);
-    lv_img_set_src(img2, "F:/weather/03n@2x.png");
-
-    lv_obj_t *img3 = lv_img_create(cont_1);
-    lv_img_set_src(img3, "F:/weather/10d@2x.png");
-
-    lv_obj_set_style_img_opa(img1, LV_OPA_COVER, 0);
-    lv_obj_set_style_img_recolor(img1, lv_color_white(), 0);
-    lv_obj_set_style_img_recolor_opa(img1, LV_OPA_COVER, 0);
-
-    lv_obj_set_style_img_opa(img2, LV_OPA_COVER, 0);
-    lv_obj_set_style_img_recolor(img2, lv_palette_main(LV_PALETTE_YELLOW), 0);
-    lv_obj_set_style_img_recolor_opa(img2, LV_OPA_COVER, 0);
-
-    // lv_obj_set_style_img_opa(img3, LV_OPA_COVER, 0);
-    // lv_obj_set_style_img_recolor(img3, lv_palette_main(LV_PALETTE_CYAN), 0);
-    // lv_obj_set_style_img_recolor_opa(img3, LV_OPA_COVER, 0);
+    // Temperature
+    lv_obj_t *lbl_temp = lv_label_create(cont_weather);
+    lv_obj_set_style_text_font(lbl_temp, &lv_font_montserrat_32, 0);
+    lv_label_set_text(lbl_temp, "19C");
 }
 
 static lv_obj_t * slider_label;
@@ -509,8 +510,7 @@ static void tux_panel_devinfo(lv_obj_t *parent)
 static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
-    tux_panel_clock(parent);
-    tux_panel_weather(parent);
+    tux_panel_clock_weather(parent);
     tux_panel_config(parent);
 }
 
@@ -549,7 +549,7 @@ static void create_splash_screen()
     lv_obj_t * splash_screen = lv_scr_act();
     lv_obj_set_style_bg_color(splash_screen, lv_color_black(),0);
     lv_obj_t * splash_img = lv_img_create(splash_screen);
-    lv_img_set_src(splash_img, &tux_logo);
+    lv_img_set_src(splash_img, "F:/bg/tux-logo.bin"); //&tux_logo);
     lv_obj_align(splash_img, LV_ALIGN_CENTER, 0, 0);
 
     //lv_scr_load_anim(splash_screen, LV_SCR_LOAD_ANIM_FADE_IN, 5000, 10, true);
@@ -587,7 +587,8 @@ static void show_ui()
     //create_page_settings(content_container);
 
     // Load main screen with animation
-    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_OUT, 2000,3000, true);
+    //lv_scr_load(screen_container);
+    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_OUT, 1000,3000, true);
 }
 
 static void rotate_event_handler(lv_event_t *e)
