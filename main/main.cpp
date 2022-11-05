@@ -21,6 +21,12 @@ using namespace std ;
 
 static const char *TAG = "lvgl_gui";
 
+// Mount SPIFF partition and print readme.txt content
+#include "helper_spiff.hpp"
+
+// Make SPIFF available to LVGL Filesystem
+#include "helper_lv_fs.hpp"
+
 // Enable one of the devices from below
 #include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
 // #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
@@ -53,6 +59,13 @@ void app_main(void)
         ESP_LOGE(TAG, "LVGL setup failed!!!");
     }
     
+    // Init SPIFF & print readme.txt from the root
+    init_spiff();
+    print_readme_txt();
+
+    // LV_FS integration & print readme.txt from the root
+    lv_print_readme_txt();
+
     create_splash_screen();
     lv_setup_styles();
 
