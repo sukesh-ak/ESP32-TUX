@@ -23,6 +23,9 @@
 - [x] Switch theme between Light & Dark - [here](/main/gui.hpp)
 - [x] Scrolling long message in footer - [here](/main/gui.hpp)
 - [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
+- [x] Enable SPIFF partition and init [here](/main/helpers/helper_spiff.hpp)
+- [x] Map SPIFF to LVGL Filesystem as F: [here](/main/helpers/helper_lv_fs.hpp)
+- [x] Load Images directly using F:/<filename>.png [here => tux_panel_weather()](/main/gui.hpp)
 
 - [x] Settings Page
 - [x] UI Islands (Widget - tux_panel)
