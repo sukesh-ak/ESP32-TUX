@@ -303,20 +303,18 @@ static void tux_panel_clock(lv_obj_t *parent)
     // lv_obj_set_style_shadow_color(l,lv_palette_main(LV_PALETTE_BLUE),0);
     lv_obj_set_style_text_color(l, lv_color_make(50, 205, 50), 0);
     lv_label_set_text(l, "20:25");
-
-
 }
 
 static void tux_panel_weather(lv_obj_t *parent)
 {
     /******** WEATHER UPDATES ********/
-    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_TINT " WEATHER", 120);
+    lv_obj_t *island_1 = tux_panel_create(parent, LV_SYMBOL_TINT " WEATHER", 150);
     lv_obj_add_style(island_1, &style_ui_island, 0);
     // tux_panel_set_title_bg_color(island_1,lv_palette_main(LV_PALETTE_RED));
 
     lv_obj_t *cont_1 = tux_panel_get_content(island_1);
 
-    lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
+    //lv_obj_set_layout(cont_1, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(cont_1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
@@ -324,13 +322,13 @@ static void tux_panel_weather(lv_obj_t *parent)
     // lv_style_init(&imgstyle);
 
     lv_obj_t *img1 = lv_img_create(cont_1);
-    lv_img_set_src(img1, &weather_clear_day);
+    lv_img_set_src(img1, "F:/weather/13d@2x.png");
 
     lv_obj_t *img2 = lv_img_create(cont_1);
-    lv_img_set_src(img2, &weather_clear_night);
+    lv_img_set_src(img2, "F:/weather/03n@2x.png");
 
     lv_obj_t *img3 = lv_img_create(cont_1);
-    lv_img_set_src(img3, &weather_cloudy_snowing);
+    lv_img_set_src(img3, "F:/weather/10d@2x.png");
 
     lv_obj_set_style_img_opa(img1, LV_OPA_COVER, 0);
     lv_obj_set_style_img_recolor(img1, lv_color_white(), 0);
@@ -340,10 +338,9 @@ static void tux_panel_weather(lv_obj_t *parent)
     lv_obj_set_style_img_recolor(img2, lv_palette_main(LV_PALETTE_YELLOW), 0);
     lv_obj_set_style_img_recolor_opa(img2, LV_OPA_COVER, 0);
 
-    lv_obj_set_style_img_opa(img3, LV_OPA_COVER, 0);
-    lv_obj_set_style_img_recolor(img3, lv_palette_main(LV_PALETTE_CYAN), 0);
-    lv_obj_set_style_img_recolor_opa(img3, LV_OPA_COVER, 0);
-
+    // lv_obj_set_style_img_opa(img3, LV_OPA_COVER, 0);
+    // lv_obj_set_style_img_recolor(img3, lv_palette_main(LV_PALETTE_CYAN), 0);
+    // lv_obj_set_style_img_recolor_opa(img3, LV_OPA_COVER, 0);
 }
 
 static lv_obj_t * slider_label;
