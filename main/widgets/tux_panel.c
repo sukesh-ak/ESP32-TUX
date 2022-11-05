@@ -98,8 +98,7 @@ lv_obj_t * tux_panel_create(lv_obj_t* parent, const char* title, lv_coord_t heig
 
 void tux_panel_set_height(lv_obj_t* obj, lv_coord_t value)
 {
-    tux_panel_t* _panel = (tux_panel_t*)obj;
-    lv_obj_set_height(_panel, value);
+    lv_obj_set_height(obj, value);
 }
 
 void tux_panel_set_title_color(lv_obj_t* obj,lv_color_t value)
