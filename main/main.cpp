@@ -50,26 +50,13 @@ static bool wifi_on = false;
 static int battery_value = 0;
 
 extern "C" { 
-    void wifi_init_sta(void);
     void app_main(); 
     }
-
-void wifi_task(void * pvParameters)
-{
-    // Move this to another task
-    wifi_init_sta();
-    ESP_LOGE(TAG, "wifi_task exiting");
-    vTaskDelete(NULL);
-}
 
 void app_main(void)
 {
     //Initialize NVS
     ESP_ERROR_CHECK(nvs_flash_init());
-    //wifi_init_sta();
-
-    //xTaskCreate(wifi_task, "wifitask", 4096, NULL, 2, NULL);
-
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
     if (lv_display_init() != ESP_OK) // Configure LVGL
@@ -104,6 +91,9 @@ void app_main(void)
     lv_obj_refresh_style(icon_storage, LV_PART_ANY, LV_STYLE_PROP_ANY);
     lvgl_release();
 #endif
+
+    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
     // lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);

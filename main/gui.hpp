@@ -629,11 +629,11 @@ static void show_ui()
     // Show Home Page
     create_page_home(content_container);
     //create_page_settings(content_container);
-    
+    //create_page_remote(content_container);
 
     // Load main screen with animation
-    //lv_scr_load(screen_container);
-    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_OUT, 1000,3000, true);
+    lv_scr_load(screen_container);
+    //lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_MOVE_LEFT, 1000,3000, true);
 }
 
 static void rotate_event_handler(lv_event_t *e)

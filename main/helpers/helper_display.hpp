@@ -35,10 +35,9 @@ static const uint16_t screenWidth = TFT_WIDTH;
 static const uint16_t screenHeight = TFT_HEIGHT;
 
 #define BUFF_SIZE 40
+#define LVGL_DOUBLE_BUFFER
 
 static lv_disp_draw_buf_t draw_buf;
-//static lv_color_t buf[screenWidth * BUFF_SIZE];
-//static lv_color_t buf2[screenWidth * BUFF_SIZE];
 
 static lv_disp_t *disp;
 static lv_theme_t *theme_current;
@@ -70,11 +69,15 @@ esp_err_t lv_display_init()
     lcd.setBrightness(128);
     //lcd.fillScreen(TFT_BLACK);
 
-    lv_color_t * buf = (lv_color_t *)malloc(screenWidth * BUFF_SIZE * sizeof(lv_color_t));
-    lv_color_t * buf2 = (lv_color_t *)malloc(screenWidth * BUFF_SIZE * sizeof(lv_color_t));
-
     /* LVGL : Setting up buffer to use for display */
-    lv_disp_draw_buf_init(&draw_buf, buf, buf2, screenWidth * BUFF_SIZE);
+#if defined(LVGL_DOUBLE_BUFFER)
+    EXT_RAM_ATTR lv_color_t * buf1 = (lv_color_t *)malloc(screenWidth * BUFF_SIZE * sizeof(lv_color_t));
+    EXT_RAM_ATTR lv_color_t * buf2 = (lv_color_t *)malloc(screenWidth * BUFF_SIZE * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&draw_buf, buf1, buf2, screenWidth * BUFF_SIZE);    
+#else
+    EXT_RAM_ATTR lv_color_t * buf1 = (lv_color_t *)malloc(screenWidth * BUFF_SIZE * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&draw_buf, buf1, NULL, screenWidth * BUFF_SIZE);
+#endif
 
     /*** LVGL : Setup & Initialize the display device driver ***/
     static lv_disp_drv_t disp_drv;
