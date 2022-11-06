@@ -1,4 +1,5 @@
 idf_component_register(SRCS "main.cpp" 
+							"wifi_sta.c"
 							"widgets/tux_panel.c" 
 							"fonts/font_fa_14.c" 
 							"fonts/font_robotomono_12.c"
@@ -7,7 +8,7 @@ idf_component_register(SRCS "main.cpp"
 							"fonts/font_7seg_64.c"
 
                     	INCLUDE_DIRS "." "devices" "helpers" "pages" "widgets" "images"
-				REQUIRES LovyanGFX lvgl fatfs fmt app_update
+				REQUIRES LovyanGFX lvgl fatfs fmt app_update 
 				)
 
 # Create a SPIFFS image from the contents of the 'spiffs_image' directory

@@ -6,6 +6,7 @@
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
+#include "nvs_flash.h"
 
 #include <cmath>
 #include <inttypes.h>
@@ -18,6 +19,7 @@ using namespace std ;
 #include "soc/rtc.h"
 #include "esp_ota_ops.h"
 #include "esp_app_format.h"
+
 
 static const char *TAG = "lvgl_gui";
 
@@ -47,10 +49,26 @@ static void lv_update_battery(uint batval);
 static bool wifi_on = false;
 static int battery_value = 0;
 
-extern "C" { void app_main(); }
+extern "C" { 
+    void wifi_init_sta(void);
+    void app_main(); 
+    }
+
+void wifi_task(void * pvParameters)
+{
+    // Move this to another task
+    wifi_init_sta();
+    ESP_LOGE(TAG, "wifi_task exiting");
+    vTaskDelete(NULL);
+}
 
 void app_main(void)
 {
+    //Initialize NVS
+    ESP_ERROR_CHECK(nvs_flash_init());
+    //wifi_init_sta();
+
+    //xTaskCreate(wifi_task, "wifitask", 4096, NULL, 2, NULL);
 
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
@@ -66,8 +84,9 @@ void app_main(void)
     // LV_FS integration & print readme.txt from the root
     lv_print_readme_txt();
 
+    lvgl_acquire();
     create_splash_screen();
-
+    lvgl_release();
 
     lvgl_acquire();
     lv_setup_styles();    

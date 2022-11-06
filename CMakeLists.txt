@@ -16,6 +16,8 @@ set(COMPONENTS bootloader esptool_py main)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 
+#add_compile_options("-Wno-format")
+
 project(ESP32-TUX)
 
 # Enable colors for compile output

@@ -417,16 +417,16 @@ static void tux_panel_wifi(lv_obj_t *parent)
     lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
 
     /* ESP-WIFI - Wifi SoftAP Provisioning */
-    lv_obj_t* esp_wifi = lv_obj_create(cont_1);
-    lv_obj_set_size(esp_wifi, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_wifi, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(esp_wifi, 0, 0);
+    lv_obj_t* cont_wifi_prov = lv_obj_create(cont_1);
+    lv_obj_set_size(cont_wifi_prov, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(cont_wifi_prov, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(cont_wifi_prov, 0, 0);
 
-    lv_obj_t* label_1 = lv_label_create(esp_wifi);
+    lv_obj_t* label_1 = lv_label_create(cont_wifi_prov);
     lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
     lv_label_set_text(label_1, "Provision using SoftAP");
 
-    lv_obj_t* sw_1 = lv_switch_create(esp_wifi);
+    lv_obj_t* sw_1 = lv_switch_create(cont_wifi_prov);
     lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
 
 
@@ -448,7 +448,7 @@ static void tux_panel_wifi(lv_obj_t *parent)
     lv_obj_t *esp_status = lv_obj_create(cont_1);
     lv_obj_set_size(esp_status, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_set_style_bg_opa(esp_status, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_pad_ver(esp_wifi, 3, 0);
+    lv_obj_set_style_pad_ver(esp_status, 3, 0);
     lv_obj_set_style_border_width(esp_status, 0, 0);
     lv_obj_set_flex_flow(esp_status, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(esp_status, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
