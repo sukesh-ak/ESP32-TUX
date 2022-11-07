@@ -10,6 +10,18 @@
 ![As of 2022-10-21](assets/home.jpg)
 ![As of 2022-10-21](assets/settings.jpg)
 
+## Key Project Goals
+- UI Scaling for different resolutions
+- Rotate to Landscape / Portrait without code changes
+- Easy re-use of the template with just a header file [Supported Devices here](/main/devices/)
+- Switching Themes easily (Dark/Light)
+- Access to SPIFF (FAT once upgraded to IDF 5.x) partition with F:/\<filename>
+- Support for updating UI from any Task
+- Wi-Fi Provisioning using BLE/SoftAP
+- OTA update using local (Python webserver) and Cloud (Azure)
+- Save settings in json file
+- Support more devices with TFT + Capacitive Touch
+
 ## Features included 
 - [x] Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
 - [x] UI code separation into [gui.hpp](/main/gui.hpp)
