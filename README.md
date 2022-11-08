@@ -1,5 +1,10 @@
-![ESP32-TUX](assets/tux-design.png)
-## Web Installer : [https://tux.sukesh.me](https://tux.sukesh.me)
+![ESP32-TUX](assets/tux-design.png)  
+
+![GitHub](https://img.shields.io/github/license/sukesh-ak/esp32-tux?style=for-the-badge) 
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23FF007F&style=for-the-badge)](https://github.com/sponsors/sukesh-ak)   
+![GitHub forks](https://img.shields.io/github/forks/sukesh-ak/esp32-tux?style=for-the-badge) 
+![GitHub Repo stars](https://img.shields.io/github/stars/sukesh-ak/esp32-tux?style=for-the-badge) 
+![GitHub issues](https://img.shields.io/github/issues/sukesh-ak/esp32-tux?style=for-the-badge) 
 
 ## ESP32-TUX - A Touch UX template to get you started.  
 - Currently Supported Devices : [WT32-SC01](https://www.alibaba.com/product-detail/WT32-SC01-3-5-3-5inch_1600120762835.html?spm=a2747.product_upgrade.0.0.636971d29EHKiD) / [WT32-SC01 Plus](https://www.alibaba.com/product-detail/Upgrade-WT32-SC01-plus-16MB-hmi_1600609718238.html?spm=a2756.order-detail-ta-bn-s.0.0.6f3f2fc2RYpL8H)
@@ -9,6 +14,9 @@
 
 ![As of 2022-10-21](assets/home.jpg)
 ![As of 2022-10-21](assets/settings.jpg)
+
+## Web Installer : [https://tux.sukesh.me](https://tux.sukesh.me)
+> You only need a USB Cable and Browser to install and test on your device.
 
 ## Key Project Goals
 - UI Scaling for different resolutions
