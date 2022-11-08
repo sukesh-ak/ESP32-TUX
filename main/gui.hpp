@@ -24,8 +24,8 @@ SOFTWARE.
 
 
 #include "widgets/tux_panel.h"
-LV_IMG_DECLARE(dev_bg)
-LV_IMG_DECLARE(tux_logo)
+//LV_IMG_DECLARE(dev_bg)
+//LV_IMG_DECLARE(tux_logo)
 
 // LV_FONT_DECLARE(font_7seg_16)
 // LV_FONT_DECLARE(font_7seg_24)
@@ -35,7 +35,7 @@ LV_IMG_DECLARE(tux_logo)
 // LV_FONT_DECLARE(font_7seg_48)
 // LV_FONT_DECLARE(font_7seg_56)
 LV_FONT_DECLARE(font_7seg_64)
-LV_FONT_DECLARE(font_robotomono_12)
+//LV_FONT_DECLARE(font_robotomono_12)
 LV_FONT_DECLARE(font_robotomono_13)
 
 LV_FONT_DECLARE(font_fa_14)
