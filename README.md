@@ -1,5 +1,5 @@
 ![ESP32-TUX](assets/tux-design.png)
-## Web Installer : [https://iot.sukesh.me](https://iot.sukesh.me)
+## Web Installer : [https://tux.sukesh.me](https://tux.sukesh.me)
 
 ## ESP32-TUX - A Touch UX template to get you started.  
 - Currently Supported Devices : [WT32-SC01](https://www.alibaba.com/product-detail/WT32-SC01-3-5-3-5inch_1600120762835.html?spm=a2747.product_upgrade.0.0.636971d29EHKiD) / [WT32-SC01 Plus](https://www.alibaba.com/product-detail/Upgrade-WT32-SC01-plus-16MB-hmi_1600609718238.html?spm=a2756.order-detail-ta-bn-s.0.0.6f3f2fc2RYpL8H)
@@ -48,7 +48,41 @@
 - [ ] BLE Config 
 - [ ] Pages as modules
 - [ ] Multiple Navigation styles
-- [ ] Integration with SquareLine Studio
+- [ ] Integration with SquareLine Studio  
+
+## WIDGET : How to use TUX_PANEL Widget
+> Entire UI consists of Header, Footer and TUX_PANEL widgets.
+
+```c++
+// Create the Panel instance with title 
+// 200px height and it can also be LV_SIZE_CONTENT or LV_PCT(100)
+// Leave title empty if you don't need a title.
+lv_obj_t *panel1 = tux_panel_create(parent, LV_SYMBOL_EDIT " CONFIG", 200);
+
+// Set the common panel style
+lv_obj_add_style(panel1, &style_ui_island, 0);
+
+// Set title color to RED
+tux_panel_set_title_color(panel1, lv_palette_main(LV_PALETTE_RED));
+
+// Set title background color to BLUE
+tux_panel_set_title_bg_color(panel1,lv_palette_main(LV_PALETTE_BLUE))
+
+// Set height of tux_panel to 300
+tux_panel_set_height(panel1,300);
+
+// Set background color of content area to GREEN
+tux_panel_set_content_bg_color(panel1,lv_palette_main(LV_PALETTE_GREEN))
+
+// Get Content Area of the panel to add UI elements
+lv_obj_t *cont1 = tux_panel_get_content(panel1);
+
+    // Add Label to the content area
+    lv_obj_t *lbl_version = lv_label_create(cont1);
+    lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
+    lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
+```
 
 ## Currently Supported Devices 
 > [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
@@ -66,6 +100,8 @@
 # Clone repo and update submodules (LovyanGFX + LVGL)
 git clone https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
+
+# To get the submodules like LovyanGFX, LVGL
 git submodule update --init --recursive
 
 # Update submodules to the latest if required (LovyanGFX + LVGL)
@@ -73,11 +109,15 @@ git submodule update --init --recursive
 ```
 
 ## Separate build folder for ESP32 & ESP32-S3
-> Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)
+> Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
+> This enables you to have separate build folder, in case you use multiple devices with different controllers.  
+
 #### WT32-SC01 - ESP32
 ```cmake
 # set target and build,flash,monitor
 idf.py -B build-esp32 set-target esp32 build
+
+# Use build folder called build-esp32 for compile, flash etc
 idf.py -B build-esp32 -p COM6 flash monitor
 ```
 
@@ -85,6 +125,8 @@ idf.py -B build-esp32 -p COM6 flash monitor
 ```cmake
 # set target and build,flash,monitor
 idf.py -B build-esp32s3 set-target esp32s3 build
+
+# Use build folder called build-esp32s3 for compile, flash etc
 idf.py -B build-esp32s3 -p COM3 app-flash monitor
 ```
 
@@ -97,7 +139,7 @@ idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 ```
 
 ## Display Compile Time Information
-Check settings in CMakeLists.txt [here](CMakeLists.txt#L25)  
+> Check settings in CMakeLists.txt [here](CMakeLists.txt#L25)  
 ```cmake
 # Display Compile Time Information
 message(STATUS "--------------Compile Info------------")
