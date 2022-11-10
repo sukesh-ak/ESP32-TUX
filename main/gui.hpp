@@ -892,10 +892,8 @@ static string device_info()
                                                     (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
                                                     (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
     //s_chip_info += fmt::format("\nIEEE 802.15.4 : {}",string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA"));
-    
-    ESP_LOGE(TAG,"\n%s",s_chip_info.c_str());
-    fflush(stdout);
 
+    //ESP_LOGE(TAG,"\n%s",device_info().c_str());
     return s_chip_info;
 }
     

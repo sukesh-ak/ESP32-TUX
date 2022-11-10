@@ -151,9 +151,9 @@ esp_err_t lv_display_init()
     }
 
 #if CONFIG_FREERTOS_UNICORE == 0
-    int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 5, &g_lvgl_task_handle, 1);
+    int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 3, &g_lvgl_task_handle, 1);
 #else
-    int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 5, &g_lvgl_task_handle, 0);
+    int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 3, &g_lvgl_task_handle, 0);
 #endif
     if (!err)
     {

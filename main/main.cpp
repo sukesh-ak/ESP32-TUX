@@ -68,12 +68,11 @@ static void lv_update_battery(uint batval);
 static bool wifi_on = false;
 static int battery_value = 0;
 
-extern "C" { 
-    void app_main(); 
-    }
-
-void app_main(void)
+extern "C" void app_main(void)
 {
+    ESP_LOGE(TAG,"\n%s",device_info().c_str());
+    //fflush(stdout);
+
     //Initialize NVS
     ESP_ERROR_CHECK(nvs_flash_init());
     lcd.init();        // Initialize LovyanGFX
