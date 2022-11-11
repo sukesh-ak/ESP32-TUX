@@ -7,7 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/sukesh-ak/esp32-tux?style=for-the-badge) 
 
 ## ESP32-TUX - A Touch UX template to get you started.  
-- Currently Supported Devices : [WT32-SC01](https://www.alibaba.com/product-detail/WT32-SC01-3-5-3-5inch_1600120762835.html?spm=a2747.product_upgrade.0.0.636971d29EHKiD) / [WT32-SC01 Plus](https://www.alibaba.com/product-detail/Upgrade-WT32-SC01-plus-16MB-hmi_1600609718238.html?spm=a2756.order-detail-ta-bn-s.0.0.6f3f2fc2RYpL8H)
+- Currently Supported Devices : [WT32-SC01](https://bit.ly/wt32-sc01) / [WT32-SC01 Plus](https://bit.ly/wt32-sc01-plus)
 - Graphics & Touch Driver : [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
 - UI / Widgets : [LVGL9.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)

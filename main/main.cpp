@@ -40,7 +40,7 @@ using namespace std ;
 #include "esp_app_format.h"
 
 
-static const char *TAG = "lvgl_gui";
+static const char *TAG = "ESP32-TUX";
 
 // Mount SPIFF partition and print readme.txt content
 #include "helper_spiff.hpp"
