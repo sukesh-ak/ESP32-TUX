@@ -69,6 +69,31 @@ static void lv_update_battery(uint batval);
 static bool wifi_on = false;
 static int battery_value = 0;
 
+// Wifi & IP related event handler
+static void wifi_event_handler(void* arg, esp_event_base_t event_base,
+                          int32_t event_id, void* event_data)
+{
+    if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
+    {
+        ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
+        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
+        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+    {
+        ESP_LOGW(TAG,"WIFI_EVENT_STA_DISCONNECTED");
+        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
+        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
+    {
+        ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        // Display IP on the footer
+        footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
+    }
+}
+
 extern "C" void app_main(void)
 {
     // Print device info
@@ -89,12 +114,13 @@ extern "C" void app_main(void)
     {
         ESP_LOGE(TAG, "LVGL setup failed!!!");
     }
-    
-    // Wifi Provision and connection.
-    // Use idf.py menuconfig to configure 
-    // Use SoftAP only / BLE has some issues
-    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
-    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
+
+    // /* Initialize the event loop */
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    /* Register for event handler for Wi-Fi, IP related events */
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL));
 
     // Init SPIFF & print readme.txt from the root
     init_spiff();
@@ -103,14 +129,18 @@ extern "C" void app_main(void)
     // LV_FS integration & print readme.txt from the root
     lv_print_readme_txt();
 
+/* Push these to its own task later*/
+    // Splash screen
     lvgl_acquire();
     create_splash_screen();
     lvgl_release();
 
+    // Main UI
     lvgl_acquire();
     lv_setup_styles();    
     show_ui();
     lvgl_release();
+/* Push these to its own task later*/
 
 #ifdef SD_ENABLED
     lvgl_acquire();
@@ -124,7 +154,12 @@ extern "C" void app_main(void)
     lvgl_release();
 #endif
 
-    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+    // Wifi Provision and connection.
+    // Use idf.py menuconfig to configure 
+    // Use SoftAP only / BLE has some issues
+    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
+    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
+
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
@@ -139,7 +174,7 @@ static void periodic_timer_callback(lv_timer_t * timer)
     if (wifi_on)
     {
         lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_GREY));
-        lv_label_set_text(icon_wifi, FA_SYMBOL_BLE);
+        lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
 
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
@@ -153,7 +188,7 @@ static void periodic_timer_callback(lv_timer_t * timer)
     else
     {
         lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_BLUE));
-        lv_label_set_text(icon_wifi, FA_SYMBOL_BLE);
+        lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
 
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);

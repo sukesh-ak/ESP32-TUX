@@ -74,11 +74,11 @@ bool init_sdspi()
     ret = esp_vfs_fat_sdspi_mount(MOUNT_POINT, &host, &device_config, &mount_config, &sdcard);
     if (ret != ESP_OK) {
         if (ret == ESP_FAIL) {
-            ESP_LOGE(TAG, "Failed to mount filesystem. "
+            ESP_LOGE(TAG, "Failed to mount filesystem. \n"
                      "If you want the card to be formatted, enable above in mount_config.");
             return ESP_FAIL;
         } else {
-            ESP_LOGE(TAG, "Failed to initialize the card (%s). "
+            ESP_LOGE(TAG, "Failed to initialize the card (%s). \n"
                      "Make sure SD card lines have pull-up resistors in place.", esp_err_to_name(ret));
             return ESP_FAIL;
         }

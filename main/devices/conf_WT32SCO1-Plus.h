@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// SD card Work-in-progress so disabled
+// SD card Working / enable it below
 #define WT32_SC01_PLUS
 #define SD_ENABLED 
 
