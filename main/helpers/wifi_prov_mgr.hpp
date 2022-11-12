@@ -331,8 +331,9 @@ void provision_wifi(void *param)
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, prov_wifi_inst));
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, prov_ip_inst));
 
-    ESP_LOGI(TAG, "Wifi Connected continue application!");
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ESP_LOGI(TAG, "Wifi Connected - Self-destruct Task :)");
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     
+    // Kill the current task (self)
     vTaskDelete(NULL);
 }

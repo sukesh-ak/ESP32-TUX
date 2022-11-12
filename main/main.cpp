@@ -75,22 +75,31 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 {
     if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
     {
+        // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
+        // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_DISCONNECTED");
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
+        // Not a warning but just for highlight
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         // Display IP on the footer
         footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_LOST_IP)
+    {
+        ESP_LOGW(TAG,"IP_EVENT_STA_LOST_IP");
+        // Ideally we can kick off provisioning task here.  Will test later
+        xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
     }
 }
 
