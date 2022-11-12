@@ -110,7 +110,7 @@ public:
       cfg.bus_shared = true; 
       cfg.offset_rotation = 0;
 
-      cfg.i2c_port = I2C_NUM_1;
+      cfg.i2c_port = 1;//I2C_NUM_1;
       cfg.i2c_addr = 0x38;
       cfg.pin_sda  = 6;   
       cfg.pin_scl  = 5;   

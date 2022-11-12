@@ -39,8 +39,9 @@ using namespace std ;
 #include "esp_ota_ops.h"
 #include "esp_app_format.h"
 
-
 static const char *TAG = "ESP32-TUX";
+
+#include "wifi_prov_mgr.hpp"
 
 // Mount SPIFF partition and print readme.txt content
 #include "helper_spiff.hpp"
@@ -49,8 +50,8 @@ static const char *TAG = "ESP32-TUX";
 #include "helper_lv_fs.hpp"
 
 // Enable one of the devices from below
-#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
-// #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
+///#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
+#include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
 
 #include "helper_display.hpp"
 
@@ -70,11 +71,18 @@ static int battery_value = 0;
 
 extern "C" void app_main(void)
 {
+    // Print device info
     ESP_LOGE(TAG,"\n%s",device_info().c_str());
-    //fflush(stdout);
 
     //Initialize NVS
-    ESP_ERROR_CHECK(nvs_flash_init());
+    esp_err_t err = nvs_flash_init();
+    // NVS partition contains new data format or unable to access
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK( err );
+
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
     if (lv_display_init() != ESP_OK) // Configure LVGL
@@ -82,6 +90,12 @@ extern "C" void app_main(void)
         ESP_LOGE(TAG, "LVGL setup failed!!!");
     }
     
+    // Wifi Provision and connection.
+    // Use idf.py menuconfig to configure 
+    // Use SoftAP only / BLE has some issues
+    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
+    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
+
     // Init SPIFF & print readme.txt from the root
     init_spiff();
     print_readme_txt();
