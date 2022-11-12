@@ -61,8 +61,30 @@ menu "TUX WIFI Provision"
             This enables BLE 4.2 features for Bluedroid.
 
     config BROKER_URL
-        string "MQTT Broker URL"
+        string 
+        prompt "Enter MQTT Broker URL"
         default "mqtt://mqtt.eclipseprojects.io"
         help
             URL of the mqtt broker to connect to
+
+    config SNTP_MAX_RETRY_COUNT
+        int 
+        default 10
+        prompt "SNTP max retry count"
+        help
+            Set the Maximum retry to avoid failure of getting and setting device time.
+
+    choice SNTP_TIME_SYNC_METHOD
+        prompt "Time synchronization method"
+        default SNTP_TIME_SYNC_METHOD_IMMED
+        help
+            Time synchronization method.
+
+        config SNTP_TIME_SYNC_METHOD_IMMED
+            bool "update time immediately when received"
+        config SNTP_TIME_SYNC_METHOD_SMOOTH
+            bool "update time with smooth method (adjtime)"
+        config SNTP_TIME_SYNC_METHOD_CUSTOM
+            bool "custom implementation"
+    endchoice
 endmenu

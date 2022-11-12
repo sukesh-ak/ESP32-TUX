@@ -41,7 +41,8 @@ using namespace std ;
 
 static const char *TAG = "ESP32-TUX";
 
-#include "wifi_prov_mgr.hpp"
+#include "wifi_prov_mgr.hpp"    // Provision and connect to Wifi
+#include "helper_sntp.hpp"      // Get and set device time
 
 // Mount SPIFF partition and print readme.txt content
 #include "helper_spiff.hpp"
@@ -64,10 +65,57 @@ static const char *TAG = "ESP32-TUX";
 // UI design
 #include "gui.hpp"
 
+#include "events/tux_events.hpp"
+
+/* Event source periodic timer related definitions */
+ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
+
+
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
 static bool wifi_on = false;
 static int battery_value = 0;
+
+static char* get_id_string(esp_event_base_t base, int32_t id) {
+    if (base == TUX_EVENTS) {
+        switch(id) {
+            case TUX_EVENT_DATETIME_SET:
+                return "TUX_EVENT_DATETIME_SET";
+            break;
+            case TUX_EVENT_WEATHER_UPDATED:
+                return "TUX_EVENT_WEATHER_UPDATED";
+            break;
+            case TUX_EVENT_THEME_CHANGED:
+                return "TUX_EVENT_THEME_CHANGED";
+            break;
+        }
+    } 
+    return "TUX_EVENT_UNKNOWN";
+}
+
+// tux event handler
+static void tux_event_handler(void* arg, esp_event_base_t event_base,
+                          int32_t event_id, void* event_data)
+{
+    ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+
+    tm * datetimeinfo;
+    datetimeinfo = (tm*)event_data;
+
+    char strftime_buf[64];
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", datetimeinfo);
+    ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
+
+    ESP_LOGE(TAG, "Time : %d:%d:%d", 
+                    datetimeinfo->tm_hour,
+                    datetimeinfo->tm_min,
+                    datetimeinfo->tm_sec);
+
+    lv_label_set_text_fmt(lbl_time, "%02d:%02d", 
+                datetimeinfo->tm_hour,
+                datetimeinfo->tm_min);
+
+}                          
 
 // Wifi & IP related event handler
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
@@ -94,6 +142,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         // Display IP on the footer
         footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        
+        xTaskCreate(configure_time, "config_time", 1024*4, NULL, 3, NULL);
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_LOST_IP)
     {
@@ -130,6 +180,9 @@ extern "C" void app_main(void)
     /* Register for event handler for Wi-Fi, IP related events */
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL));
+
+    // TUX EVENTS
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(TUX_EVENTS, ESP_EVENT_ANY_ID, tux_event_handler, NULL, NULL));
 
     // Init SPIFF & print readme.txt from the root
     init_spiff();

@@ -74,6 +74,9 @@ static lv_obj_t *icon_wifi;
 static lv_obj_t *icon_ble;
 static lv_obj_t *icon_battery;
 
+static lv_obj_t *lbl_time;
+static lv_obj_t *lbl_date;
+
 static lv_coord_t screen_h;
 static lv_coord_t screen_w;
 
@@ -189,6 +192,7 @@ void lv_setup_styles()
     lv_style_init(&style_battery);
     lv_style_set_text_font(&style_battery, font_symbol);
     lv_style_set_align(&style_battery, LV_ALIGN_RIGHT_MID);
+    lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
 
     // SD CARD
     lv_style_init(&style_storage);
@@ -270,7 +274,7 @@ static void create_header(lv_obj_t *parent)
 
     // BATTERY
     icon_battery = lv_label_create(panel_status);
-    lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_EMPTY);
+    lv_label_set_text(icon_battery, LV_SYMBOL_CHARGE);
     lv_obj_add_style(icon_battery, &style_battery, 0);
 
     lv_obj_add_event_cb(panel_title, home_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
@@ -331,13 +335,13 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     //lv_obj_set_style_pad_all(cont_datetime,0,0);
 
     // Time
-    lv_obj_t *lbl_time = lv_label_create(cont_datetime);
+    lbl_time = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_MID, 0);
     lv_obj_set_style_text_font(lbl_time, &font_7seg_64, 0);
     lv_label_set_text(lbl_time, "20:25");
     
     // Date
-    lv_obj_t *lbl_date = lv_label_create(cont_datetime);
+    lbl_date = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_date, LV_ALIGN_BOTTOM_MID, 0);
     lv_obj_set_style_text_font(lbl_date, font_normal, 0);
     lv_label_set_text(lbl_date, "Sat, 05 Nov 2022");
