@@ -142,12 +142,18 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 {
     ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
 
-    // Set device timezone
-    // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-    setenv("TZ", TZ_STRING, 1);
-    tzset();    
+    if (base == TUX_EVENTS && event_id == TUX_EVENT_DATETIME_SET) {
+        // Set device timezone
+        // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+        setenv("TZ", TZ_STRING, 1);
+        tzset();    
 
-    update_datetime_ui();
+        update_datetime_ui();
+    } else if (base == TUX_EVENTS && event_id == TUX_EVENT_WEATHER_UPDATED) {
+        // Weather updates
+    } else if (base == TUX_EVENTS && event_id == TUX_EVENT_THEME_CHANGED) {
+        // Theme changes
+    }
 }                          
 
 // Wifi & IP related event handler

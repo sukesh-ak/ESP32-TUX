@@ -711,11 +711,17 @@ static void theme_switch_event_handler(lv_event_t *e)
         {
             switch_theme(false);
             lv_label_set_text(udata, "Theme : Light");
+
+            // Pass the new theme info
+            // ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_THEME_CHANGED, NULL,NULL, portMAX_DELAY));
         }
         else
         {
             switch_theme(true);
             lv_label_set_text(udata, "Theme : Dark");
+            
+            // Pass the new theme info
+            // ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_THEME_CHANGED, NULL,NULL, portMAX_DELAY));
         }
     }
 }
