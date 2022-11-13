@@ -16,8 +16,7 @@
 #include "esp_ota_ops.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
-//#include "nvs.h"
-//#include "nvs_flash.h"
+#include "ota.h"
 
 #if CONFIG_BOOTLOADER_APP_ANTI_ROLLBACK
 #include "esp_efuse.h"
@@ -27,7 +26,7 @@
 #include "esp_wifi.h"
 #endif
 
-static const char *TAG = "advanced_https_ota_example";
+static const char *TAG = "OTA";
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
@@ -48,6 +47,8 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info)
 #ifndef CONFIG_OTA_SKIP_VERSION_CHECK
     if (memcmp(new_app_info->version, running_app_info.version, sizeof(new_app_info->version)) == 0) {
         ESP_LOGW(TAG, "Current running version is the same as a new. We will not continue the update.");
+        // Notify about TUX_EVENT_OTA_ABORTED event / Send abort message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ABORTED, NULL,0, portMAX_DELAY));          
         return ESP_FAIL;
     }
 #endif
@@ -61,6 +62,8 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info)
     const uint32_t hw_sec_version = esp_efuse_read_secure_version();
     if (new_app_info->secure_version < hw_sec_version) {
         ESP_LOGW(TAG, "New firmware security version is less than eFuse programmed, %d < %d", new_app_info->secure_version, hw_sec_version);
+        // Notify about TUX_EVENT_OTA_ABORTED event / Send abort message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ABORTED, NULL,0, portMAX_DELAY));         
         return ESP_FAIL;
     }
 #endif
@@ -79,6 +82,9 @@ static esp_err_t _http_client_init_cb(esp_http_client_handle_t http_client)
 void run_ota_task(void *pvParameter)
 {
     ESP_LOGI(TAG, "Starting OTA");
+    
+    // Notify about TUX_EVENT_OTA_STARTED event 
+    ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_STARTED, NULL,0, portMAX_DELAY));  
 
 #if defined(CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE)
     /**
@@ -92,8 +98,13 @@ void run_ota_task(void *pvParameter)
         if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
             if (esp_ota_mark_app_valid_cancel_rollback() == ESP_OK) {
                 ESP_LOGI(TAG, "App is valid, rollback cancelled successfully");
+                // Notify about TUX_EVENT_OTA_ROLLBACK event / Send rollback message too
+                ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ROLLBACK, NULL,0, portMAX_DELAY));                 
             } else {
                 ESP_LOGE(TAG, "Failed to cancel rollback");
+                // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+                ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_FAILED, NULL,0, portMAX_DELAY));                 
+                
             }
         }
     }
@@ -133,6 +144,8 @@ void run_ota_task(void *pvParameter)
         config.url = url_buf;
     } else {
         ESP_LOGE(TAG, "Configuration mismatch: wrong firmware upgrade image url");
+        // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ABORTED, NULL,0, portMAX_DELAY));        
         abort();
     }
 #endif
@@ -154,6 +167,8 @@ void run_ota_task(void *pvParameter)
     esp_err_t err = esp_https_ota_begin(&ota_config, &https_ota_handle);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "ESP HTTPS OTA Begin failed");
+        // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_FAILED, NULL,0, portMAX_DELAY));        
         vTaskDelete(NULL);
     }
 
@@ -161,11 +176,14 @@ void run_ota_task(void *pvParameter)
     err = esp_https_ota_get_img_desc(https_ota_handle, &app_desc);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "esp_https_ota_read_img_desc failed");
+        // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_FAILED, NULL,0, portMAX_DELAY));        
         goto ota_end;
     }
     err = validate_image_header(&app_desc);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "image header verification failed");
+        // Not required to be reported as a failure- NO UPDATES AVAILABLE
         goto ota_end;
     }
 
@@ -178,15 +196,25 @@ void run_ota_task(void *pvParameter)
         // monitor the status of OTA upgrade by calling esp_https_ota_get_image_len_read, which gives length of image
         // data read so far.
         ESP_LOGD(TAG, "Image bytes read: %d", esp_https_ota_get_image_len_read(https_ota_handle));
+
+        // Notify about TUX_EVENT_OTA_IN_PROGRESS event / Calculate and send progress percentage (or bytes)
+        //ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_IN_PROGRESS, NULL,0, portMAX_DELAY));        
     }
 
     if (esp_https_ota_is_complete_data_received(https_ota_handle) != true) {
         // the OTA image was not completely received and user can customise the response to this situation.
         ESP_LOGE(TAG, "Complete data was not received.");
+        // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_FAILED, NULL,0, portMAX_DELAY));
+
     } else {
         ota_finish_err = esp_https_ota_finish(https_ota_handle);
         if ((err == ESP_OK) && (ota_finish_err == ESP_OK)) {
             ESP_LOGI(TAG, "ESP_HTTPS_OTA upgrade successful. Rebooting ...");
+
+            // Notify about TUX_EVENT_OTA_COMPLETED event
+            ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_COMPLETED, NULL,0, portMAX_DELAY));
+
             vTaskDelay(1000 / portTICK_PERIOD_MS);
             esp_restart();
         } else {
@@ -194,13 +222,17 @@ void run_ota_task(void *pvParameter)
                 ESP_LOGE(TAG, "Image validation failed, image is corrupted");
             }
             ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed 0x%x", ota_finish_err);
+            // Notify about TUX_EVENT_OTA_FAILED event / Send failure message too
+            ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_FAILED, NULL,0, portMAX_DELAY));
             vTaskDelete(NULL);
         }
     }
 
 ota_end:
     esp_https_ota_abort(https_ota_handle);
-    ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed");
+
+    // Trigger events from the actual place to get the error message
+    ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed");  
     vTaskDelete(NULL);
 }
 

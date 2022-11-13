@@ -1,6 +1,9 @@
 #ifndef tux_ota_H
 #define tux_ota_H
 
+#include "../main/events/tux_events.hpp"
+//#include "tux_events.hpp"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

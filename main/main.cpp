@@ -70,7 +70,6 @@ static const char *TAG = "ESP32-TUX";
 /* Event source periodic timer related definitions */
 ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
 
-
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
 static bool wifi_on = false;
@@ -102,8 +101,8 @@ static void update_datetime_ui()
     // Date & Time formatted
     char strftime_buf[64];
     strftime(strftime_buf, sizeof(strftime_buf), "%c %z", &datetimeinfo);
-    ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
-    // footer_message("Date/Time: %s",strftime_buf);
+    //ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
+    footer_message("Date/Time: %s",strftime_buf);
 
     // Date formatted
     strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", &datetimeinfo);
@@ -126,6 +125,18 @@ static const char* get_id_string(esp_event_base_t base, int32_t id) {
         switch(id) {
             case TUX_EVENT_DATETIME_SET:
                 return "TUX_EVENT_DATETIME_SET";
+            case TUX_EVENT_OTA_STARTED:
+                return "TUX_EVENT_OTA_STARTED";
+            case TUX_EVENT_OTA_IN_PROGRESS:
+                return "TUX_EVENT_OTA_IN_PROGRESS";
+            case TUX_EVENT_OTA_ROLLBACK:
+                return "TUX_EVENT_OTA_ROLLBACK";
+            case TUX_EVENT_OTA_COMPLETED:
+                return "TUX_EVENT_OTA_COMPLETED";
+            case TUX_EVENT_OTA_FAILED:
+                return "TUX_EVENT_OTA_FAILED";
+            case TUX_EVENT_OTA_ABORTED:
+                return "TUX_EVENT_OTA_ABORTED";
             case TUX_EVENT_WEATHER_UPDATED:
                 return "TUX_EVENT_WEATHER_UPDATED";
             case TUX_EVENT_THEME_CHANGED:
@@ -140,19 +151,40 @@ static const char* get_id_string(esp_event_base_t base, int32_t id) {
 static void tux_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
-    ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    ESP_LOGE(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    if (event_base != TUX_EVENTS) return;   // bye bye - me not invited :(
 
-    if (event_base == TUX_EVENTS && event_id == TUX_EVENT_DATETIME_SET) {
+    // Handle TUX_EVENTS
+    if (event_id == TUX_EVENT_DATETIME_SET) {
         // Set device timezone
         // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         setenv("TZ", TZ_STRING, 1);
         tzset();    
-
         update_datetime_ui();
-    } else if (event_base == TUX_EVENTS && event_id == TUX_EVENT_WEATHER_UPDATED) {
-        // Weather updates
-    } else if (event_base == TUX_EVENTS && event_id == TUX_EVENT_THEME_CHANGED) {
-        // Theme changes
+    } else if (event_id == TUX_EVENT_OTA_STARTED) {
+        // OTA Started
+
+    } else if (event_id == TUX_EVENT_OTA_IN_PROGRESS) {
+        // OTA In Progress - progressbar?
+
+    } else if (event_id == TUX_EVENT_OTA_ROLLBACK) {
+        // OTA Rollback - god knows why!
+
+    } else if (event_id == TUX_EVENT_OTA_COMPLETED) {
+        // OTA Completed - YAY! Success
+
+    } else if (event_id == TUX_EVENT_OTA_ABORTED) {
+        // OTA Aborted - Not a good day for updates
+
+    } else if (event_id == TUX_EVENT_OTA_FAILED) {
+        // OTA Failed - huh!
+
+    } else if (event_id == TUX_EVENT_WEATHER_UPDATED) {
+        // Weather updates - summer?
+
+    } else if (event_id == TUX_EVENT_THEME_CHANGED) {
+        // Theme changes - time to play with dark & light
+
     }
 }                          
 
@@ -236,6 +268,12 @@ extern "C" void app_main(void)
     create_splash_screen();
     lvgl_release();
 
+    // Wifi Provision and connection.
+    // Use idf.py menuconfig to configure 
+    // Use SoftAP only / BLE has some issues
+    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
+    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
+
     // Main UI
     lvgl_acquire();
     lv_setup_styles();    
@@ -255,17 +293,11 @@ extern "C" void app_main(void)
     lvgl_release();
 #endif
 
-    // Wifi Provision and connection.
-    // Use idf.py menuconfig to configure 
-    // Use SoftAP only / BLE has some issues
-    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
-    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
-
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
-    // lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
-    // lv_timer_ready(timer_status);
+    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    lv_timer_ready(timer_status);
 }
 
 static void periodic_timer_callback(lv_timer_t * timer)

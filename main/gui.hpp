@@ -586,15 +586,15 @@ static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
     tux_panel_clock_weather(parent);
-    tux_panel_config(parent);
+    tux_panel_wifi(parent);
+    tux_panel_ota(parent);
 }
 
 static void create_page_settings(lv_obj_t *parent)
 {
     /* SETTINGS PAGE PANELS */
     tux_panel_devinfo(parent);
-    tux_panel_wifi(parent);
-    tux_panel_ota(parent);
+    tux_panel_config(parent);
 }
 
 // Show QR Code for BLE based Wifi Provisioning

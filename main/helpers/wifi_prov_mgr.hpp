@@ -37,8 +37,7 @@ SOFTWARE.
 #include <wifi_provisioning/scheme_softap.h>
 #endif /* CONFIG_PROV_TRANSPORT_SOFTAP */
 
-
-//static const char *TAG = "app";
+//static const char *TAG = "WIFI_PROV";
 
 /* Signal Wi-Fi events on this event-group */
 const int WIFI_CONNECTED_EVENT = BIT0;
@@ -340,7 +339,7 @@ void provision_wifi(void *param)
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, prov_ip_inst));
 
     ESP_LOGI(TAG, "Wifi Connected - Self-destruct Task :)");
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
     
     // Kill the current task (self)
     vTaskDelete(NULL);

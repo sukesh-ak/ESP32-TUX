@@ -44,7 +44,7 @@ void time_sync_notification_cb(struct timeval *tv)
     ESP_LOGI(TAG, "Notification of a time synchronization event");
 
     // Notify about TUX_EVENT_DATETIME_SET / TUX_EVENT_DATETIME_SET event
-    ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_DATETIME_SET, NULL,NULL, portMAX_DELAY));
+    ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_DATETIME_SET, NULL,0, portMAX_DELAY));
 }
 
 void configure_time(void *param)
