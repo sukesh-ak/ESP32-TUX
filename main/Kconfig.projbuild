@@ -1,4 +1,4 @@
-menu "TUX WIFI Provision"
+menu "ESP32-TUX Configuration"
 
     choice PROV_TRANSPORT
         bool "Provisioning Transport"

@@ -76,21 +76,60 @@ static void lv_update_battery(uint batval);
 static bool wifi_on = false;
 static int battery_value = 0;
 
-static char* get_id_string(esp_event_base_t base, int32_t id) {
-    if (base == TUX_EVENTS) {
+// Take your pick, here is the complete list :)
+// https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+// #define TZ_STRING "EST5EDT,M3.2.0/2,M11.1.0"    // Eastern Standard Time
+// #define TZ_STRING "CST-8"                       // China Standard Time
+#define TZ_STRING "UTC-05:30"                   // India Standart Time
+
+static void update_datetime_ui()
+{
+    // Update time
+    // date/time format reference => https://cplusplus.com/reference/ctime/strftime/
+    time_t now;
+    struct tm datetimeinfo;
+    time(&now);
+    localtime_r(&now, &datetimeinfo);
+
+    // tm_year will be (1970 - 1900) = 70, if not set
+    if (datetimeinfo.tm_year < 100) // Time travel not supported :P
+    {
+        // Date/Time is not set yet
+        // ESP_LOGE(TAG, "Date/time not set yet [%d]",datetimeinfo.tm_year);    
+        return;
+    }
+
+    // Date & Time formatted
+    char strftime_buf[64];
+    strftime(strftime_buf, sizeof(strftime_buf), "%c %z", &datetimeinfo);
+    ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
+    // footer_message("Date/Time: %s",strftime_buf);
+
+    // Date formatted
+    strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", &datetimeinfo);
+    lv_label_set_text_fmt(lbl_date,"%s",strftime_buf);
+
+    // Time in 24hrs
+    // strftime(strftime_buf, sizeof(strftime_buf), "%H:%M", datetimeinfo);
+
+    // Time in 12hrs - %p for AM/PM
+    strftime(strftime_buf, sizeof(strftime_buf), "%I:%M", &datetimeinfo);
+    lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);
+}
+
+static const char* get_id_string(esp_event_base_t base, int32_t id) {
+    //if (base == TUX_EVENTS) {
         switch(id) {
             case TUX_EVENT_DATETIME_SET:
                 return "TUX_EVENT_DATETIME_SET";
-            break;
             case TUX_EVENT_WEATHER_UPDATED:
                 return "TUX_EVENT_WEATHER_UPDATED";
-            break;
             case TUX_EVENT_THEME_CHANGED:
                 return "TUX_EVENT_THEME_CHANGED";
-            break;
+            default:
+                return "TUX_EVENT_UNKNOWN";        
         }
-    } 
-    return "TUX_EVENT_UNKNOWN";
+    //} 
 }
 
 // tux event handler
@@ -99,22 +138,12 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 {
     ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
 
-    tm * datetimeinfo;
-    datetimeinfo = (tm*)event_data;
+    // Set device timezone
+    // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    setenv("TZ", TZ_STRING, 1);
+    tzset();    
 
-    char strftime_buf[64];
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", datetimeinfo);
-    ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
-
-    ESP_LOGE(TAG, "Time : %d:%d:%d", 
-                    datetimeinfo->tm_hour,
-                    datetimeinfo->tm_min,
-                    datetimeinfo->tm_sec);
-
-    lv_label_set_text_fmt(lbl_time, "%02d:%02d", 
-                datetimeinfo->tm_hour,
-                datetimeinfo->tm_min);
-
+    update_datetime_ui();
 }                          
 
 // Wifi & IP related event handler
@@ -191,7 +220,7 @@ extern "C" void app_main(void)
     // LV_FS integration & print readme.txt from the root
     lv_print_readme_txt();
 
-/* Push these to its own task later*/
+/* Push LVGL/UI to its own task later*/
     // Splash screen
     lvgl_acquire();
     create_splash_screen();
@@ -225,41 +254,18 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
-    // lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
-    // lv_timer_ready(timer_status);
+    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    lv_timer_ready(timer_status);
 }
 
 static void periodic_timer_callback(lv_timer_t * timer)
 {
+    // Battery icon animation
     if (battery_value>100) battery_value=0;
-    // Just blinking the Wifi icon between GREY & BLUE
-    if (wifi_on)
-    {
-        lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_GREY));
-        lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
+    battery_value+=10;
+    lv_update_battery(battery_value);
 
-        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
-        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
-
-        lv_update_battery(battery_value);
-        wifi_on = !wifi_on;
-        battery_value+=10;
-
-        ESP_LOGI(TAG, "periodic_timer_callback : WiFi = ON\n");
-    }
-    else
-    {
-        lv_style_set_text_color(&style_ble, lv_palette_main(LV_PALETTE_BLUE));
-        lv_label_set_text(icon_ble, FA_SYMBOL_BLE);
-
-        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
-        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
-        lv_update_battery(battery_value);
-        wifi_on = !wifi_on;
-        battery_value+=10;
-
-        ESP_LOGI(TAG, "periodic_timer_callback : WiFi = OFF\n");
-    }
+    update_datetime_ui();
 }
 
 static void lv_update_battery(uint batval)

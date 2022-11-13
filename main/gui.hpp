@@ -338,13 +338,13 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     lbl_time = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_MID, 0);
     lv_obj_set_style_text_font(lbl_time, &font_7seg_64, 0);
-    lv_label_set_text(lbl_time, "20:25");
+    lv_label_set_text(lbl_time, "00:00");
     
     // Date
     lbl_date = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_date, LV_ALIGN_BOTTOM_MID, 0);
     lv_obj_set_style_text_font(lbl_date, font_normal, 0);
-    lv_label_set_text(lbl_date, "Sat, 05 Nov 2022");
+    lv_label_set_text(lbl_date, "waiting for update");
 
     // Weather panel (panel widen with weekly forecast in landscape)
     lv_obj_t *cont_weather = lv_obj_create(cont_panel);

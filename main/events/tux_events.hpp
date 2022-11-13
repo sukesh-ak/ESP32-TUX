@@ -36,12 +36,12 @@ extern "C" {
 // Declare an event base
 ESP_EVENT_DECLARE_BASE(TUX_EVENTS);        // declaration of the TUX_EVENTS family
 
-enum {                                       // declaration of the specific events under the TUX_EVENTS family
-    TUX_EVENT_DATETIME_SET,                   // Date updated through SNTP 
+// declaration of the specific events under the TUX_EVENTS family
+enum {                                       
+    TUX_EVENT_DATETIME_SET,                  // Date updated through SNTP 
     TUX_EVENT_WEATHER_UPDATED,               // Weather updated
     TUX_EVENT_THEME_CHANGED                  // raised when the theme changes
 };
-
 
 #ifdef __cplusplus
 }

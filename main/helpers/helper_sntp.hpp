@@ -43,25 +43,8 @@ void time_sync_notification_cb(struct timeval *tv)
 {
     ESP_LOGI(TAG, "Notification of a time synchronization event");
 
-    char strftime_buf[64];
-    struct tm timeinfo;
-    time_t now = (time_t)tv->tv_sec;
-    //time(&now);
-
-    // Set timezone to Indian Standard Time
-    setenv("TZ", "UTC-05:30", 1);
-    tzset();
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "IST: %s", strftime_buf);
-
-    // Post TUX_EVENT_DATETIME_SET under TUX_EVENTS
-    // Sending datetime string
-    //ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_DATETIME_SET, strftime_buf, sizeof(strftime_buf), portMAX_DELAY));
-
-    // Sending datetime struct tm
-    ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_DATETIME_SET, &timeinfo, sizeof(timeinfo), portMAX_DELAY));
-
+    // Notify about TUX_EVENT_DATETIME_SET / TUX_EVENT_DATETIME_SET event
+    ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_DATETIME_SET, NULL,NULL, portMAX_DELAY));
 }
 
 void configure_time(void *param)
@@ -71,7 +54,7 @@ void configure_time(void *param)
     time(&now);
     localtime_r(&now, &timeinfo);
     // Is time set? If not, tm_year will be (1970 - 1900).
-    if (timeinfo.tm_year < (2016 - 1900)) {
+    if (timeinfo.tm_year < 100) {
         ESP_LOGI(TAG, "Time is not set yet. Connecting and getting time over NTP.");
         obtain_time();
         // update 'now' variable with current time
@@ -99,32 +82,6 @@ void configure_time(void *param)
 #endif
 
     char strftime_buf[64];
-
-    // Timezone default UTC so print local time
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time in UTC is: %s", strftime_buf);
-
-    // Set timezone to Eastern Standard Time and print local time
-    setenv("TZ", "EST5EDT,M3.2.0/2,M11.1.0", 1);
-    tzset();
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time in New York is: %s", strftime_buf);
-
-    // Set timezone to China Standard Time
-    setenv("TZ", "CST-8", 1);
-    tzset();
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
-
-    // Set timezone to Indian Standard Time
-    setenv("TZ", "UTC-05:30", 1);
-    tzset();
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time in India is: %s", strftime_buf);
 
     if (sntp_get_sync_mode() == SNTP_SYNC_MODE_SMOOTH) {
         struct timeval outdelta;
