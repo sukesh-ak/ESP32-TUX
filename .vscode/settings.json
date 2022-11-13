@@ -6,5 +6,10 @@
     "idf.openOcdConfigs": [
       "interface/ftdi/esp32_devkitj_v1.cfg",
       "target/esp32.cfg"
-    ]
+    ],
+    "files.associations": {
+      "esp_ota_ops.h": "c",
+      "esp_http_client.h": "c",
+      "esp_https_ota.h": "c"
+    }
   }

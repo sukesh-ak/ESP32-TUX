@@ -81,8 +81,6 @@ void configure_time(void *param)
     }
 #endif
 
-    char strftime_buf[64];
-
     if (sntp_get_sync_mode() == SNTP_SYNC_MODE_SMOOTH) {
         struct timeval outdelta;
         while (sntp_get_sync_status() == SNTP_SYNC_STATUS_IN_PROGRESS) {

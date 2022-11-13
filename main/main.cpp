@@ -264,8 +264,8 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
-    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
-    lv_timer_ready(timer_status);
+    // lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    // lv_timer_ready(timer_status);
 }
 
 static void periodic_timer_callback(lv_timer_t * timer)

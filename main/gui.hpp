@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
+#include "ota.h"
 #include "widgets/tux_panel.h"
 //LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
@@ -859,6 +859,7 @@ inline void checkupdates_event_handler(lv_event_t *e)
 
         lv_label_set_text_fmt(label, "Checking for updates...");
         LV_LOG_USER("Clicked");
+        xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
     }
 }
 
