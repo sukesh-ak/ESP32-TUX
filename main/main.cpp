@@ -112,9 +112,13 @@ static void update_datetime_ui()
     // Time in 24hrs
     // strftime(strftime_buf, sizeof(strftime_buf), "%H:%M", datetimeinfo);
 
-    // Time in 12hrs - %p for AM/PM
+    // Time in 12hrs 
     strftime(strftime_buf, sizeof(strftime_buf), "%I:%M", &datetimeinfo);
     lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);
+
+    // 12hr clock AM/PM
+    strftime(strftime_buf, sizeof(strftime_buf), "%p", &datetimeinfo);
+    lv_label_set_text_fmt(lbl_ampm, "%s", strftime_buf);
 }
 
 static const char* get_id_string(esp_event_base_t base, int32_t id) {

@@ -27,14 +27,11 @@ SOFTWARE.
 //LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
 
-// LV_FONT_DECLARE(font_7seg_16)
-// LV_FONT_DECLARE(font_7seg_24)
-// LV_FONT_DECLARE(font_7seg_28)
-// LV_FONT_DECLARE(font_7seg_32)
+// LV_FONT_DECLARE(font_7seg_64)
+// LV_FONT_DECLARE(font_7seg_60)
+// LV_FONT_DECLARE(font_7seg_58)
+LV_FONT_DECLARE(font_7seg_56)
 
-// LV_FONT_DECLARE(font_7seg_48)
-// LV_FONT_DECLARE(font_7seg_56)
-LV_FONT_DECLARE(font_7seg_64)
 //LV_FONT_DECLARE(font_robotomono_12)
 LV_FONT_DECLARE(font_robotomono_13)
 
@@ -75,6 +72,7 @@ static lv_obj_t *icon_ble;
 static lv_obj_t *icon_battery;
 
 static lv_obj_t *lbl_time;
+static lv_obj_t *lbl_ampm;
 static lv_obj_t *lbl_date;
 
 static lv_coord_t screen_h;
@@ -324,9 +322,9 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // Date/Time panel
     lv_obj_t *cont_datetime = lv_obj_create(cont_panel);
-    lv_obj_set_size(cont_datetime,170,120);
+    lv_obj_set_size(cont_datetime,180,100);
     lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
-    lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
+    //lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(cont_datetime, LV_SCROLLBAR_MODE_OFF);
     lv_obj_align(cont_datetime,LV_ALIGN_LEFT_MID,0,0);
     lv_obj_set_style_bg_opa(cont_datetime,LV_OPA_TRANSP,0);
@@ -336,9 +334,14 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // Time
     lbl_time = lv_label_create(cont_datetime);
-    lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_MID, 0);
-    lv_obj_set_style_text_font(lbl_time, &font_7seg_64, 0);
+    lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_LEFT, 0);
+    lv_obj_set_style_text_font(lbl_time, &font_7seg_56, 0);
     lv_label_set_text(lbl_time, "00:00");
+
+    // AM/PM
+    lbl_ampm = lv_label_create(cont_datetime);
+    lv_obj_set_style_align(lbl_ampm, LV_ALIGN_BOTTOM_LEFT, 0);
+    lv_label_set_text(lbl_ampm, "AM");
     
     // Date
     lbl_date = lv_label_create(cont_datetime);

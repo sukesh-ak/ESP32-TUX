@@ -22,6 +22,8 @@ https://www.cogsci.ed.ac.uk/~richard/utf-8.cgi?input=f294&mode=hex
 then define constants for us like
 #define FA_BLE_SYMBOL "\xEF\x8A\x94"
 
+For 7seg font
+0123456789 .:'
 
 /*
     Free PNG icons => https://www.flaticon.com/search?word=charte&shape=outline&order_by=4
