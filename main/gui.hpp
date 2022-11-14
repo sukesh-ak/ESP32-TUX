@@ -65,6 +65,8 @@ static lv_obj_t *island_devinfo;
 
 static lv_obj_t *label_title;
 static lv_obj_t *label_message;
+static lv_obj_t *lbl_version;
+static lv_obj_t *lbl_update_status;
 
 static lv_obj_t *icon_storage;
 static lv_obj_t *icon_wifi;
@@ -123,6 +125,7 @@ static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t *parent);
 static void show_ui();
 static string device_info();
+static const char* get_firmware_version();
 
 static void rotate_event_handler(lv_event_t *e);
 static void theme_switch_event_handler(lv_event_t *e);
@@ -500,29 +503,30 @@ static void tux_panel_ota(lv_obj_t *parent)
     lv_obj_set_flex_align(cont_ota, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     // Current Firmware version
-    lv_obj_t *lbl_version = lv_label_create(cont_ota);
+    lbl_version = lv_label_create(cont_ota);
     lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
     lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
+    lv_label_set_text_fmt(lbl_version, "Firmware Version %s",get_firmware_version());
 
     // Check for Updates button
     lv_obj_t *btn_checkupdates = lv_btn_create(cont_ota);
     lv_obj_set_size(btn_checkupdates, LV_SIZE_CONTENT, 40);
     lv_obj_align(btn_checkupdates, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_add_event_cb(btn_checkupdates, checkupdates_event_handler, LV_EVENT_ALL, NULL);
     lv_obj_t *lbl2 = lv_label_create(btn_checkupdates);
     lv_label_set_text(lbl2, "Check for Updates");
     lv_obj_center(lbl2);
+    lv_obj_add_event_cb(btn_checkupdates, checkupdates_event_handler, LV_EVENT_ALL, NULL);
 
     lv_obj_t *esp_updatestatus = lv_obj_create(cont_ota);
     lv_obj_set_size(esp_updatestatus, LV_PCT(100), LV_SIZE_CONTENT);
     lv_obj_set_style_bg_opa(esp_updatestatus, LV_OPA_10, 0);
     lv_obj_set_style_border_width(esp_updatestatus, 0, 0);
 
-    lv_obj_t *lbl_update_status = lv_label_create(esp_updatestatus);
+    lbl_update_status = lv_label_create(esp_updatestatus);
     lv_obj_set_style_text_color(lbl_update_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
     lv_obj_align(lbl_update_status, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(lbl_update_status, "New version available - v 1.2.0");
+    lv_label_set_text(lbl_update_status, "Click to check for updates");
+
 }
 
 static void tux_panel_devinfo(lv_obj_t *parent)
@@ -607,7 +611,7 @@ static void qrcode_ui(lv_obj_t *parent)
     lv_obj_t *qr = lv_qrcode_create(parent, 100, fg_color, bg_color);
 
     /* Set data - format of BLE provisioning data */
-    // {"ver":"v1","name":"TUX_4F4440","pop":"abcd1234","transport":"ble"}
+    // {"ver":"v1","name":"TUX_4AA440","pop":"abcd1234","transport":"ble"}
     const char *data = "https://www.sukesh.me";
     lv_qrcode_update(qr, data, strlen(data));
 
@@ -855,9 +859,9 @@ inline void checkupdates_event_handler(lv_event_t *e)
     if (code == LV_EVENT_CLICKED)
     {
         /*Get the first child of the button which is the label and change its text*/
-        lv_obj_t *label = lv_obj_get_child(btn, 0);
-
-        lv_label_set_text_fmt(label, "Checking for updates...");
+        // Maybe disable the button and enable once completed
+        //lv_obj_t *label = lv_obj_get_child(btn, 0);
+        //lv_label_set_text_fmt(label, "Checking for updates...");
         LV_LOG_USER("Clicked");
         xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
     }
@@ -910,4 +914,13 @@ static string device_info()
     //ESP_LOGE(TAG,"\n%s",device_info().c_str());
     return s_chip_info;
 }
-    
+
+static const char* get_firmware_version()
+{
+    const esp_partition_t *running = esp_ota_get_running_partition();
+    esp_app_desc_t running_app_info;
+    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
+        return fmt::format("{}",running_app_info.version).c_str();
+    }
+    return "0.0.0";
+}

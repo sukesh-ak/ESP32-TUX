@@ -69,6 +69,12 @@ menu "ESP32-TUX Configuration"
                 URL of the mqtt broker to connect to
     endmenu
     menu "SNTP Config"
+        config TIMEZONE_STRING
+            string 
+            prompt "Enter Timezone String (TZ format)"
+            default "UTC-05:30"
+            help
+                Refer TZ format database used with linux
         config SNTP_MAX_RETRY_COUNT
             int 
             default 10

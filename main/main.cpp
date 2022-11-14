@@ -72,18 +72,19 @@ ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
 
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
-static bool wifi_on = false;
+static bool is_wifi_connected = false;
 static int battery_value = 0;
+static lv_timer_t * timer_status;
 
-// Take your pick, here is the complete list :)
+// Take your pick, here is the complete timezone list :)
 // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 // #define TZ_STRING "EST5EDT,M3.2.0/2,M11.1.0"    // Eastern Standard Time
 // #define TZ_STRING "CST-8"                       // China Standard Time
 #define TZ_STRING "UTC-05:30"                   // India Standart Time
 
+// GEt time from internal RTC and update date/time of the clock
 static void update_datetime_ui()
 {
-    // Update time
     // date/time format reference => https://cplusplus.com/reference/ctime/strftime/
     time_t now;
     struct tm datetimeinfo;
@@ -102,7 +103,6 @@ static void update_datetime_ui()
     char strftime_buf[64];
     strftime(strftime_buf, sizeof(strftime_buf), "%c %z", &datetimeinfo);
     //ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
-    //footer_message("%s",strftime_buf);
 
     // Date formatted
     strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", &datetimeinfo);
@@ -151,33 +151,52 @@ static const char* get_id_string(esp_event_base_t base, int32_t id) {
 static void tux_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
-    ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    //ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
     if (event_base != TUX_EVENTS) return;   // bye bye - me not invited :(
 
     // Handle TUX_EVENTS
     if (event_id == TUX_EVENT_DATETIME_SET) {
-        // Set device timezone
-        // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-        setenv("TZ", TZ_STRING, 1);
+
+        // Update local timezone
+        setenv("TZ", CONFIG_TIMEZONE_STRING, 1);
         tzset();    
+
+        // update clock
         update_datetime_ui();
+
     } else if (event_id == TUX_EVENT_OTA_STARTED) {
         // OTA Started
+        char *reason = (char*)event_data;
+        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
 
     } else if (event_id == TUX_EVENT_OTA_IN_PROGRESS) {
         // OTA In Progress - progressbar?
+        int img_len_read = (int)event_data;
+        ESP_LOGW(TAG, "OTA: Data read : %d", img_len_read);
+        lv_label_set_text_fmt(lbl_update_status, "OTA: Data read : %d", img_len_read);
 
     } else if (event_id == TUX_EVENT_OTA_ROLLBACK) {
         // OTA Rollback - god knows why!
+        char *reason = (char*)event_data;
+        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
 
     } else if (event_id == TUX_EVENT_OTA_COMPLETED) {
         // OTA Completed - YAY! Success
+        char *reason = (char*)event_data;
+        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+
+        // wait before reboot
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
 
     } else if (event_id == TUX_EVENT_OTA_ABORTED) {
         // OTA Aborted - Not a good day for updates
+        char *reason = (char*)event_data;
+        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
 
     } else if (event_id == TUX_EVENT_OTA_FAILED) {
-        // OTA Failed - huh!
+        // OTA Failed - huh! - maybe in red color?
+        char *reason = (char*)event_data;
+        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
 
     } else if (event_id == TUX_EVENT_WEATHER_UPDATED) {
         // Weather updates - summer?
@@ -194,6 +213,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 {
     if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
     {
+        //is_wifi_connected = true; // Use GOT_IP instead
         // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
@@ -201,24 +221,33 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
-        // Not a warning but just for highlight
+        is_wifi_connected = false;        
+        lv_timer_pause(timer_status);   // stop/pause timer
+
         ESP_LOGW(TAG,"WIFI_EVENT_STA_DISCONNECTED");
+
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
-        // Not a warning but just for highlight
+        is_wifi_connected = true;
+        lv_timer_ready(timer_status);   // start timer
+
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+
         // Display IP on the footer
         footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
         
+        // We got IP, lets update time from SNTP. RTC keeps time unless powered off
         xTaskCreate(configure_time, "config_time", 1024*4, NULL, 3, NULL);
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_LOST_IP)
     {
+        is_wifi_connected = false;
         ESP_LOGW(TAG,"IP_EVENT_STA_LOST_IP");
+
         // Ideally we can kick off provisioning task here.  Will test later
         xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
     }
@@ -241,6 +270,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
 extern "C" void app_main(void)
 {
+    esp_log_level_set("wifi", ESP_LOG_WARN); // enable WARN logs from WiFi stack
+
     // Print device info
     ESP_LOGE(TAG,"\n%s",device_info().c_str());
 
@@ -314,8 +345,8 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     // Status icon animation timer
-    lv_timer_t * timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
-    lv_timer_ready(timer_status);
+    timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+
 }
 
 static void periodic_timer_callback(lv_timer_t * timer)

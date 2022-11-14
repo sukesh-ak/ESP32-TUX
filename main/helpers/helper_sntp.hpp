@@ -53,6 +53,8 @@ void configure_time(void *param)
     struct tm timeinfo;
     time(&now);
     localtime_r(&now, &timeinfo);
+
+
     // Is time set? If not, tm_year will be (1970 - 1900).
     if (timeinfo.tm_year < 100) {
         ESP_LOGI(TAG, "Time is not set yet. Connecting and getting time over NTP.");
@@ -92,7 +94,7 @@ void configure_time(void *param)
             vTaskDelay(2000 / portTICK_PERIOD_MS);
         }
     }
-
+    
     ESP_LOGI(TAG, "Got time - Self-destruct Task :)");
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
