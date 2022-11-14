@@ -195,7 +195,7 @@ void run_ota_task(void *pvParameter)
         // esp_https_ota_perform returns after every read operation which gives user the ability to
         // monitor the status of OTA upgrade by calling esp_https_ota_get_image_len_read, which gives length of image
         // data read so far.
-        ESP_LOGD(TAG, "Image bytes read: %d", esp_https_ota_get_image_len_read(https_ota_handle));
+        ESP_LOGW(TAG, "Image bytes read: %d", esp_https_ota_get_image_len_read(https_ota_handle));
 
         // Notify about TUX_EVENT_OTA_IN_PROGRESS event / Calculate and send progress percentage (or bytes)
         //ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_IN_PROGRESS, NULL,0, portMAX_DELAY));        

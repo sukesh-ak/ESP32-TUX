@@ -16,8 +16,10 @@ set(COMPONENTS bootloader esptool_py main)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 
-# Disable missing field initializers warnings
+# Disable annoying warnings (for now)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-missing-field-initializers" APPEND)
+idf_build_set_property(COMPILE_OPTIONS "-Wno-unused-variable" APPEND)
+idf_build_set_property(COMPILE_OPTIONS "-Wno-unused-function" APPEND)
 
 project(ESP32-TUX)
 
