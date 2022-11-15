@@ -173,11 +173,11 @@ void lv_setup_styles()
     lv_style_set_align(&style_title, LV_ALIGN_LEFT_MID);
     lv_style_set_pad_left(&style_title, 15);
     lv_style_set_border_width(&style_title, 0);
-    lv_style_set_size(&style_title, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_style_set_size(&style_title, LV_SIZE_CONTENT);
 
     // HEADER STATUS ICON PANEL
     lv_style_init(&style_iconstatus);
-    lv_style_set_size(&style_iconstatus, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_style_set_size(&style_iconstatus, LV_SIZE_CONTENT);
     lv_style_set_pad_all(&style_iconstatus, 0);
     lv_style_set_border_width(&style_iconstatus, 0);
     lv_style_set_align(&style_iconstatus, LV_ALIGN_RIGHT_MID);

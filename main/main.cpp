@@ -238,7 +238,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
 
         // Display IP on the footer
-        footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        //footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        lv_label_set_text_fmt(lbl_update_status, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
         
         // We got IP, lets update time from SNTP. RTC keeps time unless powered off
         xTaskCreate(configure_time, "config_time", 1024*4, NULL, 3, NULL);
