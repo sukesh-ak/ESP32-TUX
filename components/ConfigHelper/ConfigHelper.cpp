@@ -36,7 +36,7 @@ Config Json format:
 */
 
 #include "ConfigHelper.hpp"
-static const char* TAG = "JsonConfig";
+static const char* TAG = "ConfigHelper";
 
 ConfigHelper::ConfigHelper()
 {
