@@ -26,12 +26,15 @@ SOFTWARE.
 #define TUX_CONFIG_H_
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
+#include <filesystem>
 #include <inttypes.h>
 #include "cJSON.h"
 #include "esp_log.h"
-
+#include <fstream>
 using namespace std;
+
 
 // set this up in menuconfig
 typedef enum

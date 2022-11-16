@@ -41,8 +41,6 @@ using namespace std ;
 
 #include "ConfigHelper.hpp"
 
-static const char *TAG = "ESP32-TUX";
-
 #include "wifi_prov_mgr.hpp"    // Provision and connect to Wifi
 #include "helper_sntp.hpp"      // Get and set device time
 

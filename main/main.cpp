@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+static const char *TAG = "ESP32-TUX";
 #include "main.hpp"
 
 // GEt time from internal RTC and update date/time of the clock
@@ -226,10 +227,13 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(err); 
 
 //********************** CONFIG HELPER TESTING STARTS
+    // Init SPIFF & print readme.txt from the root
+    init_spiff();
+
     // Instantiate and setup default values
     cfg = new ConfigHelper();
     // default - don't persist
-    cfg->StorageType = CONFIG_STORE_NONE;  
+    cfg->StorageType = CONFIG_STORE_SPIFF;  
     // Save settings
     cfg->save_config();   // save default loaded settings
     // Load values
@@ -240,6 +244,7 @@ extern "C" void app_main(void)
     cfg->Brightness=250;
     // Save settings again
     cfg->save_config();
+    cfg->load_config();
 
 //********************** CONFIG HELPER TESTING ENDS
 
@@ -266,10 +271,6 @@ extern "C" void app_main(void)
 
     // TUX EVENTS
     ESP_ERROR_CHECK(esp_event_handler_instance_register(TUX_EVENTS, ESP_EVENT_ANY_ID, tux_event_handler, NULL, NULL));
-
-    // Init SPIFF & print readme.txt from the root
-    init_spiff();
-    print_readme_txt();
 
     // LV_FS integration & print readme.txt from the root
     lv_print_readme_txt();

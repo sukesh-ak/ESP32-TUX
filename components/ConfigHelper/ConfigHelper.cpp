@@ -52,20 +52,45 @@ ConfigHelper::ConfigHelper()
 // Decide storage later
 void ConfigHelper::load_config()
 {
-    //printf("\n::******************* Loading json\n");
     ESP_LOGI(TAG,"******************* Loading JSON *******************");
     switch (StorageType)
     {
         case CONFIG_STORE_SPIFF:
             // Code to load json string to jsonString from SPIFF partition
+            {
+                ifstream jsonfile("/spiffs/config.json");
+                if (!jsonfile.is_open())
+                {
+                    ESP_LOGE(TAG,"Config File open for read failed");
+                    save_config();  // create file with default values
+                }
+
+                jsonString.assign((std::istreambuf_iterator<char>(jsonfile)),
+                            (std::istreambuf_iterator<char>()));
+
+                jsonfile.close();
+            }
             break;
         case CONFIG_STORE_FAT:
             // Code to load json string to jsonString from FAT partition
             break;
         case CONFIG_STORE_SDCARD:
             // Code to load json string to jsonString from SD CARD
+            {
+                ifstream jsonfile("/spiffs/config.json");
+                if (!jsonfile.is_open())
+                {
+                    ESP_LOGE(TAG,"Config File open for read failed");
+                    save_config();  // create file with default values
+                }
+
+                jsonString.assign((std::istreambuf_iterator<char>(jsonfile)),
+                            (std::istreambuf_iterator<char>()));
+
+                jsonfile.close();                
+            }
             break;
-        default:
+        case CONFIG_STORE_NONE:
             // default is set to CONFIG_STORE_NONE - do not persist
             break;
     }
@@ -119,7 +144,27 @@ void ConfigHelper::save_config()
     switch (StorageType)
     {
         case CONFIG_STORE_SPIFF:
-            // Code to load json string to jsonString from SPIFF partition
+            // Code to save jsonString to SPIFF partition
+            {
+            // FILE* f = fopen("/spiffs/config.json", "w");
+            // if (f == NULL) {
+            //     ESP_LOGE(TAG, "Failed to open /spiffs/readme.txt for writing");
+            //     return;
+            // }
+            // fprintf(f,jsonString.c_str());
+            // fclose(f);
+            ofstream jsonfile("/spiffs/config.json");
+            if (!jsonfile.is_open())
+            {
+                ESP_LOGE(TAG,"Config File open for write failed");
+                return ;//ESP_FAIL;
+            }
+            jsonfile << jsonString;
+            jsonfile.flush();
+            jsonfile.close();
+            }
+
+
             break;
         case CONFIG_STORE_FAT:
             // Code to load json string to jsonString from FAT partition
@@ -127,7 +172,7 @@ void ConfigHelper::save_config()
         case CONFIG_STORE_SDCARD:
             // Code to load json string to jsonString from SD CARD
             break;
-        default:
+        case CONFIG_STORE_NONE:
             // default is set to CONFIG_STORE_NONE - do not persist
             break;
     }     
