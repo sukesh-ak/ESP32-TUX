@@ -28,6 +28,9 @@ static const char *TAG = "ESP32-TUX";
 // GEt time from internal RTC and update date/time of the clock
 static void update_datetime_ui()
 {
+    // If we are on another screen where lbl_time is not valid
+    if (!lv_obj_is_valid(lbl_time)) return;
+
     // date/time format reference => https://cplusplus.com/reference/ctime/strftime/
     time_t now;
     struct tm datetimeinfo;

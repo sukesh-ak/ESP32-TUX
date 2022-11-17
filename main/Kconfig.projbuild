@@ -99,7 +99,7 @@ menu "ESP32-TUX Configuration"
     menu "OTA Config"
         config OTA_FIRMWARE_UPGRADE_URL
             string "Firmware Upgrade URL"
-            default "https://192.168.2.106:8070/hello_world.bin"
+            default "https://192.168.1.128:4443/build/ESP32-TUX.bin"
             help
                 URL of server which hosts the firmware image.
     
