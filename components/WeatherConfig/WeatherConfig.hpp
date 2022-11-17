@@ -22,8 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef TUX_CONFIG_H_
-#define TUX_CONFIG_H_
+/*
+Weather Config Json format:
+{
+    "weather_provider": "openweathermap.org",
+    "settings" : {
+        "location": "bangalore,india",
+        "api_key" : "abcd",         // Free api - updates in 1min interval
+        "units" : "metric"          // Kelvin / Celsius / Fahrenheit
+        "update_interval" : 60      // in seconds
+    }
+}
+*/
+
+#ifndef TUX_WEATHERCONFIG_H_
+#define TUX_WEATHERCONFIG_H_
 
 #include <iostream>
 #include <sstream>
@@ -35,37 +48,37 @@ SOFTWARE.
 #include <fstream>
 using namespace std;
 
-
-// set this up in menuconfig
 typedef enum
 {
-    CONFIG_STORE_NONE,
-    CONFIG_STORE_SPIFF,  // SPIFF partition
-    CONFIG_STORE_FAT,    // FAT partition
-    CONFIG_STORE_SDCARD  // On SD CARD
-} config_store_t;
+    WEATHER_UNITS_KELVIN,
+    WEATHER_UNITS_CELSIUS,
+    WEATHER_UNITS_FAHRENHEIT
+} weather_units_t;
 
-class ConfigHelper
+
+class WeatherConfig
 {
     public:
-        string DeviceName;
-        uint8_t Brightness;        // 0-255
-        string TimeZone;           // +5:30
-        string CurrentTheme;       // dark / light
-        string WeatherLocation;    // bangalore, india
-        config_store_t StorageType;
+        string WeatherProvider;
+        string Location;        
+        string APIkey;           
+        uint UpdateInterval;   // in seconds
+        weather_units_t TemperatureUnits;
 
-        ConfigHelper();
+        WeatherConfig(string filename);
         void load_config();
         void save_config();
-        ~ConfigHelper();
 
     private:
+        void read_json_file();
+        void write_json_file();
+
+        string file_name;
         string jsonString;
         cJSON *root;
         cJSON *settings;
-
     protected:
 };
+
 
 #endif

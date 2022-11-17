@@ -10,6 +10,7 @@
     "files.associations": {
       "esp_ota_ops.h": "c",
       "esp_http_client.h": "c",
-      "esp_https_ota.h": "c"
+      "esp_https_ota.h": "c",
+      "*.inc": "cpp"
     }
   }

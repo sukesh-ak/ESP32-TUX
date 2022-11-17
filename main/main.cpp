@@ -94,13 +94,14 @@ static const char* get_id_string(esp_event_base_t base, int32_t id) {
 static void tux_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
-    //ESP_LOGW(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    ESP_LOGD(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
     if (event_base != TUX_EVENTS) return;   // bye bye - me not invited :(
 
     // Handle TUX_EVENTS
     if (event_id == TUX_EVENT_DATETIME_SET) {
 
         // Update local timezone
+        //setenv("TZ", cfg->TimeZone, 1);
         setenv("TZ", CONFIG_TIMEZONE_STRING, 1);
         tzset();    
 
@@ -154,9 +155,9 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
+    ESP_LOGD(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
     if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
     {
-        //is_wifi_connected = true; // Use GOT_IP instead
         // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
@@ -180,8 +181,6 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
 
-        // Display IP on the footer
-        //footer_message("IP: " IPSTR, IP2STR(&event->ip_info.ip));
         lv_label_set_text_fmt(lbl_update_status, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
         
         // We got IP, lets update time from SNTP. RTC keeps time unless powered off
@@ -214,7 +213,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
 extern "C" void app_main(void)
 {
-    esp_log_level_set("wifi", ESP_LOG_WARN); // enable WARN logs from WiFi stack
+    esp_log_level_set(TAG, ESP_LOG_DEBUG);      // enable DEBUG logs for this App
+    esp_log_level_set("SettingsConfig", ESP_LOG_DEBUG);    // enable WARN logs from WiFi stack
+    esp_log_level_set("wifi", ESP_LOG_WARN);    // enable WARN logs from WiFi stack
+
+    // Print device info
+    ESP_LOGE(TAG,"\n%s",device_info().c_str());
 
     //Initialize NVS
     esp_err_t err = nvs_flash_init();
@@ -226,14 +230,20 @@ extern "C" void app_main(void)
     }
     ESP_ERROR_CHECK(err); 
 
-//********************** CONFIG HELPER TESTING STARTS
-    // Init SPIFF & print readme.txt from the root
+    // Init SPIFF - needed for lvgl images
     init_spiff();
 
-    // Instantiate and setup default values
-    cfg = new ConfigHelper();
-    // default - don't persist
-    cfg->StorageType = CONFIG_STORE_SPIFF;  
+#ifdef SD_ENABLED
+    // Initializing SDSPI 
+    if (init_sdspi() == ESP_OK) // SD SPI
+    {
+        sd_card_enabled = true;
+    }
+#endif   
+//********************** CONFIG HELPER TESTING STARTS
+
+     //cfg = new SettingsConfig("/sdcard/settings.json");    // yet to test
+    cfg = new SettingsConfig("/spiffs/settings.json");
     // Save settings
     cfg->save_config();   // save default loaded settings
     // Load values
@@ -247,10 +257,6 @@ extern "C" void app_main(void)
     cfg->load_config();
 
 //********************** CONFIG HELPER TESTING ENDS
-
-
-    // Print device info
-    ESP_LOGE(TAG,"\n%s",device_info().c_str());
 
     lcd.init();        // Initialize LovyanGFX
     lv_init();         // Initialize lvgl
@@ -296,11 +302,11 @@ extern "C" void app_main(void)
 
 #ifdef SD_ENABLED
     lvgl_acquire();
-    // Initializing SDSPI 
-    if (init_sdspi() != ESP_OK) // SD SPI
-        lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_RED));
-    else 
+    // SD CARD available? 
+    if (sd_card_enabled) 
         lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_GREEN));
+    else 
+        lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_RED));
     
     lv_obj_refresh_style(icon_storage, LV_PART_ANY, LV_STYLE_PROP_ANY);
     lvgl_release();

@@ -39,7 +39,7 @@ using namespace std ;
 #include "esp_ota_ops.h"
 #include "esp_app_format.h"
 
-#include "ConfigHelper.hpp"
+#include "SettingsConfig.hpp"
 
 #include "wifi_prov_mgr.hpp"    // Provision and connect to Wifi
 #include "helper_sntp.hpp"      // Get and set device time
@@ -50,7 +50,7 @@ using namespace std ;
 // Make SPIFF available to LVGL Filesystem
 #include "helper_lv_fs.hpp"
 
-// Enable one of the devices from below
+// Enable one of the devices from below (shift to bsp selection later)
 ///#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
 #include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
 
@@ -69,11 +69,12 @@ using namespace std ;
 /* Event source periodic timer related definitions */
 ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
 
-ConfigHelper *cfg;
+SettingsConfig *cfg;
 
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
 static bool is_wifi_connected = false;
+static bool sd_card_enabled = false;
 static int battery_value = 0;
 static lv_timer_t * timer_status;
 

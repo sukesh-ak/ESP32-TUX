@@ -3,7 +3,7 @@ menu "ESP32-TUX Configuration"
     choice PROV_TRANSPORT
         bool "Provisioning Transport"
         default PROV_TRANSPORT_SOFTAP if IDF_TARGET_ESP32S2
-        default PROV_TRANSPORT_BLE
+        default PROV_TRANSPORT_SOFTAP
         help
             Wi-Fi provisioning component offers both, SoftAP and BLE transports. Choose any one.
 
@@ -109,7 +109,7 @@ menu "ESP32-TUX Configuration"
     
         config OTA_SKIP_COMMON_NAME_CHECK
             bool "Skip server certificate CN fieldcheck"
-            default n
+            default y
             help
                 This allows you to skip the validation of OTA server certificate CN field.
     
