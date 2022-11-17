@@ -535,12 +535,11 @@ static void tux_panel_ota(lv_obj_t *parent)
     lv_obj_set_style_text_color(lbl_update_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
     lv_obj_align(lbl_update_status, LV_ALIGN_CENTER, 0, 0);
     lv_label_set_text(lbl_update_status, "Click to check for updates");
-
 }
 
 static void tux_panel_devinfo(lv_obj_t *parent)
 {
-    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 180);
+    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 190);
     lv_obj_add_style(island_devinfo, &style_ui_island, 0);
 
     // Get Content Area to add UI elements

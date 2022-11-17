@@ -32,6 +32,9 @@
 - Support more devices with TFT + Capacitive Touch
 
 ## Features included 
+- [x] OTA Update with esp_events integration
+- [x] Wi-Fi Provisioning using SoftAP + Espressif Provisioning App
+- [x] UI Islands (Widget - tux_panel)
 - [x] Support for updating UI from different tasks [lvgl_acquire/lvgl_release]
 - [x] UI code separation into [gui.hpp](/main/gui.hpp)
 - [x] Same UI code which adapts to different resolutions
@@ -47,13 +50,9 @@
 - [x] Enable SPIFF partition and init [here](/main/helpers/helper_spiff.hpp)
 - [x] Map SPIFF to LVGL Filesystem as F: [here](/main/helpers/helper_lv_fs.hpp)
 - [x] Load Images directly using F:/<filename>.png [here => tux_panel_weather()](/main/gui.hpp)
-
 - [x] Settings Page
-- [x] UI Islands (Widget - tux_panel)
-- [x] OTA Update with esp_events integration
 
 ### Todo List
-- [ ] Wi-Fi Provisioning
 - [ ] BLE Config 
 - [ ] Pages as modules
 - [ ] Multiple Navigation styles
