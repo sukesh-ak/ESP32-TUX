@@ -25,13 +25,6 @@ SOFTWARE.
 #include "SettingsConfig.hpp"
 static const char* TAG = "SettingsConfig";
 
-/*
-SettingsConfig::SettingsConfig()
-{
-    
-}
-*/
-
 SettingsConfig::SettingsConfig(string filename)
 {
     // If load is not called, these are the default values
@@ -39,6 +32,13 @@ SettingsConfig::SettingsConfig(string filename)
     Brightness = 128;                       // 0-255
     TimeZone = "+5:30";           
     CurrentTheme = "dark";                  // light / theme / ???
+
+    WeatherProvider = "OpenWeatherMaps";
+    WeatherLocation = "Bangalore, India";
+    WeatherAPIkey = "";
+    WeatherUpdateInterval = 5 * 60;    // Every 5mins
+    TemperatureUnits = WEATHER_UNITS_CELSIUS;
+
     file_name = filename;
 }
 

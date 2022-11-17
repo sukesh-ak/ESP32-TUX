@@ -23,20 +23,53 @@ SOFTWARE.
 */
 
 /*
-Weather Config Json format:
 {
-    "weather_provider": "openweathermap.org",
-    "settings" : {
-        "location": "bangalore,india",
-        "api_key" : "abcd",         // Free api - updates in 1min interval
-        "units" : "metric"          // Kelvin / Celsius / Fahrenheit
-        "update_interval" : 60      // in seconds
+  "coord": {
+    "lon": 77.6033,
+    "lat": 12.9762
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "few clouds",
+      "icon": "02n"
     }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 19.8,
+    "feels_like": 19.4,
+    "temp_min": 18.9,
+    "temp_max": 19.8,
+    "pressure": 1017,
+    "humidity": 60
+  },
+  "visibility": 6000,
+  "wind": {
+    "speed": 1.54,
+    "deg": 360
+  },
+  "clouds": {
+    "all": 20
+  },
+  "dt": 1668704139,
+  "sys": {
+    "type": 1,
+    "id": 9205,
+    "country": "IN",
+    "sunrise": 1668646147,
+    "sunset": 1668687606
+  },
+  "timezone": 19800,
+  "id": 1277333,
+  "name": "Bengaluru",
+  "cod": 200
 }
 */
 
-#ifndef TUX_WEATHERCONFIG_H_
-#define TUX_WEATHERCONFIG_H_
+#ifndef TUX_OWM_H_
+#define TUX_OWM_H_
 
 #include <iostream>
 #include <sstream>
@@ -47,38 +80,39 @@ Weather Config Json format:
 #include "esp_log.h"
 #include <fstream>
 using namespace std;
+#include "SettingsConfig.hpp"
 
-typedef enum
-{
-    WEATHER_UNITS_KELVIN,
-    WEATHER_UNITS_CELSIUS,
-    WEATHER_UNITS_FAHRENHEIT
-} weather_units_t;
-
-
-class WeatherConfig
+class OpenWeatherMap
 {
     public:
-        string WeatherProvider;
-        string Location;        
-        string APIkey;           
-        uint UpdateInterval;   // in seconds
-        weather_units_t TemperatureUnits;
+        /* Constructor */
+        OpenWeatherMap();
 
-        WeatherConfig(string filename);
-        void load_config();
-        void save_config();
+        /* HTTPS request to the Weather API */
+        void request_weather();
+
+        /* Handle json response */
+        void load_json();
+
+        /* Cache json on flash/sdcard */
+        void save_json();
 
     private:
-        void read_json_file();
-        void write_json_file();
+        SettingsConfig *cfg;
 
         string file_name;
         string jsonString;
-        cJSON *root;
-        cJSON *settings;
-    protected:
-};
 
+        cJSON *root;
+        cJSON *maininfo;
+        cJSON *coord;
+        cJSON *weather;
+        cJSON *clouds;
+        cJSON *wind;
+        cJSON *sys;
+
+    protected:
+
+};
 
 #endif

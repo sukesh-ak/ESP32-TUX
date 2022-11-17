@@ -269,6 +269,10 @@ extern "C" void app_main(void)
     cfg->save_config();
     cfg->load_config();
 
+//******************************************** 
+    owm = new OpenWeatherMap();
+    owm->request_weather();
+
 //********************** CONFIG HELPER TESTING ENDS
 
     lcd.init();        // Initialize LovyanGFX

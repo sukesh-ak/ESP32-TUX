@@ -66,10 +66,13 @@ using namespace std ;
 #include "gui.hpp"
 #include "events/tux_events.hpp"
 
+#include "OpenWeatherMap.hpp"
+
 /* Event source periodic timer related definitions */
 ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
 
 SettingsConfig *cfg;
+OpenWeatherMap *owm;
 
 static void periodic_timer_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);

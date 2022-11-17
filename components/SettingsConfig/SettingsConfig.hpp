@@ -47,6 +47,18 @@ Config Json format:
 #include <fstream>
 using namespace std;
 
+typedef enum
+{
+    WEATHER_UNITS_KELVIN,
+    WEATHER_UNITS_CELSIUS,
+    WEATHER_UNITS_FAHRENHEIT
+} weather_units_t;
+
+typedef enum{
+    UNITS_METRICS,
+    UNITS_IMPERIAL
+} measurement_units_t;
+
 class SettingsConfig
 {
     public:
@@ -54,6 +66,12 @@ class SettingsConfig
         uint8_t Brightness;        // 0-255
         string TimeZone;           // +5:30
         string CurrentTheme;       // dark / light
+
+        string WeatherProvider;     // OpenWeatherMap
+        string WeatherLocation;            // Bangalore, India
+        string WeatherAPIkey;              // "ABCD..."
+        uint WeatherUpdateInterval;        // in seconds
+        weather_units_t TemperatureUnits;
 
         //SettingsConfig();
         SettingsConfig(string filename);
