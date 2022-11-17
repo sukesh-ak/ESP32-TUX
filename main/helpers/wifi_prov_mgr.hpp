@@ -48,6 +48,9 @@ static EventGroupHandle_t wifi_event_group;
 #define PROV_TRANSPORT_BLE      "ble"
 #define QRCODE_BASE_URL         "https://tux.sukesh.me/qr/qr.html"
 
+// Workaround for adding new event to WIFI_PROV
+#define WIFI_PROV_SHOWQR 10
+
 /* Event handler for catching system events */
 static void event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
@@ -170,6 +173,11 @@ static void wifi_prov_print_qr(const char *name, const char *pop, const char *tr
     esp_qrcode_generate(&cfg, payload);
 #endif /* CONFIG_APP_WIFI_PROV_SHOW_QR */
     ESP_LOGI(TAG, "If QR code is not visible, copy paste the below URL in a browser.\n%s?data=%s", QRCODE_BASE_URL, payload);
+
+
+    // Trigger QR CODE event with the payload
+    ESP_ERROR_CHECK(esp_event_post(WIFI_PROV_EVENT, WIFI_PROV_SHOWQR, payload,sizeof(payload), portMAX_DELAY));  
+
 }
 
 void provision_wifi(void *param)

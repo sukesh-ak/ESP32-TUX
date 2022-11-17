@@ -19,6 +19,7 @@
 > You only need a USB Cable and Browser to install and test on your device.
 
 ## Key Project Goals
+- An easy UI Template to get started quickly
 - UI Scaling for different resolutions
 - Rotate to Landscape / Portrait without code changes
 - Easy re-use of the template with just a header file [Supported Devices here](/main/devices/)
@@ -49,10 +50,10 @@
 
 - [x] Settings Page
 - [x] UI Islands (Widget - tux_panel)
+- [x] OTA Update with esp_events integration
 
 ### Todo List
-- [ ] Wi-Fi Config 
-- [ ] OTA Update 
+- [ ] Wi-Fi Provisioning
 - [ ] BLE Config 
 - [ ] Pages as modules
 - [ ] Multiple Navigation styles

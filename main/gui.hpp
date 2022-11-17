@@ -58,15 +58,18 @@ static lv_obj_t *panel_title;
 static lv_obj_t *panel_status; // Status icons in the header
 static lv_obj_t *content_container;
 static lv_obj_t *screen_container;
+static lv_obj_t *qr_status_container;
 
 static lv_obj_t *island_wifi;
 static lv_obj_t *island_ota;
 static lv_obj_t *island_devinfo;
+static lv_obj_t *prov_qr;
 
 static lv_obj_t *label_title;
 static lv_obj_t *label_message;
 static lv_obj_t *lbl_version;
 static lv_obj_t *lbl_update_status;
+static lv_obj_t *lbl_scan_status;
 
 static lv_obj_t *icon_storage;
 static lv_obj_t *icon_wifi;
@@ -76,6 +79,7 @@ static lv_obj_t *icon_battery;
 static lv_obj_t *lbl_time;
 static lv_obj_t *lbl_ampm;
 static lv_obj_t *lbl_date;
+static lv_obj_t *lbl_wifi_status;
 
 static lv_coord_t screen_h;
 static lv_coord_t screen_w;
@@ -442,53 +446,58 @@ static void tux_panel_config(lv_obj_t *parent)
 static void tux_panel_wifi(lv_obj_t *parent)
 {
     /******** PROVISION WIFI ********/
-    island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI PROVISIONING", 100);
+    island_wifi = tux_panel_create(parent, LV_SYMBOL_WIFI " WIFI STATUS", 270);
     lv_obj_add_style(island_wifi, &style_ui_island, 0);
     // tux_panel_set_title_color(island_wifi, lv_palette_main(LV_PALETTE_BLUE));
 
     // Get Content Area to add UI elements
     lv_obj_t *cont_1 = tux_panel_get_content(island_wifi);
-    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_flow(cont_1, LV_FLEX_FLOW_COLUMN_WRAP);
+    lv_obj_set_flex_align(cont_1, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-    /* ESP-WIFI - Wifi SoftAP Provisioning */
-    lv_obj_t* cont_wifi_prov = lv_obj_create(cont_1);
-    lv_obj_set_size(cont_wifi_prov, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(cont_wifi_prov, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(cont_wifi_prov, 0, 0);
+    lbl_wifi_status = lv_label_create(cont_1);
+    lv_obj_set_size(lbl_wifi_status, LV_SIZE_CONTENT, 30);
+    lv_obj_align(lbl_wifi_status, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_label_set_text(lbl_wifi_status, "Waiting for IP");
 
-    lv_obj_t* label_1 = lv_label_create(cont_wifi_prov);
-    lv_obj_align(label_1, LV_ALIGN_LEFT_MID, 0, 0);
-    lv_label_set_text(label_1, "Provision using SoftAP");
+    // Check for Updates button
+    lv_obj_t *btn_unprov = lv_btn_create(cont_1);
+    lv_obj_set_size(btn_unprov, LV_SIZE_CONTENT, 40);
+    lv_obj_align(btn_unprov, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_t *lbl2 = lv_label_create(btn_unprov);
+    lv_label_set_text(lbl2, "Reset Wi-Fi Settings");
+    lv_obj_center(lbl2);    
 
-    lv_obj_t* sw_1 = lv_switch_create(cont_wifi_prov);
-    lv_obj_align(sw_1, LV_ALIGN_RIGHT_MID, 0, 0);
+    /* ESP QR CODE inserted here */
+    qr_status_container = lv_obj_create(cont_1);
+    lv_obj_set_size(qr_status_container, LV_PCT(100), LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(qr_status_container, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_pad_ver(qr_status_container, 3, 0);
+    lv_obj_set_style_border_width(qr_status_container, 0, 0);
+    lv_obj_set_flex_flow(qr_status_container, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(qr_status_container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
+    lv_obj_add_event_cb(btn_unprov, espwifi_event_handler, LV_EVENT_CLICKED, NULL);
 
-    /* ESP-BLE */
-    // lv_obj_t *esp_ble = lv_obj_create(cont_1);
-    // lv_obj_set_size(esp_ble, LV_PCT(100), LV_SIZE_CONTENT);
-    // lv_obj_set_style_bg_opa(esp_ble, LV_OPA_TRANSP, 0);
-    // lv_obj_set_style_pad_ver(esp_ble, 3, 0);
-    // lv_obj_set_style_border_width(esp_ble, 0, 0);
+    /* QR CODE */
+    lv_color_t bg_color = lv_palette_lighten(LV_PALETTE_GREY, 4);
+    lv_color_t fg_color = lv_palette_darken(LV_PALETTE_BLUE, 4);
 
-    // lv_obj_t *label_2 = lv_label_create(esp_ble);
-    // lv_obj_align(label_2, LV_ALIGN_LEFT_MID, 0, 0);
-    // lv_label_set_text(label_2, "Provision using Bluetooth");
+    prov_qr = lv_qrcode_create(qr_status_container, 100, fg_color, bg_color);
 
-    // lv_obj_t *sw_2 = lv_switch_create(esp_ble);
-    // lv_obj_align(sw_2, LV_ALIGN_RIGHT_MID, 0, 0);
+    /* Set data - format of BLE provisioning data */
+    // {"ver":"v1","name":"TUX_4AA440","pop":"abcd1234","transport":"ble"}
+    const char *qrdata = "https://github.com/sukesh-ak/ESP32-TUX";
+    lv_qrcode_update(prov_qr, qrdata, strlen(qrdata));
 
-    /* ESP TOUCH/ble STATUS*/
-    lv_obj_t *esp_status = lv_obj_create(cont_1);
-    lv_obj_set_size(esp_status, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(esp_status, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_pad_ver(esp_status, 3, 0);
-    lv_obj_set_style_border_width(esp_status, 0, 0);
-    lv_obj_set_flex_flow(esp_status, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(esp_status, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    /*Add a border with bg_color*/
+    lv_obj_set_style_border_color(prov_qr, bg_color, 0);
+    lv_obj_set_style_border_width(prov_qr, 5, 0);
 
-    lv_obj_add_event_cb(sw_1, espwifi_event_handler, LV_EVENT_ALL, esp_status);
-    //lv_obj_add_event_cb(sw_2, espble_event_handler, LV_EVENT_ALL, esp_status);
+    lbl_scan_status = lv_label_create(qr_status_container);
+    lv_obj_set_size(lbl_scan_status, LV_SIZE_CONTENT, 30);
+    lv_label_set_text(lbl_scan_status, "Scan to learn about ESP32-TUX");
+
 }
 
 static void tux_panel_ota(lv_obj_t *parent)
@@ -599,28 +608,6 @@ static void create_page_settings(lv_obj_t *parent)
     /* SETTINGS PAGE PANELS */
     tux_panel_devinfo(parent);
     tux_panel_config(parent);
-}
-
-// Show QR Code for BLE based Wifi Provisioning
-static void qrcode_ui(lv_obj_t *parent)
-{
-    /* QR CODE */
-    lv_color_t bg_color = lv_palette_lighten(LV_PALETTE_GREY, 4);
-    lv_color_t fg_color = lv_palette_darken(LV_PALETTE_BLUE, 4);
-
-    lv_obj_t *qr = lv_qrcode_create(parent, 100, fg_color, bg_color);
-
-    /* Set data - format of BLE provisioning data */
-    // {"ver":"v1","name":"TUX_4AA440","pop":"abcd1234","transport":"ble"}
-    const char *data = "https://www.sukesh.me";
-    lv_qrcode_update(qr, data, strlen(data));
-
-    /*Add a border with bg_color*/
-    lv_obj_set_style_border_color(qr, bg_color, 0);
-    lv_obj_set_style_border_width(qr, 5, 0);
-
-    lv_obj_t *lbl_status = lv_label_create(parent);
-    lv_label_set_text(lbl_status, "Install 'ESP SoftAP Prov' App & Scan");
 }
 
 static void create_splash_screen()
@@ -811,46 +798,22 @@ void switch_theme(bool dark)
 static void espwifi_event_handler(lv_event_t* e)
 {
     lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t* obj = lv_event_get_target(e);
-    lv_obj_t* esp_status_panel = (lv_obj_t*)lv_event_get_user_data(e);
-
-    if (code == LV_EVENT_VALUE_CHANGED)
+    lv_obj_t *btn = lv_event_get_target(e);
+    if (code == LV_EVENT_CLICKED)
     {
-        LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
-        if (lv_obj_has_state(obj, LV_STATE_CHECKED))
-        {
-            tux_panel_set_height(island_wifi, 250);
-            qrcode_ui(esp_status_panel);
-        }
-        else
-        {
-            tux_panel_set_height(island_wifi, 100);
-            lv_obj_clean(esp_status_panel);
+        bool provisioned = false;
+        ESP_ERROR_CHECK(wifi_prov_mgr_is_provisioned(&provisioned));
+        if (provisioned) {
+            wifi_prov_mgr_reset_provisioning();     // reset wifi
+            
+            // Reset device to start provisioning
+            lv_label_set_text(lbl_wifi_status, "Wi-Fi Disconnected!");
+            lv_obj_set_style_text_color(lbl_wifi_status, lv_palette_main(LV_PALETTE_YELLOW), 0);
+            lv_label_set_text(lbl_scan_status, "Restart device to provision WiFi.");
+            lv_obj_add_state( btn, LV_STATE_DISABLED );  /* Disable */
         }
     }
 }
-
-// static void espble_event_handler(lv_event_t *e)
-// {
-//     lv_event_code_t code = lv_event_get_code(e);
-//     lv_obj_t *obj = lv_event_get_target(e);
-//     lv_obj_t *esp_status_panel = (lv_obj_t *)lv_event_get_user_data(e);
-
-//     if (code == LV_EVENT_VALUE_CHANGED)
-//     {
-//         LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
-//         if (lv_obj_has_state(obj, LV_STATE_CHECKED))
-//         {
-//             tux_panel_set_height(island_wifi, 250);
-//             qrcode_ui(esp_status_panel);
-//         }
-//         else
-//         {
-//             tux_panel_set_height(island_wifi, 100);
-//             lv_obj_clean(esp_status_panel);
-//         }
-//     }
-// }
 
 inline void checkupdates_event_handler(lv_event_t *e)
 {

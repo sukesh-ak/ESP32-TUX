@@ -37,15 +37,14 @@ static void update_datetime_ui()
     // tm_year will be (1970 - 1900) = 70, if not set
     if (datetimeinfo.tm_year < 100) // Time travel not supported :P
     {
-        // Date/Time is not set yet
-        // ESP_LOGE(TAG, "Date/time not set yet [%d]",datetimeinfo.tm_year);    
+        // ESP_LOGD(TAG, "Date/time not set yet [%d]",datetimeinfo.tm_year);    
         return;
     }
 
     // Date & Time formatted
     char strftime_buf[64];
     strftime(strftime_buf, sizeof(strftime_buf), "%c %z", &datetimeinfo);
-    //ESP_LOGW(TAG, "Date/time: %s",strftime_buf );
+    //ESP_LOGD(TAG, "Date/time: %s",strftime_buf );
 
     // Date formatted
     strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", &datetimeinfo);
@@ -94,7 +93,7 @@ static const char* get_id_string(esp_event_base_t base, int32_t id) {
 static void tux_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
-    ESP_LOGD(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    ESP_LOGD(TAG, "tux_event_handler => %s:%s", event_base, get_id_string(event_base, event_id));
     if (event_base != TUX_EVENTS) return;   // bye bye - me not invited :(
 
     // Handle TUX_EVENTS
@@ -147,7 +146,6 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 
     } else if (event_id == TUX_EVENT_THEME_CHANGED) {
         // Theme changes - time to play with dark & light
-
     }
 }                          
 
@@ -155,7 +153,7 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data)
 {
-    ESP_LOGD(TAG, "%s:%s: tux_event_handler", event_base, get_id_string(event_base, event_id));
+    //ESP_LOGD(TAG, "%s:%s: wifi_event_handler", event_base, get_id_string(event_base, event_id));
     if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
     {
         // Not a warning but just for highlight
@@ -172,6 +170,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
         lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
         lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
@@ -181,7 +180,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
 
-        lv_label_set_text_fmt(lbl_update_status, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        lv_label_set_text_fmt(lbl_wifi_status, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
         
         // We got IP, lets update time from SNTP. RTC keeps time unless powered off
         xTaskCreate(configure_time, "config_time", 1024*4, NULL, 3, NULL);
@@ -190,31 +189,42 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     {
         is_wifi_connected = false;
         ESP_LOGW(TAG,"IP_EVENT_STA_LOST_IP");
-
-        // Ideally we can kick off provisioning task here.  Will test later
-        xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_START) {
-
+        ESP_LOGW(TAG,"WIFI_PROV_START");
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_CRED_RECV) {
-
+        ESP_LOGW(TAG,"WIFI_PROV_CRED_RECV");
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_CRED_FAIL) {
-
+        ESP_LOGW(TAG,"WIFI_PROV_CRED_FAIL");
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_CRED_SUCCESS) {
-
+        ESP_LOGW(TAG,"WIFI_PROV_CRED_SUCCESS");
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_END) {
+        ESP_LOGW(TAG,"WIFI_PROV_END");
+        lvgl_acquire();
+        // lv_qrcode_update(prov_qr, payload, strlen(payload));
+        lv_label_set_text(lbl_scan_status, "Connected to Wi-Fi sucessfully.");
+        lvgl_release();        
+    }
+    else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_SHOWQR) {
+        ESP_LOGW(TAG,"WIFI_PROV_SHOWQR");
+        
+        char *payload = (char*)event_data;      // get payload
 
+        lvgl_acquire();
+        lv_qrcode_update(prov_qr, payload, strlen(payload));
+        lv_label_set_text(lbl_scan_status, "Install 'ESP SoftAP Prov' App & Scan");
+        lvgl_release();
     }
 }
 
 extern "C" void app_main(void)
 {
     esp_log_level_set(TAG, ESP_LOG_DEBUG);      // enable DEBUG logs for this App
-    esp_log_level_set("SettingsConfig", ESP_LOG_DEBUG);    // enable WARN logs from WiFi stack
+    //esp_log_level_set("SettingsConfig", ESP_LOG_DEBUG);    
     esp_log_level_set("wifi", ESP_LOG_WARN);    // enable WARN logs from WiFi stack
 
     // Print device info
@@ -287,12 +297,6 @@ extern "C" void app_main(void)
     create_splash_screen();
     lvgl_release();
 
-    // Wifi Provision and connection.
-    // Use idf.py menuconfig to configure 
-    // Use SoftAP only / BLE has some issues
-    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
-    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
-
     // Main UI
     lvgl_acquire();
     lv_setup_styles();    
@@ -311,6 +315,12 @@ extern "C" void app_main(void)
     lv_obj_refresh_style(icon_storage, LV_PART_ANY, LV_STYLE_PROP_ANY);
     lvgl_release();
 #endif
+
+    // Wifi Provision and connection.
+    // Use idf.py menuconfig to configure 
+    // Use SoftAP only / BLE has some issues
+    // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
+    xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
 
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
