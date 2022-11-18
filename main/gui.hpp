@@ -39,9 +39,9 @@ LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"      // 0xf294
 #define FA_SYMBOL_SETTINGS "\xEF\x80\x93" // 0xf0ad
 
-LV_FONT_DECLARE(font_fa_weather_32)
+//LV_FONT_DECLARE(font_fa_weather_32)
 LV_FONT_DECLARE(font_fa_weather_48)
-LV_FONT_DECLARE(font_fa_weather_56)
+//LV_FONT_DECLARE(font_fa_weather_56)
 #define FA_WEATHER_CLOUD "\xEF\x83\x82"     // 0xf0c2
 #define FA_WEATHER_SUN "\xEF\x86\x85"       // 0xf185
 #define FA_WEATHER_WIND "\xEF\x9C\xAE"      // 0xf72e
@@ -367,7 +367,7 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // Weather panel (panel widen with weekly forecast in landscape)
     lv_obj_t *cont_weather = lv_obj_create(cont_panel);
-    lv_obj_set_size(cont_weather,100,120);
+    lv_obj_set_size(cont_weather,100,115);
     lv_obj_set_flex_flow(cont_weather, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(cont_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(cont_weather, LV_SCROLLBAR_MODE_OFF);
