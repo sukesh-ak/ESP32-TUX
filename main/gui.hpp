@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "ota.h"
 #include "widgets/tux_panel.h"
+#include "apps/weather/weathericons.h"
+
 LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
 
@@ -38,13 +40,6 @@ LV_FONT_DECLARE(font_robotomono_13)
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"      // 0xf294
 #define FA_SYMBOL_SETTINGS "\xEF\x80\x93" // 0xf0ad
-
-//LV_FONT_DECLARE(font_fa_weather_32)
-LV_FONT_DECLARE(font_fa_weather_48)
-//LV_FONT_DECLARE(font_fa_weather_56)
-#define FA_WEATHER_CLOUD "\xEF\x83\x82"     // 0xf0c2
-#define FA_WEATHER_SUN "\xEF\x86\x85"       // 0xf185
-#define FA_WEATHER_WIND "\xEF\x9C\xAE"      // 0xf72e
 
 /*********************
  *      DEFINES
@@ -384,8 +379,8 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     lv_obj_t *lbl_icon = lv_label_create(cont_weather);
     lv_obj_set_style_text_font(lbl_icon, &font_fa_weather_48, 0);
     // "F:/weather/cloud-sun-rain.bin");//10d@2x.bin"
-    lv_label_set_text(lbl_icon, FA_WEATHER_SUN);
-    lv_obj_set_style_text_color(lbl_icon,lv_palette_main(LV_PALETTE_YELLOW),0);
+    lv_label_set_text(lbl_icon, FA_WEATHER_WATER);
+    lv_obj_set_style_text_color(lbl_icon,lv_palette_main(LV_PALETTE_BLUE),0);
 
     // Temperature
     lv_obj_t *lbl_temp = lv_label_create(cont_weather);
