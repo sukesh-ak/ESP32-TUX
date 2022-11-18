@@ -224,6 +224,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
+
 extern "C" void app_main(void)
 {
     esp_log_level_set(TAG, ESP_LOG_DEBUG);      // enable DEBUG logs for this App
@@ -338,10 +339,10 @@ extern "C" void app_main(void)
 
 static void periodic_timer_callback(lv_timer_t * timer)
 {
-    // Battery icon animation
-    if (battery_value>100) battery_value=0;
-    battery_value+=10;
-    lv_update_battery(battery_value);
+    // // Battery icon animation
+    // if (battery_value>100) battery_value=0;
+    // battery_value+=10;
+    // lv_update_battery(battery_value);
 
     update_datetime_ui();
 }

@@ -1,6 +1,12 @@
 idf_component_register(SRCS "main.cpp" 
 					"widgets/tux_panel.c" 
+					"images/dev_bg.c"
+
 					"fonts/font_fa_14.c" 
+					"fonts/font_fa_weather_32.c"
+					"fonts/font_fa_weather_48.c"
+					"fonts/font_fa_weather_56.c"
+					#"fonts/font_fa_weather_64.c"
 					# "fonts/font_robotomono_12.c"
 					"fonts/font_robotomono_13.c"
 

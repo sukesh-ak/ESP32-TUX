@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "ota.h"
 #include "widgets/tux_panel.h"
-//LV_IMG_DECLARE(dev_bg)
+LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
 
 // LV_FONT_DECLARE(font_7seg_64)
@@ -38,6 +38,13 @@ LV_FONT_DECLARE(font_robotomono_13)
 LV_FONT_DECLARE(font_fa_14)
 #define FA_SYMBOL_BLE "\xEF\x8A\x94"      // 0xf294
 #define FA_SYMBOL_SETTINGS "\xEF\x80\x93" // 0xf0ad
+
+LV_FONT_DECLARE(font_fa_weather_32)
+LV_FONT_DECLARE(font_fa_weather_48)
+LV_FONT_DECLARE(font_fa_weather_56)
+#define FA_WEATHER_CLOUD "\xEF\x83\x82"     // 0xf0c2
+#define FA_WEATHER_SUN "\xEF\x86\x85"       // 0xf185
+#define FA_WEATHER_WIND "\xEF\x9C\xAE"      // 0xf72e
 
 /*********************
  *      DEFINES
@@ -158,7 +165,9 @@ void lv_setup_styles()
 
     // Image Background
     // CF_INDEXED_8_BIT for smaller size - resolution 480x480
-    lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg1.bin");//&dev_bg);
+    // NOTE: Dynamic loading bg from SPIFF makes screen perf bad
+    //lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg1.bin");
+    lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
     // lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
 
     // Gradient Background
@@ -321,22 +330,22 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     lv_obj_add_style(island_clock_weather, &style_ui_island, 0);
 
     lv_obj_t *cont_panel = tux_panel_get_content(island_clock_weather);
-    //lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
-    //lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
+    lv_obj_set_flex_flow(island_clock_weather, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(island_clock_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     //lv_obj_center(cont_panel);
     //lv_obj_set_style_bg_opa(cont_panel,LV_OPA_TRANSP,0);
 
     // Date/Time panel
     lv_obj_t *cont_datetime = lv_obj_create(cont_panel);
-    lv_obj_set_size(cont_datetime,180,100);
+    lv_obj_set_size(cont_datetime,180,110);
     lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
     //lv_obj_set_flex_align(cont_datetime, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(cont_datetime, LV_SCROLLBAR_MODE_OFF);
     lv_obj_align(cont_datetime,LV_ALIGN_LEFT_MID,0,0);
     lv_obj_set_style_bg_opa(cont_datetime,LV_OPA_TRANSP,0);
     lv_obj_set_style_border_opa(cont_datetime,LV_OPA_TRANSP,0);
-    lv_obj_set_style_pad_gap(cont_datetime,10,0);
+    //lv_obj_set_style_pad_gap(cont_datetime,10,0);
     //lv_obj_set_style_pad_all(cont_datetime,0,0);
 
     // Time
@@ -347,40 +356,42 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // AM/PM
     lbl_ampm = lv_label_create(cont_datetime);
-    lv_obj_set_style_align(lbl_ampm, LV_ALIGN_BOTTOM_LEFT, 0);
+    lv_obj_set_style_align(lbl_ampm, LV_ALIGN_TOP_LEFT, 0);
     lv_label_set_text(lbl_ampm, "AM");
-    
+
     // Date
     lbl_date = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_date, LV_ALIGN_BOTTOM_MID, 0);
-    lv_obj_set_style_text_font(lbl_date, font_normal, 0);
+    lv_obj_set_style_text_font(lbl_date, font_large, 0);
     lv_label_set_text(lbl_date, "waiting for update");
 
     // Weather panel (panel widen with weekly forecast in landscape)
     lv_obj_t *cont_weather = lv_obj_create(cont_panel);
     lv_obj_set_size(cont_weather,100,120);
     lv_obj_set_flex_flow(cont_weather, LV_FLEX_FLOW_ROW_WRAP);
-    lv_obj_set_flex_align(cont_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_END);
+    lv_obj_set_flex_align(cont_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(cont_weather, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_align_to(cont_weather,cont_datetime,LV_ALIGN_OUT_RIGHT_MID,10,0);
+    lv_obj_align_to(cont_weather,cont_datetime,LV_ALIGN_OUT_RIGHT_MID,0,0);
     lv_obj_set_style_bg_opa(cont_weather,LV_OPA_TRANSP,0);
     lv_obj_set_style_border_opa(cont_weather,LV_OPA_TRANSP,0);
-    lv_obj_set_style_pad_gap(cont_weather,0,0);
-    lv_obj_set_style_pad_all(cont_weather,0,0);
 
     // This only for landscape
     // lv_obj_t *lbl_unit = lv_label_create(cont_weather);
     // lv_obj_set_style_text_font(lbl_unit, font_normal, 0);
     // lv_label_set_text(lbl_unit, "Light rain");
 
-    // Weather icon
-    lv_obj_t *img1 = lv_img_create(cont_weather);
-    lv_img_set_src(img1, "F:/weather/10d@2x.bin");
+    // Weather icons
+    lv_obj_t *lbl_icon = lv_label_create(cont_weather);
+    lv_obj_set_style_text_font(lbl_icon, &font_fa_weather_48, 0);
+    // "F:/weather/cloud-sun-rain.bin");//10d@2x.bin"
+    lv_label_set_text(lbl_icon, FA_WEATHER_SUN);
+    lv_obj_set_style_text_color(lbl_icon,lv_palette_main(LV_PALETTE_YELLOW),0);
 
     // Temperature
     lv_obj_t *lbl_temp = lv_label_create(cont_weather);
     lv_obj_set_style_text_font(lbl_temp, &lv_font_montserrat_32, 0);
-    lv_label_set_text(lbl_temp, "19C");
+    lv_obj_set_style_align(lbl_temp, LV_ALIGN_BOTTOM_MID, 0);
+    lv_label_set_text(lbl_temp, "19.8°C");
 }
 
 static lv_obj_t * slider_label;
