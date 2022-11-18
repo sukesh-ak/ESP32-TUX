@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/*
+    Fontawesome Weather Symbols available in font_fa_weather_xx.c
+*/
+
 //LV_FONT_DECLARE(font_fa_weather_32)
-LV_FONT_DECLARE(font_fa_weather_48)
+LV_FONT_DECLARE(font_fa_weather_42)
+//LV_FONT_DECLARE(font_fa_weather_48)
 //LV_FONT_DECLARE(font_fa_weather_56)
 #define FA_WEATHER_CLOUD                "\xEF\x83\x82"      // f0c2
 #define FA_WEATHER_BOLT                 "\xEF\x83\xA7"      // f0e7
@@ -44,3 +49,7 @@ LV_FONT_DECLARE(font_fa_weather_48)
 #define FA_WEATHER_CLOUD_RAIN           "\xEF\x9C\xBD"      // f73d
 #define FA_WEATHER_CLOUD_MOON_RAIN      "\xEF\x9C\xBC"      // f73c
 #define FA_WEATHER_CLOUD_MOON           "\xEF\x9B\x83"      // f6c3
+
+
+#define MSG_TIME_CHANGED        100
+#define MSG_WEATHER_CHANGED     101

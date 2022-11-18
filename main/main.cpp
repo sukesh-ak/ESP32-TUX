@@ -29,7 +29,7 @@ static const char *TAG = "ESP32-TUX";
 static void update_datetime_ui()
 {
     // If we are on another screen where lbl_time is not valid
-    if (!lv_obj_is_valid(lbl_time)) return;
+    //if (!lv_obj_is_valid(lbl_time)) return;
 
     // date/time format reference => https://cplusplus.com/reference/ctime/strftime/
     time_t now;
@@ -44,25 +44,8 @@ static void update_datetime_ui()
         return;
     }
 
-    // Date & Time formatted
-    char strftime_buf[64];
-    strftime(strftime_buf, sizeof(strftime_buf), "%c %z", &datetimeinfo);
-    //ESP_LOGD(TAG, "Date/time: %s",strftime_buf );
-
-    // Date formatted
-    strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", &datetimeinfo);
-    lv_label_set_text_fmt(lbl_date,"%s",strftime_buf);
-
-    // Time in 24hrs
-    // strftime(strftime_buf, sizeof(strftime_buf), "%H:%M", datetimeinfo);
-
-    // Time in 12hrs 
-    strftime(strftime_buf, sizeof(strftime_buf), "%I:%M", &datetimeinfo);
-    lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);
-
-    // 12hr clock AM/PM
-    strftime(strftime_buf, sizeof(strftime_buf), "%p", &datetimeinfo);
-    lv_label_set_text_fmt(lbl_ampm, "%s", strftime_buf);
+    // Send update time to UI with payload using lv_msg
+    lv_msg_send(MSG_TIME_CHANGED, &datetimeinfo);
 }
 
 static const char* get_id_string(esp_event_base_t base, int32_t id) {
@@ -167,7 +150,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
         is_wifi_connected = false;        
-        lv_timer_pause(timer_status);   // stop/pause timer
+        lv_timer_pause(timer_datetime);   // stop/pause timer
 
         ESP_LOGW(TAG,"WIFI_EVENT_STA_DISCONNECTED");
 
@@ -178,7 +161,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
         is_wifi_connected = true;
-        lv_timer_ready(timer_status);   // start timer
+        lv_timer_ready(timer_datetime);   // start timer
 
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
@@ -272,8 +255,7 @@ extern "C" void app_main(void)
 
 //******************************************** 
     owm = new OpenWeatherMap();
-    owm->request_weather();
-
+    owm->request_weather_update();
 //********************** CONFIG HELPER TESTING ENDS
 
     lcd.init();        // Initialize LovyanGFX
@@ -332,12 +314,14 @@ extern "C" void app_main(void)
 
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
-    // Status icon animation timer
-    timer_status = lv_timer_create(periodic_timer_callback, 1000,  NULL);
+    // Date/Time update timer - once per sec
+    timer_datetime = lv_timer_create(timer_datetime_callback, 1000,  NULL);
 
+    // Weather update timer - Once per min (60*1000)
+    timer_weather = lv_timer_create(timer_weather_callback, 5 * 1000,  NULL);
 }
 
-static void periodic_timer_callback(lv_timer_t * timer)
+static void timer_datetime_callback(lv_timer_t * timer)
 {
     // // Battery icon animation
     // if (battery_value>100) battery_value=0;
@@ -345,6 +329,13 @@ static void periodic_timer_callback(lv_timer_t * timer)
     // lv_update_battery(battery_value);
 
     update_datetime_ui();
+}
+
+static void timer_weather_callback(lv_timer_t * timer)
+{
+    // Update weather and trigger UI update
+    owm->request_weather_update();
+    lv_msg_send(MSG_WEATHER_CHANGED, owm);
 }
 
 static void lv_update_battery(uint batval)

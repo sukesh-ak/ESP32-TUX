@@ -7,9 +7,10 @@ idf_component_register(SRCS "main.cpp"
 
 					# Weather icons like clouds etc
 					# "fonts/font_fa_weather_32.c"
-					"fonts/font_fa_weather_48.c"
+					"fonts/font_fa_weather_42.c"
+					# "fonts/font_fa_weather_48.c"
 					# "fonts/font_fa_weather_56.c"
-					#"fonts/font_fa_weather_64.c"
+					# "fonts/font_fa_weather_64.c"
 
 					# Mototype font used in device info
 					# "fonts/font_robotomono_12.c"

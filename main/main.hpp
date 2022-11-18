@@ -74,12 +74,15 @@ ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
 SettingsConfig *cfg;
 OpenWeatherMap *owm;
 
-static void periodic_timer_callback(lv_timer_t * timer);
+static void timer_datetime_callback(lv_timer_t * timer);
+static void timer_weather_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
 static bool is_wifi_connected = false;
 static bool sd_card_enabled = false;
 static int battery_value = 0;
-static lv_timer_t * timer_status;
+
+static lv_timer_t * timer_datetime;
+static lv_timer_t * timer_weather;
 
 // Take your pick, here is the complete timezone list :)
 // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones

@@ -29,10 +29,14 @@ OpenWeatherMap::OpenWeatherMap()
 {
     file_name = "/spiffs/weather/weather.json";
     cfg = new SettingsConfig(file_name);
+    
+    // setup default values for everything.
+    TemperatureUnit = 'C';
+    
 }
 
 /* Get Weather from OpenWeatherMap API */
-void OpenWeatherMap::request_weather()
+void OpenWeatherMap::request_weather_update()
 {
     // Load from cache file for testing '/spiffs/weather/weather.json'
     ifstream jsonfile(file_name);
@@ -58,29 +62,29 @@ void OpenWeatherMap::load_json()
     root = cJSON_Parse(jsonString.c_str());
 
     // name = Bengaluru / What we searched?
-    string root_name = cJSON_GetObjectItem(root,"name")->valuestring;
+    LocationName = cJSON_GetObjectItem(root,"name")->valuestring;
     int root_visibility = cJSON_GetObjectItem(root,"visibility")->valueint;
-    ESP_LOGW(TAG,"root: %s / %d",root_name.c_str(), root_visibility);
+    ESP_LOGW(TAG,"root: %s / %d",LocationName.c_str(), root_visibility);
 
     maininfo = cJSON_GetObjectItem(root,"main");
-    double main_temp = cJSON_GetObjectItem(maininfo,"temp")->valuedouble;
-    double main_feels_like = cJSON_GetObjectItem(maininfo,"feels_like")->valuedouble;
-    double main_temp_min = cJSON_GetObjectItem(maininfo,"temp_min")->valuedouble;
-    double main_temp_max = cJSON_GetObjectItem(maininfo,"temp_max")->valuedouble;
-    int main_pressure = cJSON_GetObjectItem(maininfo,"pressure")->valueint;
-    int main_humidity = cJSON_GetObjectItem(maininfo,"humidity")->valueint;
+    Temperature = cJSON_GetObjectItem(maininfo,"temp")->valuedouble;
+    TemperatureFeelsLike = cJSON_GetObjectItem(maininfo,"feels_like")->valuedouble;
+    TemperatureLow = cJSON_GetObjectItem(maininfo,"temp_min")->valuedouble;
+    TemperatureHigh = cJSON_GetObjectItem(maininfo,"temp_max")->valuedouble;
+    Pressure = cJSON_GetObjectItem(maininfo,"pressure")->valueint;
+    Humidity = cJSON_GetObjectItem(maininfo,"humidity")->valueint;
     ESP_LOGW(TAG,"main: %3.1f°С / %3.1f°С / %3.1f°С / %3.1f°С / %d / %dhpa",
-                                            main_temp, main_feels_like,
-                                            main_temp_min, main_temp_max,
-                                            main_pressure,main_humidity);
+                                            Temperature, TemperatureFeelsLike,
+                                            TemperatureLow, TemperatureHigh,
+                                            Pressure,Humidity);
 
     // 1st element of the weather array. 
     // Guess for free api version only 1 (single day) available
     weather = cJSON_GetArrayItem(cJSON_GetObjectItem(root,"weather"),0);
     string weather_main = cJSON_GetObjectItem(weather,"main")->valuestring;
     string weather_description = cJSON_GetObjectItem(weather,"description")->valuestring;
-    string weather_icon = cJSON_GetObjectItem(weather,"icon")->valuestring;
-    ESP_LOGW(TAG,"weather: %s / %s / %s",weather_main.c_str(), weather_description.c_str(),weather_icon.c_str());
+    WeatherIcon = cJSON_GetObjectItem(weather,"icon")->valuestring;
+    ESP_LOGW(TAG,"weather: %s / %s / %s",weather_main.c_str(), weather_description.c_str(),WeatherIcon.c_str());
 
     // lon / lat
     coord = cJSON_GetObjectItem(root,"coord");
@@ -107,5 +111,5 @@ void OpenWeatherMap::load_json()
 
 void OpenWeatherMap::save_json()
 {
-
+    // cache json in flash to show if not online?
 }

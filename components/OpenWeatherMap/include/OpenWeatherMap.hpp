@@ -85,11 +85,22 @@ using namespace std;
 class OpenWeatherMap
 {
     public:
+        string LocationName;
+        float Temperature;     // 19.8
+        float TemperatureHigh;
+        float TemperatureLow;
+        float TemperatureFeelsLike;
+        int Pressure;
+        int Humidity;
+
+        char TemperatureUnit;   // '' / 'F' / 'C'
+        string WeatherIcon;
+
         /* Constructor */
         OpenWeatherMap();
 
         /* HTTPS request to the Weather API */
-        void request_weather();
+        void request_weather_update();
 
         /* Handle json response */
         void load_json();
