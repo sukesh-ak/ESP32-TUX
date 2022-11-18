@@ -51,6 +51,9 @@ void OpenWeatherMap::request_weather_update()
 
     jsonfile.close();    
 
+    // Load from HTTPS request
+    // https://api.openweathermap.org/data/2.5/weather?q=Bangalore,India&units=metric&APPID=
+
     ESP_LOGI(TAG,"Loaded:\n%s",jsonString.c_str());
 
     load_json();
@@ -73,6 +76,11 @@ void OpenWeatherMap::load_json()
     TemperatureHigh = cJSON_GetObjectItem(maininfo,"temp_max")->valuedouble;
     Pressure = cJSON_GetObjectItem(maininfo,"pressure")->valueint;
     Humidity = cJSON_GetObjectItem(maininfo,"humidity")->valueint;
+    
+    SeaLevel = cJSON_GetObjectItem(maininfo,"sea_level")->valueint;
+    GroundLevel = cJSON_GetObjectItem(maininfo,"grnd_level")->valueint;
+
+
     ESP_LOGW(TAG,"main: %3.1f°С / %3.1f°С / %3.1f°С / %3.1f°С / %d / %dhpa",
                                             Temperature, TemperatureFeelsLike,
                                             TemperatureLow, TemperatureHigh,

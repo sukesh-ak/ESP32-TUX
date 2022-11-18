@@ -961,8 +961,7 @@ void weather_event_cb(lv_event_t * e)
     {
         OpenWeatherMap *e_owm = NULL;
         e_owm = (OpenWeatherMap*)lv_msg_get_payload(m);
-
-        const char * location_name = e_owm->LocationName.c_str();
+        //ESP_LOGW(TAG,"weather_event_cb %s",e_owm->LocationName.c_str());
 
         // set this according to e_owm->WeatherIcon later
         lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_SHOWERS_HEAVY);
@@ -970,7 +969,5 @@ void weather_event_cb(lv_event_t * e)
 
         lv_label_set_text(lbl_temp,fmt::format("{:.1f}°{}",e_owm->Temperature,e_owm->TemperatureUnit).c_str());
         lv_label_set_text(lbl_hl,fmt::format("H:{:.1f}° L:{:.1f}°",e_owm->TemperatureHigh,e_owm->TemperatureLow).c_str());
-
-        ESP_LOGW(TAG,"weather_event_cb %s",location_name);
     }
 }

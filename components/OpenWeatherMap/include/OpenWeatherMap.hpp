@@ -32,8 +32,8 @@ SOFTWARE.
     {
       "id": 801,
       "main": "Clouds",
-      "description": "few clouds",
-      "icon": "02n"
+      "description": "few clouds",    // "overcast clouds"
+      "icon": "02n"                   // 04n
     }
   ],
   "base": "stations",
@@ -42,16 +42,18 @@ SOFTWARE.
     "feels_like": 19.4,
     "temp_min": 18.9,
     "temp_max": 19.8,
-    "pressure": 1017,
-    "humidity": 60
+    "pressure": 1017,     // hpa
+    "humidity": 60,       // percentage
+    "sea_level": 1015,    // hpa
+    "grnd_level": 912     // hpa
   },
   "visibility": 6000,
   "wind": {
-    "speed": 1.54,
-    "deg": 360
+    "speed": 1.54,        //  m/s
+    "deg": 360            // 
   },
   "clouds": {
-    "all": 20
+    "all": 20       // percentage
   },
   "dt": 1668704139,
   "sys": {
@@ -92,6 +94,8 @@ class OpenWeatherMap
         float TemperatureFeelsLike;
         int Pressure;
         int Humidity;
+        int SeaLevel;
+        int GroundLevel;
 
         char TemperatureUnit;   // '' / 'F' / 'C'
         string WeatherIcon;
