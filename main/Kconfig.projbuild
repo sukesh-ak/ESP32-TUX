@@ -48,7 +48,7 @@ menu "ESP32-TUX Configuration"
 
     config PROV_SHOW_QR
         bool "Show provisioning QR code"
-        default y
+        default n
         help
             Show the QR code for provisioning.
 

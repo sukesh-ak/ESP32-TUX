@@ -318,7 +318,7 @@ extern "C" void app_main(void)
     timer_datetime = lv_timer_create(timer_datetime_callback, 1000,  NULL);
 
     // Weather update timer - Once per min (60*1000)
-    timer_weather = lv_timer_create(timer_weather_callback, 5 * 1000,  NULL);
+    timer_weather = lv_timer_create(timer_weather_callback, 60 * 1000,  NULL);
 }
 
 static void timer_datetime_callback(lv_timer_t * timer)

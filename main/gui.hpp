@@ -48,7 +48,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30
-#define FOOTER_HEIGHT 30
+#define FOOTER_HEIGHT 50
 
 /******************
  *  LV DEFINES
@@ -113,6 +113,8 @@ static lv_style_t style_battery;
 
 static lv_style_t style_ui_island;
 
+static lv_style_t style_glow;
+
 /******************
  *  LVL ANIMATION
  ******************/
@@ -152,6 +154,7 @@ static void espwifi_event_handler(lv_event_t* e);
 static void checkupdates_event_handler(lv_event_t *e);
 static void home_clicked_eventhandler(lv_event_t *e);
 static void status_clicked_eventhandler(lv_event_t *e);
+static void footer_button_event_handler(lv_event_t *e);
 
 // static void new_theme_apply_cb(lv_theme_t * th, lv_obj_t * obj);
 
@@ -258,6 +261,19 @@ void lv_setup_styles()
     //lv_style_set_border_opa(&style_ui_island, LV_OPA_80);
     lv_style_set_border_width(&style_ui_island, 1);
     lv_style_set_radius(&style_ui_island, 10);
+
+    lv_style_init(&style_glow);
+    lv_style_set_bg_opa(&style_glow, LV_OPA_COVER);
+    lv_style_set_border_width(&style_glow,0);
+    // lv_style_set_bg_color(&style_glow, lv_palette_lighten(LV_PALETTE_GREY, 1));
+    // lv_style_set_height(&style_glow,FOOTER_HEIGHT-5);
+    lv_style_set_pad_all(&style_glow,10);
+    /*Add a shadow*/
+    lv_style_set_shadow_width(&style_glow, 30);
+    lv_style_set_shadow_color(&style_glow, lv_palette_main(LV_PALETTE_BLUE));
+    // lv_style_set_shadow_ofs_x(&style_glow, 5);
+    // lv_style_set_shadow_ofs_y(&style_glow, 5);    
+
 }
 
 static void create_header(lv_obj_t *parent)
@@ -316,25 +332,36 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_set_style_pad_all(panel_footer, 0, 0);
     lv_obj_set_style_radius(panel_footer, 0, 0);
     lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
+    lv_obj_set_scrollbar_mode(panel_footer, LV_SCROLLBAR_MODE_OFF);
 
     // Create Footer label and animate if longer
-    label_message = lv_label_create(panel_footer); // full screen as the parent
-    lv_obj_set_width(label_message, LV_PCT(100));
-    lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
-    lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
+    // label_message = lv_label_create(panel_footer); // full screen as the parent
+    // lv_obj_set_width(label_message, LV_PCT(100));
+    // lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    // lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
+    // lv_obj_set_style_align(label_message,LV_ALIGN_BOTTOM_LEFT,0);
 
     // Show LVGL version
-    footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    //footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
 
     /* REPLACE STATUS BAR WITH BUTTON PANEL FOR NAVIGATION */
-    // static const char * btnm_map[] = {LV_SYMBOL_HOME, FA_SYMBOL_SETTINGS, LV_SYMBOL_DOWNLOAD, ""};
-    // lv_obj_t * btnm1 = lv_btnmatrix_create(panel_footer);
-    // lv_btnmatrix_set_map(btnm1, btnm_map);
-    // lv_obj_set_style_bg_opa(btnm1,LV_OPA_TRANSP,0);
-    // lv_btnmatrix_set_btn_ctrl_all(btnm1, LV_BTNMATRIX_CTRL_POPOVER);//LV_BTNMATRIX_CTRL_CHECKABLE);
+    static const char * btnm_map[] = {LV_SYMBOL_HOME " HOME", FA_SYMBOL_SETTINGS " SETTINGS", LV_SYMBOL_DOWNLOAD " UPDATE", NULL};
+    lv_obj_t * footerButtons = lv_btnmatrix_create(panel_footer);
+    lv_btnmatrix_set_map(footerButtons, btnm_map);
+    lv_obj_set_style_bg_opa(footerButtons,LV_OPA_TRANSP,0);
+    lv_obj_set_size(footerButtons,LV_PCT(100),LV_PCT(100));
+    //lv_obj_set_style_border_width(footerButtons,0,0);
+    lv_btnmatrix_set_btn_ctrl_all(footerButtons, LV_BTNMATRIX_CTRL_CHECKABLE);
     
-    // lv_obj_align(btnm1, LV_ALIGN_CENTER, 0, 0);
-    // //lv_obj_add_event_cb(btnm1, event_handler, LV_EVENT_ALL, NULL);    
+    //lv_obj_set_style_align(footerButtons,LV_ALIGN_TOP_MID,0);
+    lv_btnmatrix_set_one_checked(footerButtons, true);   // only 1 button can be checked
+    lv_btnmatrix_set_btn_ctrl(footerButtons,0,LV_BTNMATRIX_CTRL_CHECKED);
+
+    lv_obj_add_style(footerButtons, &style_glow,LV_PART_ITEMS);
+
+    lv_obj_align(footerButtons, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_add_event_cb(footerButtons, footer_button_event_handler, LV_EVENT_ALL, NULL); 
+    
 }
 
 static void tux_panel_clock_weather(lv_obj_t *parent)
@@ -689,7 +716,7 @@ static void show_ui()
 
     // Load main screen with animation
     //lv_scr_load(screen_container);
-    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_IN, 1000,3000, true);
+    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_MOVE_LEFT, 1000,1000, true);
 }
 
 static void rotate_event_handler(lv_event_t *e)
@@ -969,5 +996,29 @@ void weather_event_cb(lv_event_t * e)
 
         lv_label_set_text(lbl_temp,fmt::format("{:.1f}°{}",e_owm->Temperature,e_owm->TemperatureUnit).c_str());
         lv_label_set_text(lbl_hl,fmt::format("H:{:.1f}° L:{:.1f}°",e_owm->TemperatureHigh,e_owm->TemperatureLow).c_str());
+    }
+}
+
+static void footer_button_event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_target(e);
+
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+        const char * txt = lv_btnmatrix_get_btn_text(obj, id);
+        printf("[%d] %s was pressed\n", id,txt);
+        //LV_LOG_USER("%s was pressed\n", txt);
+
+        // HOME
+        if (id==0)  {
+            lv_obj_clean(content_container);
+            create_page_home(content_container);
+        } 
+        // SETTINGS
+        else if (id == 1) {
+            lv_obj_clean(content_container);
+            create_page_settings(content_container);
+        }
     }
 }
