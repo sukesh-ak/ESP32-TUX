@@ -67,6 +67,9 @@ static lv_obj_t *content_container;
 static lv_obj_t *screen_container;
 static lv_obj_t *qr_status_container;
 
+// TUX Panels
+static lv_obj_t *tux_clock_weather;
+
 static lv_obj_t *island_wifi;
 static lv_obj_t *island_ota;
 static lv_obj_t *island_devinfo;
@@ -120,6 +123,16 @@ static lv_style_t style_glow;
  ******************/
 static lv_anim_t anim_labelscroll;
 
+void anim_move_left_x(lv_obj_t * TargetObject, int start_x, int end_x, int delay);
+void tux_anim_callback_set_x(lv_anim_t * a, int32_t v);
+
+void anim_move_left_y(lv_obj_t * TargetObject, int start_y, int end_y, int delay);
+void tux_anim_callback_set_y(lv_anim_t * a, int32_t v);
+
+void anim_fade_in(lv_obj_t * TargetObject, int delay);
+void anim_fade_out(lv_obj_t * TargetObject, int delay);
+
+void tux_anim_callback_set_opacity(lv_anim_t * a, int32_t v);
 /******************
  *  LVL FUNCS & EVENTS
  ******************/
@@ -366,12 +379,12 @@ static void create_footer(lv_obj_t *parent)
 
 static void tux_panel_clock_weather(lv_obj_t *parent)
 {
-    lv_obj_t *island_clock_weather = tux_panel_create(parent, "", 130);
-    lv_obj_add_style(island_clock_weather, &style_ui_island, 0);
+    tux_clock_weather = tux_panel_create(parent, "", 130);
+    lv_obj_add_style(tux_clock_weather, &style_ui_island, 0);
 
-    lv_obj_t *cont_panel = tux_panel_get_content(island_clock_weather);
-    lv_obj_set_flex_flow(island_clock_weather, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(island_clock_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_t *cont_panel = tux_panel_get_content(tux_clock_weather);
+    lv_obj_set_flex_flow(tux_clock_weather, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(tux_clock_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
     // ************ Date/Time panel
     lv_obj_t *cont_datetime = lv_obj_create(cont_panel);
@@ -691,9 +704,11 @@ static void show_ui()
     lv_obj_set_size(screen_container, LV_PCT(100), LV_PCT(100));
     lv_obj_set_style_pad_all(screen_container, 0, 0);
     lv_obj_align(screen_container, LV_ALIGN_TOP_MID, 0, 0);
-    lv_obj_set_style_bg_opa(screen_container, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(screen_container, 0, 0);
     lv_obj_set_scrollbar_mode(screen_container, LV_SCROLLBAR_MODE_OFF);
+
+    // Gradient / Image Background for screen container
+    lv_obj_add_style(screen_container, &style_content_bg, 0);
 
     // HEADER & FOOTER
     create_header(screen_container);
@@ -704,9 +719,8 @@ static void show_ui()
     lv_obj_set_size(content_container, screen_w, screen_h - HEADER_HEIGHT - FOOTER_HEIGHT);
     lv_obj_align(content_container, LV_ALIGN_TOP_MID, 0, HEADER_HEIGHT);
     lv_obj_set_style_border_width(content_container, 0, 0);
+    lv_obj_set_style_bg_opa(content_container, LV_OPA_TRANSP, 0);
 
-    // Gradient / Image Background for content container
-    lv_obj_add_style(content_container, &style_content_bg, 0);
     lv_obj_set_flex_flow(content_container, LV_FLEX_FLOW_COLUMN);
 
     // Show Home Page
@@ -716,7 +730,7 @@ static void show_ui()
 
     // Load main screen with animation
     //lv_scr_load(screen_container);
-    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_MOVE_LEFT, 1000,1000, true);
+    lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_IN, 1000,100, true);
 }
 
 static void rotate_event_handler(lv_event_t *e)
@@ -1014,11 +1028,106 @@ static void footer_button_event_handler(lv_event_t * e)
         if (id==0)  {
             lv_obj_clean(content_container);
             create_page_home(content_container);
+            anim_move_left_x(content_container,screen_w,0,200);
         } 
         // SETTINGS
         else if (id == 1) {
             lv_obj_clean(content_container);
             create_page_settings(content_container);
+            anim_move_left_x(content_container,screen_w,0,200);
+        }
+        // UPDATES
+        else if (id == 2) {
+            //lv_obj_clean(content_container);
+            
         }
     }
+}
+
+/********************** ANIMATIONS *********************/
+void anim_move_left_x(lv_obj_t * TargetObject, int start_x, int end_x, int delay)
+{
+    lv_anim_t property_anim;
+    lv_anim_init(&property_anim);
+    lv_anim_set_time(&property_anim, 200);
+    lv_anim_set_user_data(&property_anim, TargetObject);
+    lv_anim_set_custom_exec_cb(&property_anim, tux_anim_callback_set_x);
+    lv_anim_set_values(&property_anim, start_x, end_x);
+    lv_anim_set_path_cb(&property_anim, lv_anim_path_overshoot);
+    lv_anim_set_delay(&property_anim, delay + 0);
+    lv_anim_set_playback_time(&property_anim, 0);
+    lv_anim_set_playback_delay(&property_anim, 0);
+    lv_anim_set_repeat_count(&property_anim, 0);
+    lv_anim_set_repeat_delay(&property_anim, 0);
+    lv_anim_set_early_apply(&property_anim, true);
+    lv_anim_start(&property_anim);
+}
+
+void tux_anim_callback_set_x(lv_anim_t * a, int32_t v)
+{
+    lv_obj_set_x((lv_obj_t *)a->user_data, v);
+}
+
+void anim_move_left_y(lv_obj_t * TargetObject, int start_y, int end_y, int delay)
+{
+    lv_anim_t property_anim;
+    lv_anim_init(&property_anim);
+    lv_anim_set_time(&property_anim, 300);
+    lv_anim_set_user_data(&property_anim, TargetObject);
+    lv_anim_set_custom_exec_cb(&property_anim, tux_anim_callback_set_y);
+    lv_anim_set_values(&property_anim, start_y, end_y);
+    lv_anim_set_path_cb(&property_anim, lv_anim_path_overshoot);
+    lv_anim_set_delay(&property_anim, delay + 0);
+    lv_anim_set_playback_time(&property_anim, 0);
+    lv_anim_set_playback_delay(&property_anim, 0);
+    lv_anim_set_repeat_count(&property_anim, 0);
+    lv_anim_set_repeat_delay(&property_anim, 0);
+    lv_anim_set_early_apply(&property_anim, true);
+    lv_anim_start(&property_anim);
+}
+
+void tux_anim_callback_set_y(lv_anim_t * a, int32_t v)
+{
+    lv_obj_set_y((lv_obj_t *)a->user_data, v);
+}
+
+void anim_fade_in(lv_obj_t * TargetObject, int delay)
+{
+    lv_anim_t property_anim;
+    lv_anim_init(&property_anim);
+    lv_anim_set_time(&property_anim, 3000);
+    lv_anim_set_user_data(&property_anim, TargetObject);
+    lv_anim_set_custom_exec_cb(&property_anim, tux_anim_callback_set_opacity);
+    lv_anim_set_values(&property_anim, 0, 255);
+    lv_anim_set_path_cb(&property_anim, lv_anim_path_ease_out);
+    lv_anim_set_delay(&property_anim, delay + 0);
+    lv_anim_set_playback_time(&property_anim, 0);
+    lv_anim_set_playback_delay(&property_anim, 0);
+    lv_anim_set_repeat_count(&property_anim, 0);
+    lv_anim_set_repeat_delay(&property_anim, 0);
+    lv_anim_set_early_apply(&property_anim, false);
+    lv_anim_start(&property_anim);
+
+}
+void anim_fade_out(lv_obj_t * TargetObject, int delay)
+{
+    lv_anim_t property_anim;
+    lv_anim_init(&property_anim);
+    lv_anim_set_time(&property_anim, 1000);
+    lv_anim_set_user_data(&property_anim, TargetObject);
+    lv_anim_set_custom_exec_cb(&property_anim, tux_anim_callback_set_opacity);
+    lv_anim_set_values(&property_anim, 255, 0);
+    lv_anim_set_path_cb(&property_anim, lv_anim_path_ease_in_out);
+    lv_anim_set_delay(&property_anim, delay + 0);
+    lv_anim_set_playback_time(&property_anim, 0);
+    lv_anim_set_playback_delay(&property_anim, 0);
+    lv_anim_set_repeat_count(&property_anim, 0);
+    lv_anim_set_repeat_delay(&property_anim, 0);
+    lv_anim_set_early_apply(&property_anim, false);
+    lv_anim_start(&property_anim);
+
+}
+void tux_anim_callback_set_opacity(lv_anim_t * a, int32_t v)
+{
+    lv_obj_set_style_opa((lv_obj_t *)a->user_data, v, 0);
 }
