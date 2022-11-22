@@ -126,6 +126,8 @@ class OpenWeatherMap
         cJSON *wind;
         cJSON *sys;
 
+        void request_json_over_https();
+
     protected:
 
 };

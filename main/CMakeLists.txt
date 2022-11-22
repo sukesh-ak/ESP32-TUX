@@ -24,6 +24,7 @@ idf_component_register(SRCS "main.cpp"
 
                 INCLUDE_DIRS "." "devices" "helpers" "pages" "widgets" "images"
 				REQUIRES LovyanGFX lvgl fatfs fmt SettingsConfig OpenWeatherMap
+				#EMBED_TXTFILES ../server_certs/ca_cert.pem
 				)
 
 spiffs_create_partition_image(storage ${PROJECT_DIR}/fatfs FLASH_IN_PROJECT)

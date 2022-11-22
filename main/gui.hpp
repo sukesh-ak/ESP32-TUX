@@ -48,7 +48,7 @@ LV_FONT_DECLARE(font_fa_14)
  *      DEFINES
  *********************/
 #define HEADER_HEIGHT 30
-#define FOOTER_HEIGHT 50
+#define FOOTER_HEIGHT 30
 
 /******************
  *  LV DEFINES
@@ -138,6 +138,7 @@ void tux_anim_callback_set_opacity(lv_anim_t * a, int32_t v);
  ******************/
 static void create_page_home(lv_obj_t *parent);
 static void create_page_settings(lv_obj_t *parent);
+static void create_page_updates(lv_obj_t *parent);
 static void create_page_remote(lv_obj_t *parent);
 
 // Home page islands
@@ -275,14 +276,16 @@ void lv_setup_styles()
     lv_style_set_border_width(&style_ui_island, 1);
     lv_style_set_radius(&style_ui_island, 10);
 
+    // FOOTER NAV BUTTONS
     lv_style_init(&style_glow);
     lv_style_set_bg_opa(&style_glow, LV_OPA_COVER);
     lv_style_set_border_width(&style_glow,0);
-    // lv_style_set_bg_color(&style_glow, lv_palette_lighten(LV_PALETTE_GREY, 1));
-    // lv_style_set_height(&style_glow,FOOTER_HEIGHT-5);
-    lv_style_set_pad_all(&style_glow,10);
+    //lv_style_set_bg_color(&style_glow, lv_palette_lighten(LV_PALETTE_GREY, 1));
+    //lv_style_set_height(&style_glow,30);
+    //lv_style_set_pad_all(&style_glow,10);
+    //lv_style_set_size(&style_glow,30);
     /*Add a shadow*/
-    lv_style_set_shadow_width(&style_glow, 30);
+    lv_style_set_shadow_width(&style_glow, 10);
     lv_style_set_shadow_color(&style_glow, lv_palette_main(LV_PALETTE_BLUE));
     // lv_style_set_shadow_ofs_x(&style_glow, 5);
     // lv_style_set_shadow_ofs_y(&style_glow, 5);    
@@ -347,30 +350,37 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_set_align(panel_footer, LV_ALIGN_BOTTOM_MID);
     lv_obj_set_scrollbar_mode(panel_footer, LV_SCROLLBAR_MODE_OFF);
 
+/*
     // Create Footer label and animate if longer
-    // label_message = lv_label_create(panel_footer); // full screen as the parent
-    // lv_obj_set_width(label_message, LV_PCT(100));
-    // lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
-    // lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
-    // lv_obj_set_style_align(label_message,LV_ALIGN_BOTTOM_LEFT,0);
+    label_message = lv_label_create(panel_footer); // full screen as the parent
+    lv_obj_set_width(label_message, LV_PCT(100));
+    lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
+    lv_obj_set_style_align(label_message,LV_ALIGN_BOTTOM_LEFT,0);
 
     // Show LVGL version
-    //footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+*/
 
     /* REPLACE STATUS BAR WITH BUTTON PANEL FOR NAVIGATION */
-    static const char * btnm_map[] = {LV_SYMBOL_HOME " HOME", FA_SYMBOL_SETTINGS " SETTINGS", LV_SYMBOL_DOWNLOAD " UPDATE", NULL};
+    //static const char * btnm_map[] = {LV_SYMBOL_HOME " HOME", LV_SYMBOL_KEYBOARD " REMOTE", FA_SYMBOL_SETTINGS " SETTINGS", LV_SYMBOL_DOWNLOAD " UPDATE", NULL};
+    static const char * btnm_map[] = {LV_SYMBOL_HOME, LV_SYMBOL_KEYBOARD,FA_SYMBOL_SETTINGS, LV_SYMBOL_DOWNLOAD,  NULL};
     lv_obj_t * footerButtons = lv_btnmatrix_create(panel_footer);
     lv_btnmatrix_set_map(footerButtons, btnm_map);
+    lv_obj_set_style_text_font(footerButtons,&lv_font_montserrat_16,LV_PART_ITEMS);
     lv_obj_set_style_bg_opa(footerButtons,LV_OPA_TRANSP,0);
     lv_obj_set_size(footerButtons,LV_PCT(100),LV_PCT(100));
-    //lv_obj_set_style_border_width(footerButtons,0,0);
+    lv_obj_set_style_border_width(footerButtons,0,0);
     lv_btnmatrix_set_btn_ctrl_all(footerButtons, LV_BTNMATRIX_CTRL_CHECKABLE);
     
     //lv_obj_set_style_align(footerButtons,LV_ALIGN_TOP_MID,0);
     lv_btnmatrix_set_one_checked(footerButtons, true);   // only 1 button can be checked
     lv_btnmatrix_set_btn_ctrl(footerButtons,0,LV_BTNMATRIX_CTRL_CHECKED);
 
-    lv_obj_add_style(footerButtons, &style_glow,LV_PART_ITEMS);
+    lv_obj_set_height(footerButtons,50);
+    //lv_obj_set_style_bg_color(footerButtons,lv_palette_main(LV_PALETTE_RED),LV_PART_ITEMS); // un-selected
+    lv_obj_set_style_bg_opa(footerButtons,LV_OPA_TRANSP,LV_PART_ITEMS);
+    lv_obj_add_style(footerButtons, &style_glow,LV_PART_ITEMS | LV_BTNMATRIX_CTRL_CHECKED); // selected
 
     lv_obj_align(footerButtons, LV_ALIGN_CENTER, 0, 0);
     lv_obj_add_event_cb(footerButtons, footer_button_event_handler, LV_EVENT_ALL, NULL); 
@@ -628,12 +638,13 @@ static void tux_panel_devinfo(lv_obj_t *parent)
 
 static void create_page_remote(lv_obj_t *parent)
 {
+
     static lv_style_t style;
     lv_style_init(&style);
 
     /*Set a background color and a radius*/
     lv_style_set_radius(&style, 10);
-    // lv_style_set_bg_opa(&style, LV_OPA_COVER);
+    lv_style_set_bg_opa(&style, LV_OPA_80);
     // lv_style_set_bg_color(&style, lv_palette_lighten(LV_PALETTE_GREY, 1));
 
     /*Add a shadow*/
@@ -642,19 +653,21 @@ static void create_page_remote(lv_obj_t *parent)
     //    lv_style_set_shadow_ofs_x(&style, 10);
     //    lv_style_set_shadow_ofs_y(&style, 20);
 
-    lv_obj_t * island_remote = tux_panel_create(parent, LV_SYMBOL_KEYBOARD " REMOTE", LV_PCT(100));
+    lv_obj_t * island_remote = tux_panel_create(parent, "", LV_PCT(100));
     lv_obj_add_style(island_remote, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
     lv_obj_t *cont_remote = tux_panel_get_content(island_remote);
-
+    // lv_obj_set_style_border_color(cont_remote,lv_color_white(),0);
+    // lv_obj_set_style_border_width(cont_remote,3,0);
     //lv_obj_set_style_bg_opa(cont,LV_OPA_50,0);
+    //lv_obj_align(cont_remote,LV_ALIGN_CENTER,0,10);
 
-    //lv_obj_center(cont_remote);
+
     lv_obj_set_flex_flow(cont_remote, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(cont_remote, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_column(cont_remote, 5, 0);
-    lv_obj_set_style_pad_row(cont_remote, 5, 0);
+    lv_obj_set_style_pad_column(cont_remote, 10, 0);
+    lv_obj_set_style_pad_row(cont_remote, 10, 0);
 
     uint32_t i;
     for(i = 0; i <12; i++) {
@@ -662,26 +675,31 @@ static void create_page_remote(lv_obj_t *parent)
         lv_obj_add_style(obj, &style, LV_STATE_PRESSED);
         lv_obj_set_size(obj, 80, 80);
         
-
         lv_obj_t * label = lv_label_create(obj);
         lv_label_set_text_fmt(label, "%" LV_PRIu32, i);
         lv_obj_center(label);
     }
+
 }
 
 static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
     tux_panel_clock_weather(parent);
-    tux_panel_wifi(parent);
-    tux_panel_ota(parent);
+    //tux_panel_devinfo(parent);
 }
 
 static void create_page_settings(lv_obj_t *parent)
 {
     /* SETTINGS PAGE PANELS */
-    tux_panel_devinfo(parent);
+    tux_panel_wifi(parent);
     tux_panel_config(parent);
+}
+
+static void create_page_updates(lv_obj_t *parent)
+{
+    /* OTA UPDATES PAGE PANELS */
+    tux_panel_ota(parent);
 }
 
 static void create_splash_screen()
@@ -1022,7 +1040,6 @@ static void footer_button_event_handler(lv_event_t * e)
         uint32_t id = lv_btnmatrix_get_selected_btn(obj);
         const char * txt = lv_btnmatrix_get_btn_text(obj, id);
         printf("[%d] %s was pressed\n", id,txt);
-        //LV_LOG_USER("%s was pressed\n", txt);
 
         // HOME
         if (id==0)  {
@@ -1030,17 +1047,25 @@ static void footer_button_event_handler(lv_event_t * e)
             create_page_home(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
         } 
-        // SETTINGS
+        // KEYBOARD
         else if (id == 1) {
+            lv_obj_clean(content_container);
+            create_page_remote(content_container);
+            anim_move_left_x(content_container,screen_w,0,200);
+        }
+        // SETTINGS
+        else if (id == 2) {
             lv_obj_clean(content_container);
             create_page_settings(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
         }
-        // UPDATES
-        else if (id == 2) {
-            //lv_obj_clean(content_container);
-            
+        // OTA UPDATES
+        else if (id == 3) {
+            lv_obj_clean(content_container);
+            create_page_updates(content_container);
+            anim_move_left_x(content_container,screen_w,0,200);
         }
+
     }
 }
 

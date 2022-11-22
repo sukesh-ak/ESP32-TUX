@@ -121,3 +121,8 @@ void OpenWeatherMap::save_json()
 {
     // cache json in flash to show if not online?
 }
+
+void OpenWeatherMap::request_json_over_https()
+{
+    
+}
