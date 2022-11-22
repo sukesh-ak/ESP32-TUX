@@ -8,7 +8,7 @@ import http.server
 import ssl
 
 HOST = '192.168.1.128'
-PORT = 4443
+PORT = 443
 Handler = http.server.SimpleHTTPRequestHandler 
 with http.server.HTTPServer((HOST, PORT), Handler) as httpd:
     print("Web Server listening at => " + HOST + ":" + str(PORT))

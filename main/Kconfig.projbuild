@@ -99,7 +99,7 @@ menu "ESP32-TUX Configuration"
     menu "OTA Config"
         config OTA_FIRMWARE_UPGRADE_URL
             string "Firmware Upgrade URL"
-            default "https://192.168.1.128:4443/build/ESP32-TUX.bin"
+            default "https://192.168.1.128/build/ESP32-TUX.bin"
             help
                 URL of server which hosts the firmware image.
     
@@ -178,5 +178,13 @@ menu "ESP32-TUX Configuration"
         #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01-8MB.csv" if PARTITION_TABLE_WT32SC01_8MB
         #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-4MB.csv" if PARTITION_TABLE_WT32SC01PLUS_4MB
         #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-8MB.csv" if PARTITION_TABLE_WT32SC01PLUS_8MB
+    endmenu
+    menu "Weather Config"
+        config WEATHER_LOCAL_URL
+            string "Local URL for Weather JSON"
+            default "https://192.168.1.128/weather.json"
+            help
+                URL of server where sample weather.json is available.
+        
     endmenu
 endmenu

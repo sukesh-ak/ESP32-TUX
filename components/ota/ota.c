@@ -140,23 +140,6 @@ void run_ota_task(void *pvParameter)
         .keep_alive_enable = true,
     };
 
-#ifdef CONFIG_OTA_FIRMWARE_UPGRADE_URL_FROM_STDIN
-    char url_buf[OTA_URL_SIZE];
-    if (strcmp(config.url, "FROM_STDIN") == 0) {
-        example_configure_stdin_stdout();
-        fgets(url_buf, OTA_URL_SIZE, stdin);
-        int len = strlen(url_buf);
-        url_buf[len - 1] = '\0';
-        config.url = url_buf;
-    } else {
-        ESP_LOGE(TAG, "Configuration mismatch: wrong firmware upgrade image url");
-
-        strcpy(ota_reason,"Wrong firmware upgrade image url");
-        ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ABORTED, ota_reason,sizeof(ota_reason), portMAX_DELAY));        
-        abort();
-    }
-#endif
-
 #ifdef CONFIG_OTA_SKIP_COMMON_NAME_CHECK
     config.skip_cert_common_name_check = true;
 #endif

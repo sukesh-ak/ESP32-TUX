@@ -23,7 +23,12 @@ SOFTWARE.
 */
 
 #include "OpenWeatherMap.hpp"
+#include "esp_tls.h"
 static const char* TAG = "OpenWeatherMap";
+
+// Testing using Local Python server - same SSL cert used for OTA
+static const uint8_t local_server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+static const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 OpenWeatherMap::OpenWeatherMap()
 {
@@ -32,7 +37,6 @@ OpenWeatherMap::OpenWeatherMap()
     
     // setup default values for everything.
     TemperatureUnit = 'C';
-    
 }
 
 /* Get Weather from OpenWeatherMap API */
@@ -55,7 +59,6 @@ void OpenWeatherMap::request_weather_update()
     // https://api.openweathermap.org/data/2.5/weather?q=Bangalore,India&units=metric&APPID=
 
     ESP_LOGI(TAG,"Loaded:\n%s",jsonString.c_str());
-
     load_json();
 }
 
@@ -79,7 +82,6 @@ void OpenWeatherMap::load_json()
     
     SeaLevel = cJSON_GetObjectItem(maininfo,"sea_level")->valueint;
     GroundLevel = cJSON_GetObjectItem(maininfo,"grnd_level")->valueint;
-
 
     ESP_LOGW(TAG,"main: %3.1f°С / %3.1f°С / %3.1f°С / %3.1f°С / %d / %dhpa",
                                             Temperature, TemperatureFeelsLike,
@@ -124,5 +126,85 @@ void OpenWeatherMap::save_json()
 
 void OpenWeatherMap::request_json_over_https()
 {
-    
+    ESP_LOGI(TAG, "https_request to local server");
+
+    //string url = "https://192.168.1.128/weather.json";
+    const char LOCAL_SRV_REQUEST[] = "GET /weather.json HTTP/1.1\r\n"
+                             "User-Agent: esp-idf/1.0 esp32\r\n"
+                             "\r\n";
+
+    esp_tls_cfg_t cfg = {
+        .cacert_buf = (const unsigned char *) local_server_cert_pem_start,
+        .cacert_bytes =(unsigned) (local_server_cert_pem_end - local_server_cert_pem_start),
+        .skip_common_name = true,
+    };
+
+    char buf[512];
+    int ret, len;
+
+    struct esp_tls *tls = esp_tls_conn_http_new(CONFIG_WEATHER_LOCAL_URL, &cfg);
+
+    if (tls != NULL) {
+        ESP_LOGI(TAG, "TLS Connection established...");
+    } else {
+        ESP_LOGE(TAG, "TLS Connection failed...");
+        esp_tls_conn_delete(tls);
+        return;
+    }
+
+// #ifdef CONFIG_EXAMPLE_CLIENT_SESSION_TICKETS
+//     /* The TLS session is successfully established, now saving the session ctx for reuse */
+//     if (save_client_session) {
+//         free(tls_client_session);
+//         tls_client_session = esp_tls_get_client_session(tls);
+//     }
+// #endif
+    size_t written_bytes = 0;
+    do {
+        ret = esp_tls_conn_write(tls,
+                                 LOCAL_SRV_REQUEST + written_bytes,
+                                 strlen(LOCAL_SRV_REQUEST) - written_bytes);
+        if (ret >= 0) {
+            ESP_LOGI(TAG, "%d bytes written", ret);
+            written_bytes += ret;
+        } else if (ret != ESP_TLS_ERR_SSL_WANT_READ  && ret != ESP_TLS_ERR_SSL_WANT_WRITE) {
+            ESP_LOGE(TAG, "esp_tls_conn_write  returned: [0x%02X](%s)", ret, esp_err_to_name(ret));
+            esp_tls_conn_delete(tls);
+            return;
+        }
+    } while (written_bytes < strlen(LOCAL_SRV_REQUEST));
+
+    ESP_LOGI(TAG, "Reading HTTP response...");
+
+    do {
+        len = sizeof(buf) - 1;
+        bzero(buf, sizeof(buf));
+        ret = esp_tls_conn_read(tls, (char *)buf, len);
+
+        if (ret == ESP_TLS_ERR_SSL_WANT_WRITE  || ret == ESP_TLS_ERR_SSL_WANT_READ) {
+            continue;
+        }
+
+        if (ret < 0) {
+            ESP_LOGE(TAG, "esp_tls_conn_read  returned [-0x%02X](%s)", -ret, esp_err_to_name(ret));
+            break;
+        }
+
+        if (ret == 0) {
+            ESP_LOGI(TAG, "connection closed");
+            break;
+        }
+
+        len = ret;
+        ESP_LOGD(TAG, "%d bytes read", len);
+        
+        /* Print response directly to stdout as it is read */
+        for (int i = 0; i < len; i++) {
+            putchar(buf[i]);
+        }
+        putchar('\n'); // JSON output doesn't have a newline at end
+    } while (1);
+
+    ESP_LOGI(TAG, "Got Weather data - YAY!!!");
+    esp_tls_conn_delete(tls);
 }
