@@ -293,7 +293,6 @@ void lv_setup_styles()
     // lv_style_set_shadow_color(&style_glow, lv_palette_main(LV_PALETTE_RED));
     // lv_style_set_shadow_ofs_x(&style_glow, 5);
     // lv_style_set_shadow_ofs_y(&style_glow, 5);    
-
 }
 
 static void create_header(lv_obj_t *parent)

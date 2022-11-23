@@ -258,7 +258,7 @@ extern "C" void app_main(void)
 //******************************************** 
     owm = new OpenWeatherMap();
     owm->request_weather_update();
-    //owm->request_json_over_https();
+    //owm->request_json_over_http();
 //********************** CONFIG HELPER TESTING ENDS
 
     lcd.init();        // Initialize LovyanGFX
@@ -316,6 +316,7 @@ extern "C" void app_main(void)
 
     // Weather update timer - Once per min (60*1000)
     timer_weather = lv_timer_create(timer_weather_callback, 30 * 1000,  NULL);
+    lv_timer_set_repeat_count(timer_weather,1);
     //lv_timer_pause(timer_weather);  // enable after wifi is connected
 
     // Subscribe to page change events in the UI
@@ -340,7 +341,7 @@ static void timer_datetime_callback(lv_timer_t * timer)
 static void timer_weather_callback(lv_timer_t * timer)
 {
     // Update weather and trigger UI update
-    owm->request_json_over_https();
+    owm->request_json_over_http();
     //owm->request_weather_update();
     //lv_msg_send(MSG_WEATHER_CHANGED, owm);
 }

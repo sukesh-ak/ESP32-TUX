@@ -182,9 +182,13 @@ menu "ESP32-TUX Configuration"
     menu "Weather Config"
         config WEATHER_LOCAL_URL
             string "Local URL for Weather JSON"
-            default "https://192.168.1.128/weather.json"
+            default "https://192.168.1.128"
             help
                 URL of server where sample weather.json is available.
-        
+        config WEATHER_OWM_URL
+            string "Open Weather Map URL for Current Weather API"
+            default "https://api.openweathermap.org"
+            help
+                URL of OpenWeatherMap.org API.
     endmenu
 endmenu
