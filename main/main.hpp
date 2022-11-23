@@ -80,6 +80,8 @@ static void timer_weather_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
 static void tux_ui_change_cb(void * s, lv_msg_t *m);
 
+static string device_info();
+
 static bool is_wifi_provisioned = false;
 static bool is_wifi_connected = false;
 static bool is_sdcard_enabled = false;
@@ -99,3 +101,4 @@ static lv_timer_t * timer_weather;
 char qr_payload[150] = {0};     // QR code data for WiFi provisioning
 char ip_payload[20] = {0};      // IP Address
 char ota_status[150] = {0};     // OTA status during updates
+char devinfo_data[300] = {0};   // Device info

@@ -50,6 +50,8 @@ extern "C" {
 #define MSG_SDCARD_STATUS       57
 #define MSG_BATTERY_STATUS      58
 
+#define MSG_DEVICE_INFO         60
+
 #define MSG_TIME_CHANGED        100
 #define MSG_WEATHER_CHANGED     101
 

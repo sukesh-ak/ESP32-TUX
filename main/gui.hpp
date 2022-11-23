@@ -82,6 +82,8 @@ static lv_obj_t *lbl_version;
 static lv_obj_t *lbl_update_status;
 static lv_obj_t *lbl_scan_status;
 
+static lv_obj_t *lbl_device_info;
+
 static lv_obj_t *icon_storage;
 static lv_obj_t *icon_wifi;
 static lv_obj_t *icon_ble;
@@ -159,7 +161,7 @@ static void create_splash_screen();
 static void switch_theme(bool dark);
 static void qrcode_ui(lv_obj_t *parent);
 static void show_ui();
-static string device_info();
+
 static const char* get_firmware_version();
 
 static void rotate_event_handler(lv_event_t *e);
@@ -338,8 +340,8 @@ static void create_header(lv_obj_t *parent)
     lv_label_set_text(icon_battery, LV_SYMBOL_CHARGE);
     lv_obj_add_style(icon_battery, &style_battery, 0);
 
-    lv_obj_add_event_cb(panel_title, home_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_event_cb(panel_status, status_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
+    // lv_obj_add_event_cb(panel_title, home_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
+    // lv_obj_add_event_cb(panel_status, status_clicked_eventhandler, LV_EVENT_CLICKED, NULL);
 }
 
 static void create_footer(lv_obj_t *parent)
@@ -353,14 +355,14 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_set_scrollbar_mode(panel_footer, LV_SCROLLBAR_MODE_OFF);
 
 /*
-    // Create Footer label and animate if longer
+    // Create Footer label and animate if text is longer
     label_message = lv_label_create(panel_footer); // full screen as the parent
     lv_obj_set_width(label_message, LV_PCT(100));
     lv_label_set_long_mode(label_message, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_obj_add_style(label_message, &style_message, LV_STATE_DEFAULT);
     lv_obj_set_style_align(label_message,LV_ALIGN_BOTTOM_LEFT,0);
 
-    // Show LVGL version
+    // Show LVGL version in the footer
     footer_message("A Touch UX Template using LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
 */
 
@@ -372,7 +374,7 @@ static void create_footer(lv_obj_t *parent)
     lv_obj_set_style_text_font(footerButtons,&lv_font_montserrat_16,LV_PART_ITEMS);
     lv_obj_set_style_bg_opa(footerButtons,LV_OPA_TRANSP,0);
     lv_obj_set_size(footerButtons,LV_PCT(100),LV_PCT(100));
-    lv_obj_set_style_border_width(footerButtons,0,0);
+    lv_obj_set_style_border_width(footerButtons,0,LV_PART_MAIN | LV_PART_ITEMS);
     lv_btnmatrix_set_btn_ctrl_all(footerButtons, LV_BTNMATRIX_CTRL_CHECKABLE);
     
     //lv_obj_set_style_align(footerButtons,LV_ALIGN_TOP_MID,0);
@@ -627,16 +629,15 @@ static void tux_panel_ota(lv_obj_t *parent)
 
 static void tux_panel_devinfo(lv_obj_t *parent)
 {
-    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 190);
+    island_devinfo = tux_panel_create(parent, LV_SYMBOL_TINT " DEVICE INFO", 200);
     lv_obj_add_style(island_devinfo, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
     lv_obj_t *cont_devinfo = tux_panel_get_content(island_devinfo);
 
-    lv_obj_t * label1 = lv_label_create(cont_devinfo);
+    lbl_device_info = lv_label_create(cont_devinfo);
     // Monoaspace font for alignment
-    lv_obj_set_style_text_font(label1,&font_robotomono_13,0); 
-    lv_label_set_text(label1, device_info().c_str());
+    lv_obj_set_style_text_font(lbl_device_info,&font_robotomono_13,0); 
 }
 
 static void create_page_remote(lv_obj_t *parent)
@@ -653,19 +654,12 @@ static void create_page_remote(lv_obj_t *parent)
     /*Add a shadow*/
     lv_style_set_shadow_width(&style, 55);
     lv_style_set_shadow_color(&style, lv_palette_main(LV_PALETTE_BLUE));
-    //    lv_style_set_shadow_ofs_x(&style, 10);
-    //    lv_style_set_shadow_ofs_y(&style, 20);
 
-    lv_obj_t * island_remote = tux_panel_create(parent, "", LV_PCT(100));
+    lv_obj_t * island_remote = tux_panel_create(parent, LV_SYMBOL_KEYBOARD " REMOTE", LV_PCT(100));
     lv_obj_add_style(island_remote, &style_ui_island, 0);
 
     // Get Content Area to add UI elements
     lv_obj_t *cont_remote = tux_panel_get_content(island_remote);
-    // lv_obj_set_style_border_color(cont_remote,lv_color_white(),0);
-    // lv_obj_set_style_border_width(cont_remote,3,0);
-    //lv_obj_set_style_bg_opa(cont,LV_OPA_50,0);
-    //lv_obj_align(cont_remote,LV_ALIGN_CENTER,0,10);
-
 
     lv_obj_set_flex_flow(cont_remote, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(cont_remote, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -689,7 +683,6 @@ static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
     tux_panel_clock_weather(parent);
-    //tux_panel_devinfo(parent);
 }
 
 static void create_page_settings(lv_obj_t *parent)
@@ -703,6 +696,7 @@ static void create_page_updates(lv_obj_t *parent)
 {
     /* OTA UPDATES PAGE PANELS */
     tux_panel_ota(parent);
+    tux_panel_devinfo(parent);    
 }
 
 static void create_splash_screen()
@@ -759,7 +753,8 @@ static void show_ui()
     lv_msg_subsribe(MSG_WIFI_DISCONNECTED, status_change_cb, NULL);    
     lv_msg_subsribe(MSG_OTA_STATUS, status_change_cb, NULL);    
     lv_msg_subsribe(MSG_SDCARD_STATUS, status_change_cb, NULL);  
-    lv_msg_subsribe(MSG_BATTERY_STATUS, status_change_cb, NULL);         
+    lv_msg_subsribe(MSG_BATTERY_STATUS, status_change_cb, NULL);  
+    lv_msg_subsribe(MSG_DEVICE_INFO, status_change_cb, NULL);      
 }
 
 static void rotate_event_handler(lv_event_t *e)
@@ -931,56 +926,7 @@ inline void checkupdates_event_handler(lv_event_t *e)
         //lv_label_set_text_fmt(label, "Checking for updates...");
         LV_LOG_USER("Clicked");
         lv_msg_send(MSG_OTA_INITIATE,NULL);
-        //xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
     }
-}
-
-static string device_info()
-{
-    std::string s_chip_info = "";
-
-    /* Print chip information */
-    esp_chip_info_t chip_info;
-    uint32_t flash_size;
-    esp_chip_info(&chip_info);
-
-    // CPU Speed - 80Mhz / 160 Mhz / 240Mhz
-    rtc_cpu_freq_config_t conf;
-    rtc_clk_cpu_freq_get_config(&conf);
-
-    multi_heap_info_t info;    
-	heap_caps_get_info(&info, MALLOC_CAP_SPIRAM);
-    float psramsize = (info.total_free_bytes + info.total_allocated_bytes) / (1024.0 * 1024.0);
-
-    const esp_partition_t *running = esp_ota_get_running_partition();
-    esp_app_desc_t running_app_info;
-    
-    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
-        s_chip_info += fmt::format("Firmware Ver : {}\n",running_app_info.version);
-        s_chip_info += fmt::format("Project Name : {}\n",running_app_info.project_name);
-        // running_app_info.time
-        // running_app_info.date
-    }
-    s_chip_info += fmt::format("IDF Version  : {}\n\n",esp_get_idf_version());
-
-    s_chip_info += fmt::format("Controller   : {} Rev.{}\n",CONFIG_IDF_TARGET,chip_info.revision);  
-    //s_chip_info += fmt::format("\nModel         : {}",chip_info.model); // esp_chip_model_t type
-    s_chip_info += fmt::format("CPU Cores    : {}\n", (chip_info.cores==2)? "Dual Core" : "Single Core");
-    s_chip_info += fmt::format("CPU Speed    : {}Mhz\n",conf.freq_mhz);
-    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
-    s_chip_info += fmt::format("Flash Size   : {}MB {}\n",flash_size / (1024 * 1024),
-                                            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "[embedded]" : "[external]");
-    }
-    s_chip_info += fmt::format("PSRAM Size   : {}MB {}\n",static_cast<int>(round(psramsize)),
-                                            (chip_info.features & CHIP_FEATURE_EMB_PSRAM) ? "[embedded]" : "[external]");
-
-    s_chip_info += fmt::format("Connectivity : {}{}{}\n",(chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "2.4GHz WIFI" : "NA",
-                                                    (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-                                                    (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
-    //s_chip_info += fmt::format("\nIEEE 802.15.4 : {}",string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA"));
-
-    //ESP_LOGE(TAG,"\n%s",device_info().c_str());
-    return s_chip_info;
 }
 
 static const char* get_firmware_version()
@@ -1152,6 +1098,14 @@ static void status_change_cb(void * s, lv_msg_t *m)
             int battery_val = *(int *)lv_msg_get_payload(m);
             //ESP_LOGW(TAG,"[%d] MSG_BATTERY_STATUS %d",msg_id,battery_val);
             lv_update_battery(battery_val);
+        }
+        break;
+        case MSG_DEVICE_INFO:
+        {
+            ESP_LOGW(TAG,"[%d] MSG_DEVICE_INFO",msg_id);
+            char devinfo_data[300] = {0};
+            snprintf(devinfo_data,sizeof(devinfo_data),"%s",(const char*)lv_msg_get_payload(m));
+            lv_label_set_text(lbl_device_info,devinfo_data);
         }
         break;
     }

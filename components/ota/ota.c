@@ -49,7 +49,7 @@ static esp_err_t validate_image_header(esp_app_desc_t *new_app_info)
     if (memcmp(new_app_info->version, running_app_info.version, sizeof(new_app_info->version)) == 0) {
         ESP_LOGW(TAG, "Current running version is the same as a new. We will not continue the update.");
         
-        strcpy(ota_reason,"No update found!");
+        strcpy(ota_reason,"No firmware updates found!");
         ESP_ERROR_CHECK(esp_event_post(TUX_EVENTS, TUX_EVENT_OTA_ABORTED, ota_reason,sizeof(ota_reason), portMAX_DELAY));          
         return ESP_FAIL;
     }
@@ -139,6 +139,7 @@ void run_ota_task(void *pvParameter)
         .timeout_ms = CONFIG_OTA_OTA_RECV_TIMEOUT,
         .keep_alive_enable = true,
     };
+
 
 #ifdef CONFIG_OTA_SKIP_COMMON_NAME_CHECK
     config.skip_cert_common_name_check = true;
@@ -240,7 +241,6 @@ ota_end:
     esp_https_ota_abort(https_ota_handle);
 
     // Trigger events from the actual place to get the error message
-    ESP_LOGE(TAG, "OTA upgrade failed");  
     vTaskDelete(NULL);
 }
 

@@ -25,6 +25,14 @@ SOFTWARE.
 static const char *TAG = "ESP32-TUX";
 #include "main.hpp"
 
+static void set_timezone()
+{
+    // Update local timezone
+    //setenv("TZ", cfg->TimeZone, 1);
+    setenv("TZ", CONFIG_TIMEZONE_STRING, 1);
+    tzset();    
+}
+
 // GEt time from internal RTC and update date/time of the clock
 static void update_datetime_ui()
 {
@@ -85,10 +93,7 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
     // Handle TUX_EVENTS
     if (event_id == TUX_EVENT_DATETIME_SET) {
 
-        // Update local timezone
-        //setenv("TZ", cfg->TimeZone, 1);
-        setenv("TZ", CONFIG_TIMEZONE_STRING, 1);
-        tzset();    
+        set_timezone();
 
         // update clock
         update_datetime_ui();
@@ -102,7 +107,8 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
     } else if (event_id == TUX_EVENT_OTA_IN_PROGRESS) {
         // OTA In Progress - progressbar?
         char buffer[150] = {0};
-        snprintf(buffer,sizeof(buffer),"OTA: Data read : %d", (int)event_data);
+        int bytes_read = (*(int *)event_data)/1024;
+        snprintf(buffer,sizeof(buffer),"OTA: Data read : %dkb", bytes_read);
         lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_OTA_ROLLBACK) {
@@ -149,6 +155,9 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     {
         is_wifi_connected = true;
         lv_timer_ready(timer_datetime);   // start timer
+
+        // After OTA device restart, RTC will have time but not timezone
+        set_timezone();
 
         // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
@@ -307,7 +316,7 @@ extern "C" void app_main(void)
 
     // Weather update timer - Once per min (60*1000)
     timer_weather = lv_timer_create(timer_weather_callback, 30 * 1000,  NULL);
-    lv_timer_pause(timer_weather);  // enable after wifi is connected
+    //lv_timer_pause(timer_weather);  // enable after wifi is connected
 
     // Subscribe to page change events in the UI
     /* SPELLING MISTAKE IN API BUG => https://github.com/lvgl/lvgl/issues/3822 */
@@ -366,10 +375,59 @@ static void tux_ui_change_cb(void * s, lv_msg_t *m)
             break;
         case MSG_PAGE_OTA:
             // Update firmware current version info
+            lv_msg_send(MSG_DEVICE_INFO,device_info().c_str());
             break;
         case MSG_OTA_INITIATE:
             // OTA update from button trigger
             xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
             break;
     }
+}
+
+static string device_info()
+{
+    std::string s_chip_info = "";
+
+    /* Print chip information */
+    esp_chip_info_t chip_info;
+    uint32_t flash_size;
+    esp_chip_info(&chip_info);
+
+    // CPU Speed - 80Mhz / 160 Mhz / 240Mhz
+    rtc_cpu_freq_config_t conf;
+    rtc_clk_cpu_freq_get_config(&conf);
+
+    multi_heap_info_t info;    
+	heap_caps_get_info(&info, MALLOC_CAP_SPIRAM);
+    float psramsize = (info.total_free_bytes + info.total_allocated_bytes) / (1024.0 * 1024.0);
+
+    const esp_partition_t *running = esp_ota_get_running_partition();
+    esp_app_desc_t running_app_info;
+    
+    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
+        s_chip_info += fmt::format("Firmware Ver : {}\n",running_app_info.version);
+        s_chip_info += fmt::format("Project Name : {}\n",running_app_info.project_name);
+        // running_app_info.time
+        // running_app_info.date
+    }
+    s_chip_info += fmt::format("IDF Version  : {}\n\n",esp_get_idf_version());
+
+    s_chip_info += fmt::format("Controller   : {} Rev.{}\n",CONFIG_IDF_TARGET,chip_info.revision);  
+    //s_chip_info += fmt::format("\nModel         : {}",chip_info.model); // esp_chip_model_t type
+    s_chip_info += fmt::format("CPU Cores    : {}\n", (chip_info.cores==2)? "Dual Core" : "Single Core");
+    s_chip_info += fmt::format("CPU Speed    : {}Mhz\n",conf.freq_mhz);
+    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK) {
+    s_chip_info += fmt::format("Flash Size   : {}MB {}\n",flash_size / (1024 * 1024),
+                                            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "[embedded]" : "[external]");
+    }
+    s_chip_info += fmt::format("PSRAM Size   : {}MB {}\n",static_cast<int>(round(psramsize)),
+                                            (chip_info.features & CHIP_FEATURE_EMB_PSRAM) ? "[embedded]" : "[external]");
+
+    s_chip_info += fmt::format("Connectivity : {}{}{}\n",(chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "2.4GHz WIFI" : "NA",
+                                                    (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+                                                    (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    //s_chip_info += fmt::format("\nIEEE 802.15.4 : {}",string((chip_info.features & CHIP_FEATURE_IEEE802154) ? "YES" : "NA"));
+
+    //ESP_LOGE(TAG,"\n%s",device_info().c_str());
+    return s_chip_info;
 }
