@@ -67,6 +67,7 @@ using namespace std ;
 #include "events/tux_events.hpp"
 
 #include "OpenWeatherMap.hpp"
+#include "events/gui_events.hpp"
 
 /* Event source periodic timer related definitions */
 ESP_EVENT_DEFINE_BASE(TUX_EVENTS);
@@ -77,8 +78,13 @@ OpenWeatherMap *owm;
 static void timer_datetime_callback(lv_timer_t * timer);
 static void timer_weather_callback(lv_timer_t * timer);
 static void lv_update_battery(uint batval);
+static void tux_ui_change_cb(void * s, lv_msg_t *m);
+
+static bool is_wifi_provisioned = false;
 static bool is_wifi_connected = false;
-static bool sd_card_enabled = false;
+static bool is_sdcard_enabled = false;
+static bool is_dark_theme = true;
+
 static int battery_value = 0;
 
 static lv_timer_t * timer_datetime;
@@ -89,3 +95,7 @@ static lv_timer_t * timer_weather;
 // #define TZ_STRING "EST5EDT,M3.2.0/2,M11.1.0"    // Eastern Standard Time
 // #define TZ_STRING "CST-8"                       // China Standard Time
 #define TZ_STRING "UTC-05:30"                   // India Standart Time
+
+char qr_payload[150] = {0};     // QR code data for WiFi provisioning
+char ip_payload[20] = {0};      // IP Address
+char ota_status[150] = {0};     // OTA status during updates

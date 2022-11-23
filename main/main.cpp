@@ -95,37 +95,42 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
 
     } else if (event_id == TUX_EVENT_OTA_STARTED) {
         // OTA Started
-        char *reason = (char*)event_data;
-        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: %s",(char*)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_OTA_IN_PROGRESS) {
         // OTA In Progress - progressbar?
-        int img_len_read = (int)event_data;
-        ESP_LOGW(TAG, "OTA: Data read : %d", img_len_read);
-        lv_label_set_text_fmt(lbl_update_status, "OTA: Data read : %d", img_len_read);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: Data read : %d", (int)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_OTA_ROLLBACK) {
         // OTA Rollback - god knows why!
-        char *reason = (char*)event_data;
-        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: %s", (char*)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_OTA_COMPLETED) {
         // OTA Completed - YAY! Success
-        char *reason = (char*)event_data;
-        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: %s", (char*)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
         // wait before reboot
         vTaskDelay(3000 / portTICK_PERIOD_MS);
 
     } else if (event_id == TUX_EVENT_OTA_ABORTED) {
         // OTA Aborted - Not a good day for updates
-        char *reason = (char*)event_data;
-        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: %s", (char*)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_OTA_FAILED) {
         // OTA Failed - huh! - maybe in red color?
-        char *reason = (char*)event_data;
-        lv_label_set_text_fmt(lbl_update_status, "OTA: %s", reason);
+        char buffer[150] = {0};
+        snprintf(buffer,sizeof(buffer),"OTA: %s", (char*)event_data);
+        lv_msg_send(MSG_OTA_STATUS,buffer);
 
     } else if (event_id == TUX_EVENT_WEATHER_UPDATED) {
         // Weather updates - summer?
@@ -142,10 +147,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     //ESP_LOGD(TAG, "%s:%s: wifi_event_handler", event_base, get_id_string(event_base, event_id));
     if (event_base == WIFI_EVENT  && event_id == WIFI_EVENT_STA_CONNECTED)
     {
+        is_wifi_connected = true;
+        lv_timer_ready(timer_datetime);   // start timer
+
         // Not a warning but just for highlight
         ESP_LOGW(TAG,"WIFI_EVENT_STA_CONNECTED");
-        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
-        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+        lv_msg_send(MSG_WIFI_CONNECTED,NULL);
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
@@ -153,10 +160,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         lv_timer_pause(timer_datetime);   // stop/pause timer
 
         ESP_LOGW(TAG,"WIFI_EVENT_STA_DISCONNECTED");
-
-        lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
-        lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
-
+        lv_msg_send(MSG_WIFI_DISCONNECTED,NULL);
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
@@ -166,7 +170,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGW(TAG,"IP_EVENT_STA_GOT_IP");
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
 
-        //lv_label_set_text_fmt(lbl_wifi_status, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        snprintf(ip_payload,sizeof(ip_payload),"%d.%d.%d.%d", IP2STR(&event->ip_info.ip));
         
         // We got IP, lets update time from SNTP. RTC keeps time unless powered off
         xTaskCreate(configure_time, "config_time", 1024*4, NULL, 3, NULL);
@@ -190,23 +194,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_END) {
         ESP_LOGW(TAG,"WIFI_PROV_END");
-        lvgl_acquire();
-        // lv_qrcode_update(prov_qr, payload, strlen(payload));
-        lv_label_set_text(lbl_scan_status, "Connected to Wi-Fi sucessfully.");
-        lvgl_release();        
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_SHOWQR) {
         ESP_LOGW(TAG,"WIFI_PROV_SHOWQR");
-        
-        char *payload = (char*)event_data;      // get payload
-
-        lvgl_acquire();
-        lv_qrcode_update(prov_qr, payload, strlen(payload));
-        lv_label_set_text(lbl_scan_status, "Install 'ESP SoftAP Prov' App & Scan");
-        lvgl_release();
+        strcpy(qr_payload,(char*)event_data);   // Add qr payload to the variable
     }
 }
-
 
 extern "C" void app_main(void)
 {
@@ -234,7 +227,7 @@ extern "C" void app_main(void)
     // Initializing SDSPI 
     if (init_sdspi() == ESP_OK) // SD SPI
     {
-        sd_card_enabled = true;
+        is_sdcard_enabled = true;
     }
 #endif   
 //********************** CONFIG HELPER TESTING STARTS
@@ -256,6 +249,7 @@ extern "C" void app_main(void)
 //******************************************** 
     owm = new OpenWeatherMap();
     owm->request_weather_update();
+    //owm->request_json_over_https();
 //********************** CONFIG HELPER TESTING ENDS
 
     lcd.init();        // Initialize LovyanGFX
@@ -281,7 +275,7 @@ extern "C" void app_main(void)
     // LV_FS integration & print readme.txt from the root
     lv_print_readme_txt();
 
-/* Push LVGL/UI to its own task later*/
+/* Push LVGL/UI to its own UI task later*/
     // Splash screen
     lvgl_acquire();
     create_splash_screen();
@@ -292,18 +286,11 @@ extern "C" void app_main(void)
     lv_setup_styles();    
     show_ui();
     lvgl_release();
-/* Push these to its own task later*/
+/* Push these to its own UI task later*/
 
 #ifdef SD_ENABLED
-    lvgl_acquire();
-    // SD CARD available? 
-    if (sd_card_enabled) 
-        lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_GREEN));
-    else 
-        lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_RED));
-    
-    lv_obj_refresh_style(icon_storage, LV_PART_ANY, LV_STYLE_PROP_ANY);
-    lvgl_release();
+    // Icon status color update
+    lv_msg_send(MSG_SDCARD_STATUS,&is_sdcard_enabled);
 #endif
 
     // Wifi Provision and connection.
@@ -316,18 +303,28 @@ extern "C" void app_main(void)
 
     // Date/Time update timer - once per sec
     timer_datetime = lv_timer_create(timer_datetime_callback, 1000,  NULL);
+    //lv_timer_pause(timer_datetime); // enable only when wifi is connected
 
     // Weather update timer - Once per min (60*1000)
-    timer_weather = lv_timer_create(timer_weather_callback, 5 * 1000,  NULL);
+    timer_weather = lv_timer_create(timer_weather_callback, 30 * 1000,  NULL);
+    lv_timer_pause(timer_weather);  // enable after wifi is connected
+
+    // Subscribe to page change events in the UI
+    /* SPELLING MISTAKE IN API BUG => https://github.com/lvgl/lvgl/issues/3822 */
+    lv_msg_subsribe(MSG_PAGE_HOME, tux_ui_change_cb, NULL);
+    lv_msg_subsribe(MSG_PAGE_REMOTE, tux_ui_change_cb, NULL);
+    lv_msg_subsribe(MSG_PAGE_SETTINGS, tux_ui_change_cb, NULL);
+    lv_msg_subsribe(MSG_PAGE_OTA, tux_ui_change_cb, NULL);
+    lv_msg_subsribe(MSG_OTA_INITIATE, tux_ui_change_cb, NULL);    // Initiate OTA
 }
 
 static void timer_datetime_callback(lv_timer_t * timer)
 {
-    // // Battery icon animation
-    // if (battery_value>100) battery_value=0;
-    // battery_value+=10;
-    // lv_update_battery(battery_value);
-
+    // Battery icon animation
+    if (battery_value>100) battery_value=0;
+    battery_value+=10;
+    
+    lv_msg_send(MSG_BATTERY_STATUS,&battery_value);
     update_datetime_ui();
 }
 
@@ -339,31 +336,40 @@ static void timer_weather_callback(lv_timer_t * timer)
     //lv_msg_send(MSG_WEATHER_CHANGED, owm);
 }
 
-static void lv_update_battery(uint batval)
+// Callback to notify App UI change
+static void tux_ui_change_cb(void * s, lv_msg_t *m)
 {
-    if (batval < 20)
+    LV_UNUSED(s);
+    unsigned int page_id = lv_msg_get_id(m);
+    const char * msg_payload = (const char *)lv_msg_get_payload(m);
+    const char * msg_data = (const char *)lv_msg_get_user_data(m);
+
+    ESP_LOGW(TAG,"[%d] page event triggered",page_id);
+
+    switch (page_id)
     {
-        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
-        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_EMPTY);
-    }
-    else if (batval < 50)
-    {
-        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
-        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_1);
-    }
-    else if (batval < 70)
-    {
-        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_DEEP_ORANGE));
-        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_2);
-    }
-    else if (batval < 90)
-    {
-        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_GREEN));
-        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_3);
-    }
-    else
-    {
-        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_GREEN));
-        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_FULL);
+        case MSG_PAGE_HOME:
+            // Update date/time and current weather
+            // lv_msg_send(MSG_TIME_CHANGED, &datetimeinfo);
+            // lv_msg_send(MSG_WEATHER_CHANGED, owm);
+            break;
+        case MSG_PAGE_REMOTE:
+            // Trigger loading buttons data
+            break;
+        case MSG_PAGE_SETTINGS:
+            if (!is_wifi_connected)  {// Provisioning mode
+                lv_msg_send(MSG_WIFI_PROV_MODE, qr_payload);
+                //lv_msg_send(MSG_QRCODE_CHANGED, qr_payload);
+            } else {
+                lv_msg_send(MSG_WIFI_CONNECTED, ip_payload);
+            }
+            break;
+        case MSG_PAGE_OTA:
+            // Update firmware current version info
+            break;
+        case MSG_OTA_INITIATE:
+            // OTA update from button trigger
+            xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
+            break;
     }
 }

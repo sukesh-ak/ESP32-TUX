@@ -28,6 +28,7 @@ SOFTWARE.
 #include <fmt/format.h>
 #include "OpenWeatherMap.hpp"
 #include "apps/weather/weathericons.h"
+#include "events/gui_events.hpp"
 
 LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
@@ -176,6 +177,9 @@ static void footer_button_event_handler(lv_event_t *e);
 void datetime_event_cb(lv_event_t * e);
 void weather_event_cb(lv_event_t * e);
 
+static void status_change_cb(void * s, lv_msg_t *m);
+static void lv_update_battery(uint batval);
+
 void lv_setup_styles()
 {
     font_symbol = &lv_font_montserrat_14;
@@ -280,13 +284,11 @@ void lv_setup_styles()
     lv_style_init(&style_glow);
     lv_style_set_bg_opa(&style_glow, LV_OPA_COVER);
     lv_style_set_border_width(&style_glow,0);
-    //lv_style_set_bg_color(&style_glow, lv_palette_lighten(LV_PALETTE_GREY, 1));
-    //lv_style_set_height(&style_glow,30);
-    //lv_style_set_pad_all(&style_glow,10);
-    //lv_style_set_size(&style_glow,30);
+    lv_style_set_bg_color(&style_glow, lv_palette_main(LV_PALETTE_RED));
+
     /*Add a shadow*/
-    lv_style_set_shadow_width(&style_glow, 10);
-    lv_style_set_shadow_color(&style_glow, lv_palette_main(LV_PALETTE_BLUE));
+    // lv_style_set_shadow_width(&style_glow, 10);
+    // lv_style_set_shadow_color(&style_glow, lv_palette_main(LV_PALETTE_RED));
     // lv_style_set_shadow_ofs_x(&style_glow, 5);
     // lv_style_set_shadow_ofs_y(&style_glow, 5);    
 
@@ -377,8 +379,9 @@ static void create_footer(lv_obj_t *parent)
     lv_btnmatrix_set_one_checked(footerButtons, true);   // only 1 button can be checked
     lv_btnmatrix_set_btn_ctrl(footerButtons,0,LV_BTNMATRIX_CTRL_CHECKED);
 
-    lv_obj_set_height(footerButtons,50);
-    //lv_obj_set_style_bg_color(footerButtons,lv_palette_main(LV_PALETTE_RED),LV_PART_ITEMS); // un-selected
+    // Very important but weird behavior
+    lv_obj_set_height(footerButtons,FOOTER_HEIGHT+20);    
+    lv_obj_set_style_radius(footerButtons,0,LV_PART_ITEMS);
     lv_obj_set_style_bg_opa(footerButtons,LV_OPA_TRANSP,LV_PART_ITEMS);
     lv_obj_add_style(footerButtons, &style_glow,LV_PART_ITEMS | LV_BTNMATRIX_CTRL_CHECKED); // selected
 
@@ -749,6 +752,14 @@ static void show_ui()
     // Load main screen with animation
     //lv_scr_load(screen_container);
     lv_scr_load_anim(screen_container, LV_SCR_LOAD_ANIM_FADE_IN, 1000,100, true);
+
+    // Status subscribers
+    lv_msg_subsribe(MSG_WIFI_PROV_MODE, status_change_cb, NULL);    
+    lv_msg_subsribe(MSG_WIFI_CONNECTED, status_change_cb, NULL);    
+    lv_msg_subsribe(MSG_WIFI_DISCONNECTED, status_change_cb, NULL);    
+    lv_msg_subsribe(MSG_OTA_STATUS, status_change_cb, NULL);    
+    lv_msg_subsribe(MSG_SDCARD_STATUS, status_change_cb, NULL);  
+    lv_msg_subsribe(MSG_BATTERY_STATUS, status_change_cb, NULL);         
 }
 
 static void rotate_event_handler(lv_event_t *e)
@@ -919,7 +930,8 @@ inline void checkupdates_event_handler(lv_event_t *e)
         //lv_obj_t *label = lv_obj_get_child(btn, 0);
         //lv_label_set_text_fmt(label, "Checking for updates...");
         LV_LOG_USER("Clicked");
-        xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
+        lv_msg_send(MSG_OTA_INITIATE,NULL);
+        //xTaskCreate(run_ota_task, "run_ota_task", 1024 * 8, NULL, 5, NULL);
     }
 }
 
@@ -1046,26 +1058,131 @@ static void footer_button_event_handler(lv_event_t * e)
             lv_obj_clean(content_container);
             create_page_home(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
+            lv_msg_send(MSG_PAGE_HOME,NULL);
         } 
-        // KEYBOARD
+        // REMOTE
         else if (id == 1) {
             lv_obj_clean(content_container);
             create_page_remote(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
+            lv_msg_send(MSG_PAGE_REMOTE,NULL);
         }
         // SETTINGS
         else if (id == 2) {
             lv_obj_clean(content_container);
             create_page_settings(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
+            lv_msg_send(MSG_PAGE_SETTINGS,NULL);
         }
         // OTA UPDATES
         else if (id == 3) {
             lv_obj_clean(content_container);
             create_page_updates(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
+            lv_msg_send(MSG_PAGE_OTA,NULL);
         }
+    }
+}
 
+static void status_change_cb(void * s, lv_msg_t *m)
+{
+    LV_UNUSED(s);
+    unsigned int msg_id = lv_msg_get_id(m);
+    const char * msg_payload = (const char *)lv_msg_get_payload(m);
+    const char * msg_data = (const char *)lv_msg_get_user_data(m);
+
+    switch (msg_id)
+    {
+        case MSG_WIFI_PROV_MODE:
+        {
+            ESP_LOGW(TAG,"[%d] MSG_WIFI_PROV_MODE",msg_id);
+            // Update QR code for PROV and wifi symbol to red?
+            lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
+            lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+
+            char qr_data[150] = {0};
+            snprintf(qr_data,sizeof(qr_data),"%s",(const char*)lv_msg_get_payload(m));
+            lv_qrcode_update(prov_qr, qr_data, strlen(qr_data));
+            lv_label_set_text(lbl_scan_status, "Install 'ESP SoftAP Prov' App & Scan");
+        }
+        break;
+        case MSG_WIFI_CONNECTED:
+        {
+            ESP_LOGW(TAG,"[%d] MSG_WIFI_CONNECTED",msg_id);
+            lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_BLUE));
+            lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+
+            if (lv_msg_get_payload(m) != NULL) {
+                char ip_data[20]={0};
+                // IP address in the payload so display
+                snprintf(ip_data,sizeof(ip_data),"%s",(const char*)lv_msg_get_payload(m));
+                lv_label_set_text_fmt(lbl_wifi_status, "IP Address: %s",ip_data);
+            }
+        }
+        break;
+        case MSG_WIFI_DISCONNECTED:
+        {
+            ESP_LOGW(TAG,"[%d] MSG_WIFI_DISCONNECTED",msg_id);
+            lv_style_set_text_color(&style_wifi, lv_palette_main(LV_PALETTE_GREY));
+            lv_label_set_text(icon_wifi, LV_SYMBOL_WIFI);
+        }
+        break;
+        case MSG_OTA_STATUS:
+        {
+            ESP_LOGW(TAG,"[%d] MSG_OTA_STATUS",msg_id);
+            // Shows different status during OTA update
+            char ota_data[150] = {0};
+            snprintf(ota_data,sizeof(ota_data),"%s",(const char*)lv_msg_get_payload(m));
+            lv_label_set_text(lbl_update_status, ota_data);
+        }
+        break;
+        case MSG_SDCARD_STATUS:
+        {
+            bool sd_status = *(bool *)lv_msg_get_payload(m);
+            ESP_LOGW(TAG,"[%d] MSG_SDCARD_STATUS %d",msg_id,sd_status);
+            if (sd_status) {
+                lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_GREEN));
+            } else {
+                lv_style_set_text_color(&style_storage, lv_palette_main(LV_PALETTE_RED));
+            }
+        }
+        break;
+        case MSG_BATTERY_STATUS:
+        {
+            int battery_val = *(int *)lv_msg_get_payload(m);
+            //ESP_LOGW(TAG,"[%d] MSG_BATTERY_STATUS %d",msg_id,battery_val);
+            lv_update_battery(battery_val);
+        }
+        break;
+    }
+}
+
+static void lv_update_battery(uint batval)
+{
+    if (batval < 20)
+    {
+        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
+        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_EMPTY);
+    }
+    else if (batval < 50)
+    {
+        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
+        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_1);
+    }
+    else if (batval < 70)
+    {
+        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_DEEP_ORANGE));
+        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_2);
+    }
+    else if (batval < 90)
+    {
+        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_GREEN));
+        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_3);
+    }
+    else
+    {
+        lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_GREEN));
+        lv_label_set_text(icon_battery, LV_SYMBOL_BATTERY_FULL);
     }
 }
 

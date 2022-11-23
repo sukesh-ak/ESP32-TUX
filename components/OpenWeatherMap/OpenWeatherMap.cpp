@@ -27,8 +27,8 @@ SOFTWARE.
 static const char* TAG = "OpenWeatherMap";
 
 // Testing using Local Python server - same SSL cert used for OTA
-static const uint8_t local_server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
-static const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
+extern const uint8_t local_server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 OpenWeatherMap::OpenWeatherMap()
 {
@@ -130,7 +130,7 @@ void OpenWeatherMap::request_json_over_https()
 
     //string url = "https://192.168.1.128/weather.json";
     const char LOCAL_SRV_REQUEST[] = "GET /weather.json HTTP/1.1\r\n"
-                             "User-Agent: esp-idf/1.0 esp32\r\n"
+                             "User-Agent: ESP32-TUX/1.0 esp32\r\n"
                              "\r\n";
 
     esp_tls_cfg_t cfg = {

@@ -51,5 +51,3 @@ LV_FONT_DECLARE(font_fa_weather_42)
 #define FA_WEATHER_CLOUD_MOON           "\xEF\x9B\x83"      // f6c3
 
 
-#define MSG_TIME_CHANGED        100
-#define MSG_WEATHER_CHANGED     101
