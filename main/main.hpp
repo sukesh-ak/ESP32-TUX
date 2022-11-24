@@ -50,7 +50,8 @@ using namespace std ;
 // Make SPIFF available to LVGL Filesystem
 #include "helper_lv_fs.hpp"
 
-// Enable one of the devices from below (shift to bsp selection later)
+/********************DEVICE SELECTION ******************/
+/* Enable one of the devices from below (shift to bsp selection later) */
 ///#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
 
 // WT32-SC01 Plus (ESP32-S3 + 8Bit Parellel) with SD Card, Audio support
@@ -58,6 +59,8 @@ using namespace std ;
 
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
 #include "conf_Makerfabs_S3_PTFT.h"     
+/********************************************************/
+
 
 #include "helper_display.hpp"
 

@@ -28,6 +28,12 @@ SOFTWARE.
 #include <LovyanGFX.hpp>
 
 #define WT32_SC01
+// #define SD_SUPPORTED // external SPI (SD or others)
+
+#define SPI_HOST_ID SPI2_HOST
+
+// Since SPI bus is shared, only CS PIN required
+#define SD_CS   GPIO_NUM_33
 
 // Portrait
 #define TFT_WIDTH   320

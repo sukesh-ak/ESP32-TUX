@@ -27,11 +27,6 @@ SOFTWARE.
 // SD Card on Shared SPI bus if required
 #define MOUNT_POINT "/sdcard"
 
-#define SPI_HOST_ID SPI2_HOST
-
-// Since SPI bus is shared, only CS PIN required
-#define SD_CS   GPIO_NUM_33
-
 static sdmmc_card_t* sdcard;
 
 bool init_sdspi()

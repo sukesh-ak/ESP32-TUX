@@ -29,6 +29,13 @@ SOFTWARE.
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 
+// SD CARD - SPI
+#define SPI_HOST_ID SPI3_HOST
+#define SD_MISO GPIO_NUM_38 
+#define SD_MOSI GPIO_NUM_40
+#define SD_SCLK GPIO_NUM_39
+#define SD_CS   GPIO_NUM_41
+
 // Portrait
 #define TFT_WIDTH   320
 #define TFT_HEIGHT  480
