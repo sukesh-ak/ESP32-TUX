@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef TUX_CONF_H
+#define TUX_CONF_H
+
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
@@ -52,16 +55,16 @@ using namespace std ;
 
 /********************DEVICE SELECTION ******************/
 /* Enable one of the devices from below (shift to bsp selection later) */
-///#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
+// #include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
 
 // WT32-SC01 Plus (ESP32-S3 + 8Bit Parellel) with SD Card, Audio support
-//#include "conf_WT32SCO1-Plus.h"         
+#include "conf_WT32SCO1-Plus.h"         
 
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
-//#include "conf_Makerfabs_S3_PTFT.h"     
+// #include "conf_Makerfabs_S3_PTFT.h"     
 
 // Makerfabs ESP32S335D (ESP32-S3 + SPI) with SD Card, Audio support
-#include "conf_Makerfabs_S3_STFT.h"
+// #include "conf_Makerfabs_S3_STFT.h"
 /********************************************************/
 
 
@@ -118,3 +121,5 @@ char qr_payload[150] = {0};     // QR code data for WiFi provisioning
 char ip_payload[20] = {0};      // IP Address
 char ota_status[150] = {0};     // OTA status during updates
 char devinfo_data[300] = {0};   // Device info
+
+#endif // TUX_CONF_H

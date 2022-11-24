@@ -64,7 +64,7 @@ bool init_sdspi()
         .quadhd_io_num = -1,
         .max_transfer_sz = 4092,
     };
-    esp_err_t ret = spi_bus_initialize(SPI_HOST_ID, &bus_cfg, SDSPI_DEFAULT_DMA);
+    esp_err_t ret = spi_bus_initialize(SDSPI_HOST_ID, &bus_cfg, SDSPI_DEFAULT_DMA);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize bus.");
         return ESP_FAIL;
