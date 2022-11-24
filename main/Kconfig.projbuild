@@ -190,5 +190,9 @@ menu "ESP32-TUX Configuration"
             default "https://api.openweathermap.org"
             help
                 URL of OpenWeatherMap.org API.
+        config WEATHER_API_KEY
+            string "Open Weather Map API Key for access"
+            help
+                Register on OpenWeatherMap.org for FREE limited API KEY
     endmenu
 endmenu

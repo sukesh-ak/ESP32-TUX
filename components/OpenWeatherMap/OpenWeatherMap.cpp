@@ -49,9 +49,9 @@ extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 #define WEB_API_URL "api.openweathermap.org"
 #define WEB_API_PORT "80"
-#define WEB_API_PATH "/data/2.5/weather?q=Bangalore,India&units=metric&APPID=c2f797febdd79a81d065f5aa0532d5e4"
+#define WEB_API_PATH "/data/2.5/weather?q=Bangalore,India&units=metric&APPID="
 
-static const char *REQUEST = "GET " WEB_API_PATH " HTTP/1.0\r\n"
+static const char *REQUEST = "GET " WEB_API_PATH CONFIG_WEATHER_API_KEY " HTTP/1.0\r\n"
     "Host: " WEB_API_URL ":" WEB_API_PORT "\r\n"
     "User-Agent: ESP32-TUX/1.0 esp32\r\n"
     "\r\n";
@@ -153,101 +153,11 @@ void OpenWeatherMap::save_json()
 /*
     Get OpenWeatherMaps certificate - api.openweathermap.org
     openssl s_client -showcerts -connect api.openweathermap.org:443 </dev/null
-
 */
 void OpenWeatherMap::request_json_over_https()
 {
-    // ESP_LOGI(TAG, "https_request to local server");
+ESP_LOGI(TAG, "HTTPS request to get weather");
 
-    // //string url = "https://192.168.1.128/weather.json";
-    // const char LOCAL_SRV_REQUEST[] = "GET /weather.json HTTP/1.1\r\n"
-    //                          "User-Agent: ESP32-TUX/1.0 esp32\r\n"
-    //                          "\r\n";
-
-    // const char REMOTE_SRV_REQUEST[] = "GET /data/2.5/weather?q=Bangalore,India&units=metric&APPID=c2f797febdd79a81d065f5aa0532d5e4 HTTP/1.1\r\n"
-    //                          "Host: " CONFIG_WEATHER_OWM_URL ":443\r\n"
-    //                          "User-Agent: ESP32-TUX/1.0 esp32\r\n"
-    //                          "\r\n";
-
-    // // esp_tls_cfg_t cfg = {
-    // //     .cacert_buf = (const unsigned char *) local_server_cert_pem_start,
-    // //     .cacert_bytes =(unsigned) (local_server_cert_pem_end - local_server_cert_pem_start),
-    // //     .skip_common_name = true,
-    // // };
-
-    // esp_tls_cfg_t cfg = {
-    //     .cacert_buf = (const unsigned char *) owm_server_cert_pem_start,
-    //     .cacert_bytes =(unsigned) (owm_server_cert_pem_end - owm_server_cert_pem_start),
-    //     .skip_common_name = true,
-    // };
-
-    // char buf[512];
-    // int ret, len;
-
-    // //struct esp_tls *tls = esp_tls_conn_http_new(CONFIG_WEATHER_LOCAL_URL, &cfg);
-    // struct esp_tls *tls = esp_tls_conn_http_new(CONFIG_WEATHER_OWM_URL, &cfg);
-
-    // if (tls != NULL) {
-    //     ESP_LOGI(TAG, "TLS Connection established...");
-    // } else {
-    //     ESP_LOGE(TAG, "TLS Connection failed...");
-    //     esp_tls_conn_delete(tls);
-    //     return;
-    // }
-
-    // size_t written_bytes = 0;
-    // do {
-    //     // ret = esp_tls_conn_write(tls,
-    //     //                          LOCAL_SRV_REQUEST + written_bytes,
-    //     //                          strlen(LOCAL_SRV_REQUEST) - written_bytes);
-
-    //     ret = esp_tls_conn_write(tls,
-    //                              REMOTE_SRV_REQUEST + written_bytes,
-    //                              strlen(REMOTE_SRV_REQUEST) - written_bytes);
-
-    //     if (ret >= 0) {
-    //         ESP_LOGI(TAG, "%d bytes written", ret);
-    //         written_bytes += ret;
-    //     } else if (ret != ESP_TLS_ERR_SSL_WANT_READ  && ret != ESP_TLS_ERR_SSL_WANT_WRITE) {
-    //         ESP_LOGE(TAG, "esp_tls_conn_write  returned: [0x%02X](%s)", ret, esp_err_to_name(ret));
-    //         esp_tls_conn_delete(tls);
-    //         return;
-    //     }
-    // } while (written_bytes < strlen(LOCAL_SRV_REQUEST));
-
-    // ESP_LOGI(TAG, "Reading HTTP response...");
-
-    // do {
-    //     len = sizeof(buf) - 1;
-    //     bzero(buf, sizeof(buf));
-    //     ret = esp_tls_conn_read(tls, (char *)buf, len);
-
-    //     if (ret == ESP_TLS_ERR_SSL_WANT_WRITE  || ret == ESP_TLS_ERR_SSL_WANT_READ) {
-    //         continue;
-    //     }
-
-    //     if (ret < 0) {
-    //         ESP_LOGE(TAG, "esp_tls_conn_read  returned [-0x%02X](%s)", -ret, esp_err_to_name(ret));
-    //         break;
-    //     }
-
-    //     if (ret == 0) {
-    //         ESP_LOGI(TAG, "connection closed");
-    //         break;
-    //     }
-
-    //     len = ret;
-    //     ESP_LOGD(TAG, "%d bytes read", len);
-        
-    //     /* Print response directly to stdout as it is read */
-    //     for (int i = 0; i < len; i++) {
-    //         putchar(buf[i]);
-    //     }
-    //     putchar('\n'); // JSON output doesn't have a newline at end
-    // } while (1);
-
-    // ESP_LOGI(TAG, "Got Weather data - YAY!!!");
-    // esp_tls_conn_delete(tls);
 }
 
 
@@ -256,88 +166,5 @@ void OpenWeatherMap::request_json_over_https()
 */
 void OpenWeatherMap::request_json_over_http()
 {
-    const struct addrinfo hints = {
-        .ai_family = AF_INET,
-        .ai_socktype = SOCK_STREAM,
-    };
-    struct addrinfo *res;
-    struct in_addr *addr;
-    int s, r;
-    char recv_buf[64];
-
-    while(1) {
-
-        /******************* DNS LOOKUP ****************/
-        int err = getaddrinfo(WEB_API_URL, WEB_API_PORT, &hints, &res);
-
-        if(err != 0 || res == NULL) {
-            ESP_LOGE(TAG, "DNS lookup failed err=%d res=%p", err, res);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-            continue;
-        }
-
-        /* Code to print the resolved IP.
-           Note: inet_ntoa is non-reentrant, look at ipaddr_ntoa_r for "real" code */
-        addr = &((struct sockaddr_in *)res->ai_addr)->sin_addr;
-        ESP_LOGI(TAG, "DNS lookup succeeded. IP=%s", inet_ntoa(*addr));
-        /******************* DNS LOOKUP ****************/
-
-        s = socket(res->ai_family, res->ai_socktype, 0);
-        if(s < 0) {
-            ESP_LOGE(TAG, "... Failed to allocate socket.");
-            freeaddrinfo(res);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-            continue;
-        }
-        ESP_LOGI(TAG, "... allocated socket");
-
-        if(connect(s, res->ai_addr, res->ai_addrlen) != 0) {
-            ESP_LOGE(TAG, "... socket connect failed errno=%d", errno);
-            close(s);
-            freeaddrinfo(res);
-            vTaskDelay(4000 / portTICK_PERIOD_MS);
-            continue;
-        }
-
-        ESP_LOGI(TAG, "... connected");
-        freeaddrinfo(res);
-
-        if (write(s, REQUEST, strlen(REQUEST)) < 0) {
-            ESP_LOGE(TAG, "... socket send failed");
-            close(s);
-            vTaskDelay(4000 / portTICK_PERIOD_MS);
-            continue;
-        }
-        ESP_LOGI(TAG, "... socket send success");
-
-        struct timeval receiving_timeout;
-        receiving_timeout.tv_sec = 5;
-        receiving_timeout.tv_usec = 0;
-        if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout,
-                sizeof(receiving_timeout)) < 0) {
-            ESP_LOGE(TAG, "... failed to set socket receiving timeout");
-            close(s);
-            vTaskDelay(4000 / portTICK_PERIOD_MS);
-            continue;
-        }
-        ESP_LOGI(TAG, "... set socket receiving timeout success");
-
-        jsonString = "";
-        /* Read HTTP response */
-        do {
-            bzero(recv_buf, sizeof(recv_buf));
-            r = read(s, recv_buf, sizeof(recv_buf)-1);
-            for(int i = 0; i < r; i++) {
-                putchar(recv_buf[i]);
-                jsonString += recv_buf[i];
-            }
-        } while(r > 0);
-
-    printf("\n=> %s <=\n",jsonString.c_str());
-
-        ESP_LOGI(TAG, "... done reading from socket. Last read return=%d errno=%d.", r, errno);
-        close(s);
-        ESP_LOGI(TAG, "Got Weather data - YAY!!!");
-        break;
-    }
+    ESP_LOGI(TAG, "HTTP request to get weather");
 }
