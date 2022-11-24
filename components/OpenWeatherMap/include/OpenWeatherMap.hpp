@@ -111,7 +111,7 @@ class OpenWeatherMap
 
         /* Cache json on flash/sdcard */
         void save_json();
-        void request_json_over_https();
+
         void request_json_over_http();
     private:
         SettingsConfig *cfg;
@@ -126,7 +126,7 @@ class OpenWeatherMap
         cJSON *clouds;
         cJSON *wind;
         cJSON *sys;
-
+        void request_json_over_https();
     protected:
 
 };

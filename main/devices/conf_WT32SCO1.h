@@ -27,11 +27,13 @@ SOFTWARE.
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 
+#define WT32_SC01
+
 // Portrait
 #define TFT_WIDTH   320
 #define TFT_HEIGHT  480
 
-//#define SD_ENABLED
+//#define SD_SUPPORTED
 
 #define TFT_MOSI    GPIO_NUM_13 
 #define TFT_MISO    -1  // Set this PIN for using shared SPI option

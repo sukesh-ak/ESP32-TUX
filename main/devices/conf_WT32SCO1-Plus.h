@@ -24,7 +24,7 @@ SOFTWARE.
 
 // SD card Working / enable it below
 #define WT32_SC01_PLUS
-#define SD_ENABLED 
+#define SD_SUPPORTED 
 
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>

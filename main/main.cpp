@@ -232,7 +232,7 @@ extern "C" void app_main(void)
     // Init SPIFF - needed for lvgl images
     init_spiff();
 
-#ifdef SD_ENABLED
+#ifdef SD_SUPPORTED
     // Initializing SDSPI 
     if (init_sdspi() == ESP_OK) // SD SPI
     {
@@ -297,7 +297,7 @@ extern "C" void app_main(void)
     lvgl_release();
 /* Push these to its own UI task later*/
 
-#ifdef SD_ENABLED
+#ifdef SD_SUPPORTED
     // Icon status color update
     lv_msg_send(MSG_SDCARD_STATUS,&is_sdcard_enabled);
 #endif
@@ -341,8 +341,8 @@ static void timer_datetime_callback(lv_timer_t * timer)
 static void timer_weather_callback(lv_timer_t * timer)
 {
     // Update weather and trigger UI update
-    owm->request_json_over_http();
-    //owm->request_weather_update();
+    //owm->request_json_over_http();
+    owm->request_weather_update();
     //lv_msg_send(MSG_WEATHER_CHANGED, owm);
 }
 

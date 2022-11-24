@@ -23,18 +23,26 @@ SOFTWARE.
 */
 
 /* FOR NOW THIS BOARD IS NOT TESTED */
-#define SD_ENABLED 
+#define MAKERFAB_ESP32S3_16P
+#define SD_SUPPORTED 
 
 #define LGFX_USE_V1
 #include <LovyanGFX.hpp>
+
+// Portrait
+#define TFT_WIDTH   320
+#define TFT_HEIGHT  480
 
 #define LCD_CS 37
 #define LCD_BLK 45
 
 class LGFX : public lgfx::LGFX_Device
 {
-    lgfx::Panel_ILI9488 _panel_instance;
-    lgfx::Bus_Parallel16 _bus_instance; 
+    lgfx::Panel_ILI9488     _panel_instance;
+    lgfx::Bus_Parallel16    _bus_instance; 
+    lgfx::Light_PWM         _light_instance;
+    lgfx::Touch_FT5x06      _touch_instance;
+    //lgfx::Touch_NS2009 _touch_instance;
 
 public:
     LGFX(void)
@@ -76,10 +84,10 @@ public:
             cfg.pin_rst = -1;  
             cfg.pin_busy = -1; 
 
-            cfg.memory_width = 320;   
-            cfg.memory_height = 480;  
-            cfg.panel_width = 320;    
-            cfg.panel_height = 480;   
+            cfg.memory_width = TFT_WIDTH;   
+            cfg.memory_height = TFT_HEIGHT;  
+            cfg.panel_width = TFT_WIDTH;    
+            cfg.panel_height = TFT_HEIGHT;   
             cfg.offset_x = 0;         
             cfg.offset_y = 0;         
             cfg.offset_rotation = 0;  
@@ -94,6 +102,38 @@ public:
             _panel_instance.config(cfg);
         }
 
+    {
+      auto cfg = _light_instance.config();    
+
+      cfg.pin_bl = 45;              
+      cfg.invert = false;           
+      cfg.freq   = 44100;           
+      cfg.pwm_channel = 7;          
+
+      _light_instance.config(cfg);
+      _panel_instance.setLight(&_light_instance);  
+    }
+
+    { 
+      auto cfg = _touch_instance.config();
+
+      cfg.x_min      = 0;
+      cfg.x_max      = TFT_WIDTH-1;
+      cfg.y_min      = 0;  
+      cfg.y_max      = TFT_HEIGHT-1;
+      cfg.pin_int    = 40;  
+      cfg.bus_shared = true; 
+      cfg.offset_rotation = 0;
+
+      cfg.i2c_port = 0;     //I2C_NUM_1;
+      cfg.i2c_addr = 0x38;  // NS2009 = 0x48;
+      cfg.pin_sda  = 38;   
+      cfg.pin_scl  = 39;   
+      cfg.freq = 400000;  
+
+      _touch_instance.config(cfg);
+      _panel_instance.setTouch(&_touch_instance);  
+    }
         setPanel(&_panel_instance); 
     }
 };

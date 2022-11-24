@@ -52,14 +52,24 @@ using namespace std ;
 
 // Enable one of the devices from below (shift to bsp selection later)
 ///#include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
-#include "conf_WT32SCO1-Plus.h"         // WT32-SC01 Plus (ESP32-S3) with SD Card support
+
+// WT32-SC01 Plus (ESP32-S3 + 8Bit Parellel) with SD Card, Audio support
+//#include "conf_WT32SCO1-Plus.h"         
+
+// Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
+#include "conf_Makerfabs_S3_PTFT.h"     
 
 #include "helper_display.hpp"
 
-#if defined(WT32_SC01_PLUS)
-    #include "helper_storage.hpp"
-// else // For SD card shared on TFT SPI bus
-//     #include "helper_storage_shared.hpp"
+#if defined(SD_SUPPORTED)
+    /* SD Card support */
+    #if defined(WT32_SC01)
+        // Shared SPI Bus with Display
+        #include "helper_storage_shared.hpp"
+    #else
+        // Display and SD card is not on same SPI bus
+        #include "helper_storage.hpp"
+    #endif
 #endif
 
 // UI design
