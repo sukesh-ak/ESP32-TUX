@@ -81,6 +81,8 @@ SOFTWARE.
 #include "cJSON.h"
 #include "esp_log.h"
 #include <fstream>
+#include "esp_http_client.h"
+
 using namespace std;
 #include "SettingsConfig.hpp"
 
@@ -107,12 +109,7 @@ class OpenWeatherMap
         void request_weather_update();
 
         /* Handle json response */
-        void load_json();
 
-        /* Cache json on flash/sdcard */
-        void save_json();
-
-        void request_json_over_http();
     private:
         SettingsConfig *cfg;
 
@@ -126,7 +123,19 @@ class OpenWeatherMap
         cJSON *clouds;
         cJSON *wind;
         cJSON *sys;
-        void request_json_over_https();
+
+        /* Load data from cache file to the instance */
+        void load_json();
+
+        /* Read cache json from flash/sdcard */
+        void read_json();
+
+        /* Write cache json on flash/sdcard */
+        void write_json();
+
+        esp_err_t request_json_over_http();        
+        esp_err_t request_json_over_https();
+        
     protected:
 
 };

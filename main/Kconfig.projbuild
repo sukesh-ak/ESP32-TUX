@@ -96,6 +96,7 @@ menu "ESP32-TUX Configuration"
                 bool "custom implementation"
         endchoice
     endmenu
+
     menu "OTA Config"
         config OTA_FIRMWARE_UPGRADE_URL
             string "Firmware Upgrade URL"
@@ -179,20 +180,37 @@ menu "ESP32-TUX Configuration"
         #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-4MB.csv" if PARTITION_TABLE_WT32SC01PLUS_4MB
         #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-8MB.csv" if PARTITION_TABLE_WT32SC01PLUS_8MB
     endmenu
+
     menu "Weather Config"
-        config WEATHER_LOCAL_URL
-            string "Local URL for Weather JSON"
-            default "https://192.168.1.128"
+        config WEATHER_LOCATION
+            string "Location for weather - city,country format"
             help
-                URL of server where sample weather.json is available.
+                Enter city and country name for getting weather for.
+
+        choice WEATHER_UNITS
+            prompt "Select Units for Weather display"
+            default WEATHER_UNITS_METRIC
+            config WEATHER_UNITS_STANDARD
+                bool "Kelvin system - like ???..."
+            config WEATHER_UNITS_METRIC
+                bool "Metric system - like Celsius etc..."
+            config WEATHER_UNITS_IMPERIAL
+                bool "Imperial system - like Fahrenheit etc..."
+        endchoice
+
         config WEATHER_OWM_URL
             string "Open Weather Map URL for Current Weather API"
-            default "https://api.openweathermap.org"
+            default "api.openweathermap.org"
             help
                 URL of OpenWeatherMap.org API.
         config WEATHER_API_KEY
-            string "Open Weather Map API Key for access"
+            string "OpenWeatherMap API Key for access"
             help
-                Register on OpenWeatherMap.org for FREE limited API KEY
+                Register on OpenWeatherMap.org for FREE limited API KEY        
+        config WEATHER_LOCAL_URL
+            string "Local URL for weather.json for testing"
+            default "192.168.1.128"
+            help
+                URL of server where sample weather.json is available.    
     endmenu
 endmenu

@@ -32,10 +32,11 @@ SOFTWARE.
 
 static const char* TAG = "OpenWeatherMap";
 
-// Testing using Local Python server - same SSL cert used for OTA
-extern const uint8_t local_server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
-extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
+// Can Test HTTPS using Local Python server - same SSL cert used for OTA
+// extern const uint8_t local_server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+// extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
+// Since HTTP call works for weather, we skip HTTPS for now
 // extern const uint8_t owm_server_cert_pem_start[] asm("_binary_owm_cert_pem_start");
 // extern const uint8_t owm_server_cert_pem_end[] asm("_binary_owm_cert_pem_end");
 
@@ -47,15 +48,12 @@ extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
     If device is disconnected from internet or fails, it will show the last weather update
 */
 
-// Move all these to config.json later
-#define WEB_API_URL "api.openweathermap.org"
-#define WEB_API_PORT "80"
-#define WEB_API_PATH "/data/2.5/weather?q=Bangalore,India&units=metric&APPID="
+#define MAX_HTTP_OUTPUT_BUFFER 1024
 
-static const char *REQUEST = "GET " WEB_API_PATH CONFIG_WEATHER_API_KEY " HTTP/1.0\r\n"
-    "Host: " WEB_API_URL ":" WEB_API_PORT "\r\n"
-    "User-Agent: ESP32-TUX/1.0 esp32\r\n"
-    "\r\n";
+// Move all these to config.json later
+#define WEB_API_URL     CONFIG_WEATHER_OWM_URL //"api.openweathermap.org"
+#define WEB_API_PORT    "80"    // not used unless we need custom port number
+#define WEB_API_PATH "/data/2.5/weather" //?q=" CONFIG_WEATHER_LOCATION "&units=metric&APPID="
 
 OpenWeatherMap::OpenWeatherMap()
 {
@@ -63,34 +61,43 @@ OpenWeatherMap::OpenWeatherMap()
     cfg = new SettingsConfig(file_name);
     
     // setup default values for everything.
+#if defined(CONFIG_WEATHER_UNITS_METRIC)    
     TemperatureUnit = 'C';
+#elif defined(CONFIG_WEATHER_UNITS_IMPERIAL)
+    TemperatureUnit = 'F';
+#else   // Standard => Kelvin
+    TemperatureUnit = 'K';  // degree symbol not used
+#endif
 }
 
-/* Get Weather from OpenWeatherMap API */
+/* 
+ * Get Weather from OpenWeatherMap API 
+ * API call can fail => no wifi / connectivity issues / request limits
+ * If fails, data from cache file is used.
+*/
 void OpenWeatherMap::request_weather_update()
 {
-    // Load from cache file for testing '/spiffs/weather/weather.json'
-    ifstream jsonfile(file_name);
-    if (!jsonfile.is_open())
-    {
-        ESP_LOGE(TAG,"File open for read failed %s",file_name.c_str());
-        //save_json();  // create file with default values
-    }
+    jsonString = "";
 
-    jsonString.assign((std::istreambuf_iterator<char>(jsonfile)),
-                (std::istreambuf_iterator<char>()));
+    // Get weather from OpenWeatherMap and update the cache file
+    if (request_json_over_http() == ESP_OK)
+        write_json();    // Save content of jsonString to file if success
+    
+    ESP_LOGI(TAG,"Reading weather.json");
+    read_json();
 
-    jsonfile.close();    
-
-    // Load from HTTPS request
-    // https://api.openweathermap.org/data/2.5/weather?q=Bangalore,India&units=metric&APPID=
-
-    ESP_LOGI(TAG,"Loaded:\n%s",jsonString.c_str());
+    ESP_LOGI(TAG,"Loading weather.json");
     load_json();
 }
 
 void OpenWeatherMap::load_json()
 {
+
+    ESP_LOGW(TAG,"load_json() \n%s",jsonString.c_str());
+
+    try
+	{
+
     // 19.8°С temperature from 18.9°С to 19.8 °С, wind 1.54 m/s. clouds 20 %, 1017 hpa
     root = cJSON_Parse(jsonString.c_str());
 
@@ -107,13 +114,16 @@ void OpenWeatherMap::load_json()
     Pressure = cJSON_GetObjectItem(maininfo,"pressure")->valueint;
     Humidity = cJSON_GetObjectItem(maininfo,"humidity")->valueint;
     
-    SeaLevel = cJSON_GetObjectItem(maininfo,"sea_level")->valueint;
-    GroundLevel = cJSON_GetObjectItem(maininfo,"grnd_level")->valueint;
-
     ESP_LOGW(TAG,"main: %3.1f°С / %3.1f°С / %3.1f°С / %3.1f°С / %d / %dhpa",
                                             Temperature, TemperatureFeelsLike,
                                             TemperatureLow, TemperatureHigh,
                                             Pressure,Humidity);
+
+/*    
+    SeaLevel = cJSON_GetObjectItem(maininfo,"sea_level")->valueint;
+    GroundLevel = cJSON_GetObjectItem(maininfo,"grnd_level")->valueint;
+*/
+
 
     // 1st element of the weather array. 
     // Guess for free api version only 1 (single day) available
@@ -141,31 +151,140 @@ void OpenWeatherMap::load_json()
     // type / id / country / sunrise (epoc?) / sunset (epoc?)
     //sys = cJSON_GetObjectItem(root,"sys");
 
+	}
+	catch (exception& exc)
+	{
+		ESP_LOGE(TAG,"Exception has occurred!");
+	}
 
     // Cleanup
     cJSON_Delete(root);
 }
 
-void OpenWeatherMap::save_json()
+void OpenWeatherMap::read_json()
+{
+    // read json file to string    
+    ifstream jsonfile(file_name);
+    if (!jsonfile.is_open())
+    {
+        ESP_LOGE(TAG,"File open for read failed %s",file_name.c_str());
+        //save_config();  // create file with default values
+    }
+
+    jsonString.assign((std::istreambuf_iterator<char>(jsonfile)),
+                (std::istreambuf_iterator<char>()));
+
+    jsonfile.close();    
+}
+
+void OpenWeatherMap::write_json()
 {
     // cache json in flash to show if not online?
+    ofstream jsonfile(file_name);
+    if (!jsonfile.is_open())
+    {
+        ESP_LOGE(TAG,"File open for write failed %s",file_name.c_str());
+        return ;//ESP_FAIL;
+    }
+    jsonfile << jsonString;
+    jsonfile.flush();
+    jsonfile.close();    
+}
+
+esp_err_t http_event_handle(esp_http_client_event_t *evt)
+{
+    static int output_len;       // Stores number of bytes read
+    switch(evt->event_id) {
+        case HTTP_EVENT_ERROR:
+            ESP_LOGI(TAG, "HTTP_EVENT_ERROR");
+            break;
+        case HTTP_EVENT_ON_CONNECTED:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_CONNECTED");
+            break;
+        case HTTP_EVENT_HEADER_SENT:
+            ESP_LOGI(TAG, "HTTP_EVENT_HEADER_SENT");
+            break;
+        case HTTP_EVENT_ON_HEADER:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_HEADER");
+            printf("%.*s", evt->data_len, (char*)evt->data);
+            break;
+        case HTTP_EVENT_ON_DATA:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
+            if (!esp_http_client_is_chunked_response(evt->client)) {
+                // If user_data buffer is configured, copy the response into the buffer
+                if (evt->user_data) {
+                    memcpy(evt->user_data + output_len, evt->data, evt->data_len);
+                }
+                output_len += evt->data_len;
+            }            
+            break;
+        case HTTP_EVENT_ON_FINISH:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH, Total len=%d", output_len);
+            output_len = 0;
+            break;
+        case HTTP_EVENT_DISCONNECTED:
+            ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
+            output_len = 0;
+            break;
+    }
+    return ESP_OK;
 }
 
 /*
     Get OpenWeatherMaps certificate - api.openweathermap.org
     openssl s_client -showcerts -connect api.openweathermap.org:443 </dev/null
 */
-void OpenWeatherMap::request_json_over_https()
+esp_err_t OpenWeatherMap::request_json_over_https()
 {
-ESP_LOGI(TAG, "HTTPS request to get weather");
-
+    ESP_LOGI(TAG, "HTTPS request to get weather");
+    return ESP_OK;
 }
-
 
 /*
     Get OpenWeatherMaps json using http - api.openweathermap.org
 */
-void OpenWeatherMap::request_json_over_http()
+esp_err_t OpenWeatherMap::request_json_over_http()
 {
+    char local_response_buffer[MAX_HTTP_OUTPUT_BUFFER] = {0};
+
+    jsonString = "";
+    string queryString = "";
+
+    // units = standard / metric / imperial
+    // https://openweathermap.org/weather-data
+    #if defined(CONFIG_WEATHER_UNITS_METRIC)    
+            queryString = WEB_API_PATH "?q=" CONFIG_WEATHER_LOCATION "&units=metric&APPID=" CONFIG_WEATHER_API_KEY;
+    #elif defined(CONFIG_WEATHER_UNITS_IMPERIAL)
+            queryString = WEB_API_PATH "?q=" CONFIG_WEATHER_LOCATION "&units=imperial&APPID=" CONFIG_WEATHER_API_KEY;
+    #else   // Standard => Kelvin?
+            queryString = WEB_API_PATH "?q=" CONFIG_WEATHER_LOCATION "&APPID=" CONFIG_WEATHER_API_KEY;
+    #endif
+
     ESP_LOGI(TAG, "HTTP request to get weather");
+    ESP_LOGE(TAG,"URL: http://api.openweathermap.org%s",queryString.c_str());
+
+    esp_http_client_config_t config = {
+        .host = WEB_API_URL,
+        .path = queryString.c_str(),
+        .event_handler = http_event_handle,
+        .user_data = local_response_buffer,        // Pass address of local buffer to get response
+    };
+
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_err_t err = esp_http_client_perform(client);
+
+    if (err == ESP_OK) {
+    ESP_LOGI(TAG, "Status = %d, content_length = %d",
+            esp_http_client_get_status_code(client),
+            esp_http_client_get_content_length(client));
+    } else {
+        return ESP_FAIL;
+    }
+
+    esp_http_client_cleanup(client);    
+    //ESP_LOGE(TAG,"JSON:\n%s",local_response_buffer);
+    jsonString = local_response_buffer;
+    return ESP_OK;
+
 }

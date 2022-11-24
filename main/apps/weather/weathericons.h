@@ -49,5 +49,5 @@ LV_FONT_DECLARE(font_fa_weather_42)
 #define FA_WEATHER_CLOUD_RAIN           "\xEF\x9C\xBD"      // f73d
 #define FA_WEATHER_CLOUD_MOON_RAIN      "\xEF\x9C\xBC"      // f73c
 #define FA_WEATHER_CLOUD_MOON           "\xEF\x9B\x83"      // f6c3
-
+#define FA_WEATHER_DROPLET              "\xEF\x81\x83"      // f043
 

@@ -181,6 +181,7 @@ void weather_event_cb(lv_event_t * e);
 
 static void status_change_cb(void * s, lv_msg_t *m);
 static void lv_update_battery(uint batval);
+static void set_weather_icon(string weatherIcon);
 
 void lv_setup_styles()
 {
@@ -983,9 +984,8 @@ void weather_event_cb(lv_event_t * e)
         e_owm = (OpenWeatherMap*)lv_msg_get_payload(m);
         //ESP_LOGW(TAG,"weather_event_cb %s",e_owm->LocationName.c_str());
 
-        // set this according to e_owm->WeatherIcon later
-        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_SHOWERS_HEAVY);
-        lv_obj_set_style_text_color(lbl_weathericon,lv_palette_main(LV_PALETTE_BLUE),0);        
+        // set this according to e_owm->WeatherIcon 
+        set_weather_icon(e_owm->WeatherIcon);      
 
         lv_label_set_text(lbl_temp,fmt::format("{:.1f}°{}",e_owm->Temperature,e_owm->TemperatureUnit).c_str());
         lv_label_set_text(lbl_hl,fmt::format("H:{:.1f}° L:{:.1f}°",e_owm->TemperatureHigh,e_owm->TemperatureLow).c_str());
@@ -1229,4 +1229,42 @@ void anim_fade_out(lv_obj_t * TargetObject, int delay)
 void tux_anim_callback_set_opacity(lv_anim_t * a, int32_t v)
 {
     lv_obj_set_style_opa((lv_obj_t *)a->user_data, v, 0);
+}
+
+static void set_weather_icon(string weatherIcon)
+{
+    /* 
+        https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+        d = day / n = night
+        01 - clear sky
+        02 - few clouds
+        03 - scattered clouds
+        04 - broken clouds
+        09 - shower rain
+        10 - rain
+        11 - thunderstorm
+        13 - snow
+        50 - mist
+    */
+    // lv_color_make(red, green, blue);
+
+    if (weatherIcon == "50n" || weatherIcon == "50d" ) {     // mist - need icon
+       // set this according to e_owm->WeatherIcon later
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_DROPLET);
+        lv_obj_set_style_text_color(lbl_weathericon,lv_color_make(245, 245, 245),0); 
+        return;
+    }
+    
+    if (weatherIcon == "03n") {     // scattered clouds - night
+       // set this according to e_owm->WeatherIcon later
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_MOON);
+        lv_obj_set_style_text_color(lbl_weathericon,lv_palette_main(LV_PALETTE_GREY),0); 
+        return;
+    }
+
+    // default
+    lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_SHOWERS_HEAVY);
+    lv_obj_set_style_text_color(lbl_weathericon,lv_palette_main(LV_PALETTE_BLUE_GREY),0); 
+
+
 }
