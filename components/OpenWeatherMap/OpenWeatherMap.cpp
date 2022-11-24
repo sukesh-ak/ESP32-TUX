@@ -40,13 +40,14 @@ extern const uint8_t local_server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 // extern const uint8_t owm_server_cert_pem_end[] asm("_binary_owm_cert_pem_end");
 
 /*
-    Free OpenWeatherAPI is available one request per min. We request once every 5mins
+    Free OpenWeatherAPI is available one request per min. We request once every 10mins
 
-    We pull realtime weather from the API and dump in a json local file (SPIFF/SDCARD/FAT)
-    Then read that file to show in the UI. 
+    We pull realtime weather from the API and dump in a json local cache file (SPIFF/SDCARD/FAT)
+    Then read that file to show in the UI every 5mins. 
     If device is disconnected from internet or fails, it will show the last weather update
 */
 
+// Move all these to config.json later
 #define WEB_API_URL "api.openweathermap.org"
 #define WEB_API_PORT "80"
 #define WEB_API_PATH "/data/2.5/weather?q=Bangalore,India&units=metric&APPID="

@@ -682,6 +682,7 @@ static void create_page_home(lv_obj_t *parent)
 {
     /* HOME PAGE PANELS */
     tux_panel_clock_weather(parent);
+    //tux_panel_devinfo(parent);  
 }
 
 static void create_page_settings(lv_obj_t *parent)
@@ -754,6 +755,9 @@ static void show_ui()
     lv_msg_subsribe(MSG_SDCARD_STATUS, status_change_cb, NULL);  
     lv_msg_subsribe(MSG_BATTERY_STATUS, status_change_cb, NULL);  
     lv_msg_subsribe(MSG_DEVICE_INFO, status_change_cb, NULL);      
+
+    // Send default page load notification => HOME
+    lv_msg_send(MSG_PAGE_HOME,NULL);
 }
 
 static void rotate_event_handler(lv_event_t *e)

@@ -360,8 +360,11 @@ static void tux_ui_change_cb(void * s, lv_msg_t *m)
     {
         case MSG_PAGE_HOME:
             // Update date/time and current weather
+
             // lv_msg_send(MSG_TIME_CHANGED, &datetimeinfo);
             // lv_msg_send(MSG_WEATHER_CHANGED, owm);
+
+            //lv_msg_send(MSG_DEVICE_INFO,device_info().c_str());
             break;
         case MSG_PAGE_REMOTE:
             // Trigger loading buttons data

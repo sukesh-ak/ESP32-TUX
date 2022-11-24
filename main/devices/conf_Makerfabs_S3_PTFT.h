@@ -59,50 +59,6 @@ class LGFX : public lgfx::LGFX_Device
     lgfx::Bus_Parallel16    _bus_instance; 
     lgfx::Light_PWM         _light_instance;
     lgfx::Touch_FT5x06      _touch_instance;
-//     lgfx::ITouch*  _touch_instance_ptr = nullptr;
-
-//  /// Detects and configures the touch panel during initialization;
-//   bool init_impl(bool use_reset, bool use_clear) override
-//   {
-//     if (_touch_instance_ptr == nullptr)
-//     {
-//       lgfx::ITouch::config_t cfg;
-//       lgfx::i2c::init(I2C_PORT_NUM, I2C_PIN_SDA, I2C_PIN_SCL);
-//       if (lgfx::i2c::beginTransaction(I2C_PORT_NUM, 0x38, 400000, false).has_value()
-//        && lgfx::i2c::endTransaction(I2C_PORT_NUM).has_value())
-//       {
-//         _touch_instance_ptr = new lgfx::Touch_FT5x06();
-//         cfg = _touch_instance_ptr->config();
-//         cfg.i2c_addr = 0x38;
-//         cfg.x_max = 320;
-//         cfg.y_max = 480;
-//       }
-//     //   else
-//     //   if (lgfx::i2c::beginTransaction(I2C_PORT_NUM, 0x48, 400000, false).has_value()
-//     //    && lgfx::i2c::endTransaction(I2C_PORT_NUM).has_value())
-//     //   {
-//     //     _touch_instance_ptr = new lgfx::Touch_NS2009();
-//     //     cfg = _touch_instance_ptr->config();
-//     //     cfg.i2c_addr = 0x48;
-//     //     cfg.x_min = 368;
-//     //     cfg.y_min = 212;
-//     //     cfg.x_max = 3800;
-//     //     cfg.y_max = 3800;
-//     //   }
-//       if (_touch_instance_ptr != nullptr)
-//       {
-//         cfg.i2c_port = I2C_PORT_NUM;
-//         cfg.pin_sda  = I2C_PIN_SDA;
-//         cfg.pin_scl  = I2C_PIN_SCL;
-//         cfg.pin_int  = I2C_PIN_INT;
-//         cfg.freq = 400000;
-//         cfg.bus_shared = false;
-//         _touch_instance_ptr->config(cfg);
-//         _panel_instance.touch(_touch_instance_ptr);
-//       }
-//     }
-//     return lgfx::LGFX_Device::init_impl(use_reset, use_clear);
-//   }
 
 public:
     LGFX(void)
@@ -178,9 +134,9 @@ public:
       auto cfg = _touch_instance.config();
 
       cfg.x_min      = 0;
-      cfg.x_max      = TFT_WIDTH-1;
+      cfg.x_max      = TFT_WIDTH;
       cfg.y_min      = 0;  
-      cfg.y_max      = TFT_HEIGHT-1;
+      cfg.y_max      = TFT_HEIGHT;
       cfg.pin_int    = I2C_PIN_INT;  
       cfg.bus_shared = true; 
       cfg.offset_rotation = 0;
