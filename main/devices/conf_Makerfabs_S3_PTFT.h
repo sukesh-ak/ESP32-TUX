@@ -23,8 +23,7 @@ SOFTWARE.
 */
 
 /* 
-  TFT & SD CARD WORKING
-  TOUCH NOT WORKING YET 
+  TFT + TOUCH & SD CARD WORKING
 */
 
 #define MAKERFAB_ESP32S3_16P
@@ -35,11 +34,11 @@ SOFTWARE.
 #include <driver/i2c.h>
 
 // SD CARD - SPI
-#define SPI_HOST_ID SPI3_HOST
-#define SD_MISO GPIO_NUM_41 
-#define SD_MOSI GPIO_NUM_2
-#define SD_SCLK GPIO_NUM_42
-#define SD_CS   GPIO_NUM_1
+#define SDSPI_HOST_ID SPI3_HOST
+#define SD_MISO       GPIO_NUM_41 
+#define SD_MOSI       GPIO_NUM_2
+#define SD_SCLK       GPIO_NUM_42
+#define SD_CS         GPIO_NUM_1
 
 // Portrait
 #define TFT_WIDTH   320

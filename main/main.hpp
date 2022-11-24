@@ -58,16 +58,19 @@ using namespace std ;
 //#include "conf_WT32SCO1-Plus.h"         
 
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
-#include "conf_Makerfabs_S3_PTFT.h"     
+//#include "conf_Makerfabs_S3_PTFT.h"     
+
+// Makerfabs ESP32S335D (ESP32-S3 + SPI) with SD Card, Audio support
+#include "conf_Makerfabs_S3_STFT.h"
 /********************************************************/
 
 
 #include "helper_display.hpp"
 
+/* SD Card support */
 #if defined(SD_SUPPORTED)
-    /* SD Card support */
-    #if defined(WT32_SC01)
         // Shared SPI Bus with Display
+    #if defined(WT32_SC01) //|| defined(MAKERFAB_ESP32S3_SPI)
         #include "helper_storage_shared.hpp"
     #else
         // Display and SD card is not on same SPI bus

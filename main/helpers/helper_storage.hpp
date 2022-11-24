@@ -39,7 +39,7 @@ static sdmmc_card_t* sdcard;
 bool init_sdspi()
 {
     sdspi_device_config_t device_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    device_config.host_id = SPI_HOST_ID;
+    device_config.host_id = SDSPI_HOST_ID;
     device_config.gpio_cs = SD_CS;  
     //device_config.gpio_cd = -1;   // SD Card detect    
 
