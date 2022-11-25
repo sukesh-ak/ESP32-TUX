@@ -45,7 +45,7 @@ SOFTWARE.
 #define TFT_WIDTH   320
 #define TFT_HEIGHT  480
 
-#define SDSPI_HOST_ID SPI2_HOST
+#define SPI_HOST_ID SPI2_HOST
 #define TFT_MOSI    GPIO_NUM_13 
 #define TFT_MISO    GPIO_NUM_12  // Set this PIN for using shared SPI option
 #define TFT_SCLK    GPIO_NUM_14

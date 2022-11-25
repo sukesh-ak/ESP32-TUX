@@ -205,8 +205,8 @@ void lv_setup_styles()
     // Image Background
     // CF_INDEXED_8_BIT for smaller size - resolution 480x480
     // NOTE: Dynamic loading bg from SPIFF makes screen perf bad
-    //lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg1.bin");
-    lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
+    lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg9.bin");
+    //lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
     // lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
 
     // Gradient Background
