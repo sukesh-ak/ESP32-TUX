@@ -7,7 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/sukesh-ak/esp32-tux?style=for-the-badge) 
 
 ## ESP32-TUX - A Touch UX template to get you started.  
-- Currently Supported Devices : 
+- Currently Supported Devices - For Comparison click [here](#currently-supported-devices)
   - [WT32-SC01 - SPI TFT 3.5" ST7796 - ESP32](https://bit.ly/wt32-sc01) 
   - [WT32-SC01 Plus 8Bit Parallel 3.5" ST7796UI - ESP32-S3](https://bit.ly/wt32-sc01-plus)
   - [Makerfabs 16Bit Parallel TFT 3.5" ILI9488 - ESP32-S3](https://bit.ly/ESP32S335D)
