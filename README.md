@@ -7,7 +7,11 @@
 ![GitHub issues](https://img.shields.io/github/issues/sukesh-ak/esp32-tux?style=for-the-badge) 
 
 ## ESP32-TUX - A Touch UX template to get you started.  
-- Currently Supported Devices : [WT32-SC01](https://bit.ly/wt32-sc01) / [WT32-SC01 Plus](https://bit.ly/wt32-sc01-plus)
+- Currently Supported Devices : 
+  - [WT32-SC01 - SPI TFT 3.5" ST7796 - ESP32](https://bit.ly/wt32-sc01) 
+  - [WT32-SC01 Plus 8Bit Parallel 3.5" ST7796UI - ESP32-S3](https://bit.ly/wt32-sc01-plus)
+  - [Makerfabs 16Bit Parallel TFT 3.5" ILI9488 - ESP32-S3](https://bit.ly/ESP32S335D)
+  - [Makerfabs SPI TFT 3.5" ILI9488 - ESP32-S3](https://bit.ly/ESP32S3SPI35)
 - Graphics & Touch Driver : [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
 - UI / Widgets : [LVGL9.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
@@ -49,6 +53,7 @@
 - [x] Rotate screen Landscape/Portrait [here](/main/main.cpp)
 - [x] Enable SPIFF partition and init [here](/main/helpers/helper_spiff.hpp)
 - [x] Map SPIFF to LVGL Filesystem as F: [here](/main/helpers/helper_lv_fs.hpp)
+- [x] Map SD Card to LVGL Filesystem as S: [here](/main/helpers/helper_lv_fs.hpp)
 - [x] Load Images directly using F:/<filename>.png [here => tux_panel_weather()](/main/gui.hpp)
 - [x] Settings Page
 
@@ -93,52 +98,53 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 ```
 
 ## Currently Supported Devices 
-> [Wireless Tag WT32-SC01 (ESP32 + 3.5" TFT with Capacitive Touch)](https://www.alibaba.com/product-detail/esp32-development-board-WT32-SC01-3_62534911683.html) 
 
-![device](datasheet/WT32-SC01.png)  
+| Devices   | WT32-SC01  | WT32-SC01+ | ESP32S335D | ESP32S3SPI35
+|:---------  |:-----------:|:----------:|:--------:|:-----------:
+|Manufacturer|Wireless-Tag|Wireless-Tag|Makerfabs|Makerfabs
+|Controller   |ESP32|ESP32-S3   |ESP32-S3    | ESP32-S3
+|Display Size | 3.5" |3.5"  |3.5"  |3.5" 
+|Resolution|480x320|480x320|480x320|480x320
+|Display Controller|ST7796|ST7796UI|ILI9488|ILI9488
+|Display Interface|SPI|8Bit Parallel|SPI|16Bit Parallel
+|Touch Controller|FT5x06|FT5x06|FT5x06|FT5x06
+|Flash Size |4MB|8MB|16MB|16MB
+|PSRAM Size |4MB|2MB|2MB|2MB
+|Wi-Fi|Yes|Yes|Yes|Yes
+|Bluetooth|BT/BLE 4.x|BLE 5.x|BLE 5.x|BLE 5.x
+|SD CARD |No|Yes|Yes|Yes
+|OTG |No|Yes|Yes|Yes
+|Datasheet|[PDF](datasheet/WT32-SC01_ESP32.pdf)|[PDF](datasheet/WT32-SC01_Plus_ESP32-S3.pdf)|[PDF](datasheet/Makerfabs-ESP32S3SPI35.PDF)|[PDF](datasheet/Makerfabs-ESP32S335D.pdf)
+|Purchase Link|[BUY](https://bit.ly/wt32-sc01)|[BUY](https://bit.ly/wt32-sc01-plus)|[BUY](https://bit.ly/ESP32S335D)|[BUY](https://bit.ly/ESP32S3SPI35)
+> Flash & PSRAM specifications are as per what I received.
 
-> [Wireless Tag WT32-SC01 Plus (ESP32-S3 + 3.5" TFT with Capacitive Touch + SD Card)](https://www.alibaba.com/product-detail/Good-heat-dissipation-IPS-LCD-Color_1600148110318.html) 
-
-![device](datasheet/WT32-SC01-Plus.png)
 
 
 ## Get Started
 > Git clone and recursively update submodule
 ```cmake
-# Clone repo and update submodules (LovyanGFX + LVGL)
-git clone https://github.com/sukesh-ak/ESP32-TUX.git
+# Clone repo and update submodules (LovyanGFX + LVGL) recursively
+git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
-
-# To get the submodules like LovyanGFX, LVGL
-git submodule update --init --recursive
-
-# Update submodules to the latest if required (LovyanGFX + LVGL)
-# git submodule foreach git pull
 ```
 
 ## Separate build folder for ESP32 & ESP32-S3
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
 > This enables you to have separate build folder, in case you use multiple devices with different controllers.  
 
-#### WT32-SC01 - ESP32
+#### ESP32 devices
 ```cmake
-# set target and build,flash,monitor
-idf.py -B build-esp32 set-target esp32 build
+# set IDF chip target (default is 'esp32')
+idf.py set-target esp32s3
 
-# Use build folder called build-esp32 for compile, flash etc
-idf.py -B build-esp32 -p COM6 flash monitor
+# set target and build,flash,monitor
+idf.py build
+
+# Compile, Flash and Monitor
+idf.py -p COM6 flash monitor
 ```
 
-#### WT32-SC01 Plus - ESP32-S3
-```cmake
-# set target and build,flash,monitor
-idf.py -B build-esp32s3 set-target esp32s3 build
-
-# Use build folder called build-esp32s3 for compile, flash etc
-idf.py -B build-esp32s3 -p COM3 app-flash monitor
-```
-
-## Setup custom lvgl config - ESP-IDF  
+## How custom lvgl config is setup - ESP-IDF  
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L16)
 ```cmake
 #LVGL custom config file setup
@@ -146,7 +152,7 @@ idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 ```
 
-## Display Compile Time Information
+## Display Helpful Compile Time Information
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L25)  
 ```cmake
 # Display Compile Time Information
