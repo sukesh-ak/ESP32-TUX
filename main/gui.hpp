@@ -183,6 +183,8 @@ static void status_change_cb(void * s, lv_msg_t *m);
 static void lv_update_battery(uint batval);
 static void set_weather_icon(string weatherIcon);
 
+static int current_page = 0;
+
 void lv_setup_styles()
 {
     font_symbol = &lv_font_montserrat_14;
@@ -998,33 +1000,37 @@ static void footer_button_event_handler(lv_event_t * e)
     lv_obj_t * obj = lv_event_get_target(e);
 
     if(code == LV_EVENT_VALUE_CHANGED) {
-        uint32_t id = lv_btnmatrix_get_selected_btn(obj);
-        const char * txt = lv_btnmatrix_get_btn_text(obj, id);
-        printf("[%d] %s was pressed\n", id,txt);
+        uint32_t page_id = lv_btnmatrix_get_selected_btn(obj);
+        const char * txt = lv_btnmatrix_get_btn_text(obj, page_id);
+        printf("[%d] %s was pressed\n", page_id,txt);
+
+        // Do not refresh the page if its not changed
+        if (current_page != page_id) current_page = page_id;
+        else return;    // Skip if no page change
 
         // HOME
-        if (id==0)  {
+        if (page_id==MSG_PAGE_HOME)  {
             lv_obj_clean(content_container);
             create_page_home(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
             lv_msg_send(MSG_PAGE_HOME,NULL);
         } 
         // REMOTE
-        else if (id == 1) {
+        else if (page_id == MSG_PAGE_REMOTE) {
             lv_obj_clean(content_container);
             create_page_remote(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
             lv_msg_send(MSG_PAGE_REMOTE,NULL);
         }
         // SETTINGS
-        else if (id == 2) {
+        else if (page_id == MSG_PAGE_SETTINGS) {
             lv_obj_clean(content_container);
             create_page_settings(content_container);
             anim_move_left_x(content_container,screen_w,0,200);
             lv_msg_send(MSG_PAGE_SETTINGS,NULL);
         }
         // OTA UPDATES
-        else if (id == 3) {
+        else if (page_id == MSG_PAGE_OTA) {
             lv_obj_clean(content_container);
             create_page_updates(content_container);
             anim_move_left_x(content_container,screen_w,0,200);

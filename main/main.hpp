@@ -122,4 +122,7 @@ char ip_payload[20] = {0};      // IP Address
 char ota_status[150] = {0};     // OTA status during updates
 char devinfo_data[300] = {0};   // Device info
 
+// Weather update timer - Once per min (60*1000) or maybe once in 10 mins (10*60*1000)
+static constexpr int WEATHER_UPDATE_INTERVAL = 60 * 1000;
+
 #endif // TUX_CONF_H

@@ -33,10 +33,10 @@ SOFTWARE.
 extern "C" {
 #endif
 
-#define MSG_PAGE_HOME           1
-#define MSG_PAGE_REMOTE         2
-#define MSG_PAGE_SETTINGS       3
-#define MSG_PAGE_OTA            4
+#define MSG_PAGE_HOME           0
+#define MSG_PAGE_REMOTE         1
+#define MSG_PAGE_SETTINGS       2
+#define MSG_PAGE_OTA            3
 
 // Used for WiFI status update
 #define MSG_WIFI_PROV_MODE      50

@@ -80,19 +80,19 @@ void OpenWeatherMap::request_weather_update()
     jsonString = "";
 
     // Get weather from OpenWeatherMap and update the cache file
-    if (request_json_over_http() == ESP_OK)
+    if (request_json_over_http() == ESP_OK) {
+        ESP_LOGI(TAG,"Updating and writing into cache - weather.json");
         write_json();    // Save content of jsonString to file if success
-    
-    ESP_LOGI(TAG,"Reading weather.json");
+    }
+    ESP_LOGI(TAG,"Reading - weather.json");
     read_json();
 
-    ESP_LOGI(TAG,"Loading weather.json");
+    ESP_LOGI(TAG,"Loading - weather.json");
     load_json();
 }
 
 void OpenWeatherMap::load_json()
 {
-
     ESP_LOGW(TAG,"load_json() \n%s",jsonString.c_str());
 
     try
