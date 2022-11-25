@@ -98,6 +98,9 @@ static void tux_event_handler(void* arg, esp_event_base_t event_base,
         // update clock
         update_datetime_ui();
 
+        // Enable timer after the date/time is set.
+        lv_timer_ready(timer_weather); 
+
     } else if (event_id == TUX_EVENT_OTA_STARTED) {
         // OTA Started
         char buffer[150] = {0};
@@ -314,9 +317,9 @@ extern "C" void app_main(void)
     timer_datetime = lv_timer_create(timer_datetime_callback, 1000,  NULL);
     //lv_timer_pause(timer_datetime); // enable only when wifi is connected
 
-    // Weather update timer - Once per min (60*1000)
-    timer_weather = lv_timer_create(timer_weather_callback, 30 * 1000,  NULL);
-    lv_timer_set_repeat_count(timer_weather,1);
+    // Weather update timer - Once per min (60*1000) or maybe once in 10 mins (10*60*1000)
+    timer_weather = lv_timer_create(timer_weather_callback, 60 * 1000,  NULL);
+    //lv_timer_set_repeat_count(timer_weather,1);
     //lv_timer_pause(timer_weather);  // enable after wifi is connected
 
     // Subscribe to page change events in the UI

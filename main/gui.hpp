@@ -1248,19 +1248,61 @@ static void set_weather_icon(string weatherIcon)
     */
     // lv_color_make(red, green, blue);
 
-    if (weatherIcon == "50n" || weatherIcon == "50d" ) {     // mist - need icon
-       // set this according to e_owm->WeatherIcon later
+    if (weatherIcon.find('d') != std::string::npos) {
+        // set daytime color
+        // color = whitesmoke = lv_color_make(245, 245, 245)
+        // Ideally it should change for each weather - light blue for rain etc...
+        lv_obj_set_style_text_color(lbl_weathericon,lv_color_make(241, 235, 156),0); 
+    } else {
+        // set night time color
+        lv_obj_set_style_text_color(lbl_weathericon,lv_palette_main(LV_PALETTE_BLUE_GREY),0);
+    }
+
+    if (weatherIcon.find("50") != std::string::npos) {     // mist - need icon
         lv_label_set_text(lbl_weathericon,FA_WEATHER_DROPLET);
-        lv_obj_set_style_text_color(lbl_weathericon,lv_color_make(245, 245, 245),0); 
         return;
     }
     
-    if (weatherIcon == "03n") {     // scattered clouds - night
-       // set this according to e_owm->WeatherIcon later
-        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_MOON);
-        lv_obj_set_style_text_color(lbl_weathericon,lv_palette_main(LV_PALETTE_GREY),0); 
+    if (weatherIcon.find("13") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_SNOWFLAKES);
+        return;
+    }    
+
+    if (weatherIcon.find("11") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_SHOWERS_HEAVY);
+        return;
+    }    
+
+    if (weatherIcon.find("10") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_RAIN);
+        return;
+    }    
+
+    if (weatherIcon.find("09") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_RAIN);
+        return;
+    }    
+
+    if (weatherIcon.find("04") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD);
+        return;
+    }   
+
+    if (weatherIcon.find("03") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD);
         return;
     }
+
+    if (weatherIcon.find("02") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD);
+        return;
+    }
+
+    if (weatherIcon.find("01") != std::string::npos) {     
+        lv_label_set_text(lbl_weathericon,FA_WEATHER_SUN);
+        return;
+    }
+
 
     // default
     lv_label_set_text(lbl_weathericon,FA_WEATHER_CLOUD_SHOWERS_HEAVY);
