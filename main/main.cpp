@@ -284,8 +284,9 @@ extern "C" void app_main(void)
     // TUX EVENTS
     ESP_ERROR_CHECK(esp_event_handler_instance_register(TUX_EVENTS, ESP_EVENT_ANY_ID, tux_event_handler, NULL, NULL));
 
-    // LV_FS integration & print readme.txt from the root
-    lv_print_readme_txt();
+    // LV_FS integration & print readme.txt from the root for testing
+    lv_print_readme_txt("F:/readme.txt");   // SPIFF / FAT
+    lv_print_readme_txt("S:/readme.txt");   // SDCARD
 
 /* Push LVGL/UI to its own UI task later*/
     // Splash screen

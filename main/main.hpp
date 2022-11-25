@@ -67,7 +67,6 @@ using namespace std ;
 // #include "conf_Makerfabs_S3_STFT.h"
 /********************************************************/
 
-
 #include "helper_display.hpp"
 
 /* SD Card support */

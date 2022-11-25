@@ -30,33 +30,34 @@ SOFTWARE.
 #include <misc/lv_fs.h>
 
 #define LV_README_TXT "F:/readme.txt"
-
-static esp_err_t lv_print_readme_txt(void)
+#define TUX_READ_BUFF_SIZE 32
+static esp_err_t lv_print_readme_txt(const char * filename)
 {
-
-    if (lv_fs_is_ready('F'))
-        ESP_LOGE(TAG, "F Drive is ready");
+    // F for Flash (SPIFF/FAT)
+    // S for SD CARD
+    if (lv_fs_is_ready(filename[0]))
+        ESP_LOGE(TAG, "%c Drive is ready",filename[0]);
     else
-        ESP_LOGE(TAG, "F Drive is NOT ready");
+        ESP_LOGE(TAG, "%c Drive is NOT ready",filename[0]);
 
     lv_fs_file_t f;
     lv_fs_res_t res;
-    res = lv_fs_open(&f, LV_README_TXT, LV_FS_MODE_RD);
+    res = lv_fs_open(&f, filename, LV_FS_MODE_RD);
     if(res != LV_FS_RES_OK) {
-        ESP_LOGE(TAG, "Failed to open %s, %d",LV_README_TXT, res);
+        ESP_LOGE(TAG, "Failed to open %s, %d",filename, res);
         return ESP_FAIL;
     }
 
     uint32_t read_num;
-    uint8_t buf[100];
-    res = lv_fs_read(&f, buf, 8, &read_num);
-    if(res != LV_FS_RES_OK || read_num != 8) {
-        ESP_LOGE(TAG, "Failed to read from %s", LV_README_TXT);
+    uint8_t buf[TUX_READ_BUFF_SIZE];
+    res = lv_fs_read(&f, buf, TUX_READ_BUFF_SIZE-1, &read_num);
+    if(res != LV_FS_RES_OK || read_num != TUX_READ_BUFF_SIZE-1) {
+        ESP_LOGE(TAG, "Failed to read from %s", filename);
         return ESP_FAIL;
     }
     
     // Display the read contents from the file
-    ESP_LOGI(TAG, "Read from %s : %s",LV_README_TXT, buf);
+    ESP_LOGI(TAG, "Read from %s : %s",filename, buf);
     lv_fs_close(&f);
     return ESP_OK;
 }
