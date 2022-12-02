@@ -33,14 +33,17 @@ SOFTWARE.
 #include <cmath>
 #include <inttypes.h>
 #include <string>
-
+#include <esp_chip_info.h>
+#include <esp_ota_ops.h>
+#include <spi_flash_mmap.h>
+#include <esp_flash.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 
 using namespace std ;
 #include "soc/rtc.h"
-#include "esp_ota_ops.h"
-#include "esp_app_format.h"
+//#include "esp_ota_ops.h"
+//#include "esp_app_format.h"
 
 #include "SettingsConfig.hpp"
 
@@ -58,13 +61,13 @@ using namespace std ;
 // #include "conf_WT32SCO1.h"              // WT32-SC01 (ESP32)
 
 // WT32-SC01 Plus (ESP32-S3 + 8Bit Parellel) with SD Card, Audio support
-#include "conf_WT32SCO1-Plus.h"         
+//#include "conf_WT32SCO1-Plus.h"         
 
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
 // #include "conf_Makerfabs_S3_PTFT.h"     
 
 // Makerfabs ESP32S335D (ESP32-S3 + SPI) with SD Card, Audio support
-// #include "conf_Makerfabs_S3_STFT.h"
+#include "conf_Makerfabs_S3_STFT.h"
 /********************************************************/
 
 #include "helper_display.hpp"

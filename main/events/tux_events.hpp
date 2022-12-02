@@ -27,7 +27,7 @@ SOFTWARE.
 #define TUX_EVENT_SOURCE_H_
 
 #include "esp_event.h"
-#include "esp_timer.h"
+//#include "esp_timer.h"
 
 #ifdef __cplusplus
 extern "C" {

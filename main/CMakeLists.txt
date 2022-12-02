@@ -23,7 +23,9 @@ idf_component_register(SRCS "main.cpp"
 					"fonts/font_7seg_56.c"
 
                 INCLUDE_DIRS "." "devices" "helpers" "pages" "widgets" "images"
-				REQUIRES LovyanGFX lvgl fatfs fmt SettingsConfig OpenWeatherMap
+				REQUIRES json LovyanGFX lvgl fatfs fmt SettingsConfig OpenWeatherMap spi_flash
+				app_update ota esp_event esp_timer esp_wifi wifi_provisioning spiffs esp_partition
+				esp_hw_support
 				)
 
 spiffs_create_partition_image(storage ${PROJECT_DIR}/fatfs FLASH_IN_PROJECT)

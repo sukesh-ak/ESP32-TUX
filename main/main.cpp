@@ -312,7 +312,7 @@ extern "C" void app_main(void)
     // Tuning PSRAM options visible only in IDF5, so will wait till then for BLE.
     xTaskCreate(provision_wifi, "wifi_prov", 1024*8, NULL, 3, NULL);
 
-    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
+    ESP_LOGI(TAG, "[APP] Free memory: %" PRIu32 " bytes", esp_get_free_heap_size());
 
     // Date/Time update timer - once per sec
     timer_datetime = lv_timer_create(timer_datetime_callback, 1000,  NULL);
@@ -357,7 +357,7 @@ static void tux_ui_change_cb(void * s, lv_msg_t *m)
     const char * msg_payload = (const char *)lv_msg_get_payload(m);
     const char * msg_data = (const char *)lv_msg_get_user_data(m);
 
-    ESP_LOGW(TAG,"[%d] page event triggered",page_id);
+    //ESP_LOGW(TAG,"[%" PRIu32 "] page event triggered",page_id);
 
     switch (page_id)
     {

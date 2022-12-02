@@ -1,16 +1,8 @@
 {
-    "C_Cpp.intelliSenseEngine": "Tag Parser",
-    "idf.portWin": "COM5",
-    "idf.flashType": "UART",
-    "idf.adapterTargetName": "esp32",
+    "idf.portWin": "COM14",
+    "idf.adapterTargetName": "esp32s3",
     "idf.openOcdConfigs": [
-      "interface/ftdi/esp32_devkitj_v1.cfg",
-      "target/esp32.cfg"
-    ],
-    "files.associations": {
-      "esp_ota_ops.h": "c",
-      "esp_http_client.h": "c",
-      "esp_https_ota.h": "c",
-      "*.inc": "cpp"
-    }
-  }
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "target/esp32s3.cfg"
+    ]
+}

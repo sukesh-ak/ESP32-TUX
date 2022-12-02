@@ -29,6 +29,7 @@ SOFTWARE.
 #include "OpenWeatherMap.hpp"
 #include "apps/weather/weathericons.h"
 #include "events/gui_events.hpp"
+#include <esp_partition.h>
 
 LV_IMG_DECLARE(dev_bg)
 //LV_IMG_DECLARE(tux_logo)
@@ -1006,7 +1007,7 @@ static void footer_button_event_handler(lv_event_t * e)
     if(code == LV_EVENT_VALUE_CHANGED) {
         uint32_t page_id = lv_btnmatrix_get_selected_btn(obj);
         const char * txt = lv_btnmatrix_get_btn_text(obj, page_id);
-        printf("[%d] %s was pressed\n", page_id,txt);
+        printf("[%ld] %s was pressed\n", page_id,txt);
 
         // Do not refresh the page if its not changed
         if (current_page != page_id) current_page = page_id;

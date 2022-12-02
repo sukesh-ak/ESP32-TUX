@@ -95,8 +95,8 @@ void OpenWeatherMap::load_json()
 {
     ESP_LOGW(TAG,"load_json() \n%s",jsonString.c_str());
 
-    try
-	{
+    // try
+	// {
 
     // 19.8°С temperature from 18.9°С to 19.8 °С, wind 1.54 m/s. clouds 20 %, 1017 hpa
     root = cJSON_Parse(jsonString.c_str());
@@ -151,11 +151,11 @@ void OpenWeatherMap::load_json()
     // type / id / country / sunrise (epoc?) / sunset (epoc?)
     //sys = cJSON_GetObjectItem(root,"sys");
 
-	}
-	catch (exception& exc)
-	{
-		ESP_LOGE(TAG,"Exception has occurred!");
-	}
+	// }
+	// catch (exception& exc)
+	// {
+	// 	ESP_LOGE(TAG,"Exception has occurred!");
+	// }
 
     // Cleanup
     cJSON_Delete(root);
@@ -227,6 +227,8 @@ esp_err_t http_event_handle(esp_http_client_event_t *evt)
             ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
             output_len = 0;
             break;
+        case HTTP_EVENT_REDIRECT:
+            break;
     }
     return ESP_OK;
 }
@@ -275,7 +277,7 @@ esp_err_t OpenWeatherMap::request_json_over_http()
     esp_err_t err = esp_http_client_perform(client);
 
     if (err == ESP_OK) {
-    ESP_LOGI(TAG, "Status = %d, content_length = %d",
+    ESP_LOGI(TAG, "Status = %d, content_length = %" PRId64 , // PRIu64  / PRIx64 to print in hexadecimal.
             esp_http_client_get_status_code(client),
             esp_http_client_get_content_length(client));
     } else {
