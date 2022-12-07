@@ -128,6 +128,8 @@ git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
 ```
 
+### To select your device uncomment [here](/main/main.hpp)
+
 Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration` including
 - WiFi Provisioning - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
 - MQTT Config (work-in-progress)
