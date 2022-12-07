@@ -18,6 +18,9 @@ idf_build_set_property(COMPILE_OPTIONS "-Wno-missing-field-initializers" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-unused-variable" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-unused-function" APPEND)
 
+# This should be only for .cpp files
+#idf_build_set_property(COMPILE_OPTIONS "-Wdeprecated-enum-enum-conversion" APPEND)
+
 # Trouble unless you know what you are doing
 idf_build_set_property(COMPILE_OPTIONS "-Wno-pointer-arith" APPEND) 
 

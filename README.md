@@ -128,6 +128,19 @@ git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
 ```
 
+Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration` including
+- WiFi Provisioning - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
+- MQTT Config (work-in-progress)
+- SNTP Config
+- OTA Config
+- Weather Config
+
+Please also make sure to set 
+- Flash size (under `Serial flasher config`)
+- Custom partition table CSV (under `Partition Table`)
+
+_Remaining default configuration is setup using sdkconfig file in the project root for ESP32 & ESP32-S3._
+
 ## Separate build folder for ESP32 & ESP32-S3
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
 > This enables you to have separate build folder, in case you use multiple devices with different controllers.  
