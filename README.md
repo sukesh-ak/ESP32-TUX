@@ -13,7 +13,7 @@
   - [Makerfabs 16Bit Parallel TFT 3.5" ILI9488 - ESP32-S3](https://bit.ly/ESP32S335D)
   - [Makerfabs SPI TFT 3.5" ILI9488 - ESP32-S3](https://bit.ly/ESP32S3SPI35)
 - Graphics & Touch Driver : [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
-- UI / Widgets : [LVGL9.x](https://github.com/lvgl/lvgl)
+- UI / Widgets : [LVGL 8.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
 ![As of 2022-10-21](assets/home.jpg)

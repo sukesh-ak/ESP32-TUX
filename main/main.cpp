@@ -203,6 +203,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_CRED_SUCCESS) {
         ESP_LOGW(TAG,"WIFI_PROV_CRED_SUCCESS");
+        // FIXME Refresh IP details once provision is successfull
     }
     else if (event_base == WIFI_PROV_EVENT && event_id == WIFI_PROV_END) {
         ESP_LOGW(TAG,"WIFI_PROV_END");
@@ -260,8 +261,6 @@ extern "C" void app_main(void)
 
 //******************************************** 
     owm = new OpenWeatherMap();
-    // owm->request_weather_update();
-    //owm->request_json_over_http();
 //********************** CONFIG HELPER TESTING ENDS
 
     lcd.init();        // Initialize LovyanGFX

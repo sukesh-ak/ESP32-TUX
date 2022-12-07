@@ -115,9 +115,10 @@ static lv_timer_t * timer_weather;
 
 // Take your pick, here is the complete timezone list :)
 // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+// Setting is moved to menuconfig - SNTP Config
 // #define TZ_STRING "EST5EDT,M3.2.0/2,M11.1.0"    // Eastern Standard Time
 // #define TZ_STRING "CST-8"                       // China Standard Time
-#define TZ_STRING "UTC-05:30"                   // India Standart Time
+// #define TZ_STRING "UTC-05:30"                   // India Standart Time
 
 char qr_payload[150] = {0};     // QR code data for WiFi provisioning
 char ip_payload[20] = {0};      // IP Address
