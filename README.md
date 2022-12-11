@@ -113,7 +113,7 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 | Devices   | WT32-SC01  | WT32-SC01+ | ESP32S335D | ESP32S3SPI35
 |:---------  |:-----------:|:----------:|:--------:|:-----------:
 |Manufacturer|Wireless-Tag|Wireless-Tag|Makerfabs|Makerfabs
-|Controller   |ESP32|ESP32-S3   |ESP32-S3    | ESP32-S3
+|MCU   |ESP32|ESP32-S3   |ESP32-S3    | ESP32-S3
 |Display Size | 3.5" |3.5"  |3.5"  |3.5" 
 |Resolution|480x320|480x320|480x320|480x320
 |Display Controller|ST7796|ST7796UI|ILI9488|ILI9488
