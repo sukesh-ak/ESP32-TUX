@@ -155,11 +155,11 @@ Please also make sure to set
 _Remaining default configuration is setup using sdkconfig file in the project root for ESP32 & ESP32-S3._
 
 ### Important customization configuration
-- SNTP Config > Timezone settings
-- OTA Config > OTA URL settings (use local python [webserver.py](webserver.py))
-- Weather Config > Weather Location
-- Weather Config > Weather Units
-- Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
+- ESP32-TUX Configuration > SNTP Config > Timezone settings
+- ESP32-TUX Configuration > OTA Config > OTA URL settings (use local python [webserver.py](webserver.py))
+- ESP32-TUX Configuration > Weather Config > Weather Location (Test the location [here]https://openweathermap.org/find)
+- ESP32-TUX Configuration > Weather Config > Weather Units
+- ESP32-TUX Configuration > Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
 
 ## Separate build folder for ESP32 & ESP32-S3
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
