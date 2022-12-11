@@ -1,7 +1,7 @@
 ![ESP32-TUX](assets/tux-design.png)  
 
 ![GitHub](https://img.shields.io/github/license/sukesh-ak/esp32-tux?style=for-the-badge) 
-[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23FF007F&style=for-the-badge)](https://github.com/sponsors/sukesh-ak)   
+[![Github sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23FF007F&style=for-the-badge)](https://github.com/sponsors/sukesh-ak)   
 ![GitHub forks](https://img.shields.io/github/forks/sukesh-ak/esp32-tux?style=for-the-badge) 
 ![GitHub Repo stars](https://img.shields.io/github/stars/sukesh-ak/esp32-tux?style=for-the-badge) 
 ![GitHub issues](https://img.shields.io/github/issues/sukesh-ak/esp32-tux?style=for-the-badge) 
@@ -16,11 +16,22 @@
 - UI / Widgets : [LVGL 8.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
-![As of 2022-10-21](assets/home.jpg)
-![As of 2022-10-21](assets/settings.jpg)
+## Screens
+1. HOME (you can add more widgets here)
+2. REMOTE (Sample App screen where you can have your own)
+3. SETTINGS (with WI-FI provisioning, brightness, theme, portrait/landscape)
+4. OTA (Over-the-air update and device info)  
+
+_Remember this is a template so make it your own for your needs._
+
+![As of 2022-12-11](assets/1.home.png)
+![As of 2022-12-11](assets/2.app.png)
+![As of 2022-12-11](assets/3.wifi.png)
+![As of 2022-12-11](assets/4.ota.png)
 
 ## Web Installer : [https://tux.sukesh.me](https://tux.sukesh.me)
-> You only need a USB Cable and Browser to install and test on your device.
+> You only need a USB Cable and Browser to install and test on your device.  
+_(Work in progress)_
 
 ## Key Project Goals
 - An easy UI Template to get started quickly
@@ -28,10 +39,10 @@
 - Rotate to Landscape / Portrait without code changes
 - Easy re-use of the template with just a header file [Supported Devices here](/main/devices/)
 - Switching Themes easily (Dark/Light)
-- Access to SPIFF (FAT once upgraded to IDF 5.x) partition with F:/\<filename>
+- Access to SPIFF partition with F:/\<filename>
 - Support for updating UI from any Task
 - Wi-Fi Provisioning using BLE/SoftAP
-- OTA update using local (Python webserver) and Cloud (Azure)
+- OTA update using local (Python webserver) and Cloud (Azure) later
 - Save settings in json file
 - Support more devices with TFT + Capacitive Touch
 
@@ -131,7 +142,7 @@ cd ESP32-TUX
 ### To select your device uncomment [here](/main/main.hpp)
 
 Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration` including
-- WiFi Provisioning - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
+- WiFi Provisioning using Mobile App - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
 - MQTT Config (work-in-progress)
 - SNTP Config
 - OTA Config
@@ -143,24 +154,40 @@ Please also make sure to set
 
 _Remaining default configuration is setup using sdkconfig file in the project root for ESP32 & ESP32-S3._
 
+### Important customization configuration
+- SNTP Config > Timezone settings
+- OTA Config > OTA URL settings (use local python [webserver.py](webserver.py))
+- Weather Config > Weather Location
+- Weather Config > Weather Units
+- Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
+
 ## Separate build folder for ESP32 & ESP32-S3
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
 > This enables you to have separate build folder, in case you use multiple devices with different controllers.  
 
-#### ESP32 devices
+```cmake
+# set target and build,flash,monitor - ESP32
+idf.py -B build-esp32 set-target esp32 build
+idf.py -B build-esp32 flash monitor
+
+# set target and build,flash,monitor - ESP32-S3
+idf.py -B build-esp32s3 set-target esp32s3 build
+idf.py -B build-esp32s3 flash monitor
+```
+### Otherwise ESP32/ESP32-S3 devices
 ```cmake
 # set IDF chip target (default is 'esp32')
 idf.py set-target esp32s3
 
-# set target and build,flash,monitor
+# set target and build
 idf.py build
 
 # Compile, Flash and Monitor
-idf.py -p COM6 flash monitor
+idf.py flash monitor
 ```
 
 ## How custom lvgl config is setup - ESP-IDF  
-> Check settings in CMakeLists.txt [here](CMakeLists.txt#L16)
+> Check settings in CMakeLists.txt [here](CMakeLists.txt)
 ```cmake
 #LVGL custom config file setup
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
@@ -168,7 +195,7 @@ idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 ```
 
 ## Display Helpful Compile Time Information
-> Check settings in CMakeLists.txt [here](CMakeLists.txt#L25)  
+> Check settings in CMakeLists.txt [here](CMakeLists.txt)  
 ```cmake
 # Display Compile Time Information
 message(STATUS "--------------Compile Info------------")
