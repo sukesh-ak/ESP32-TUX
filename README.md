@@ -110,7 +110,7 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 
 ## Currently Supported Devices 
 
-| Devices   | WT32-SC01  | WT32-SC01+ | ESP32S335D | ESP32S3SPI35
+| Devices   | WT32-SC01  | WT32-SC01+ | ESP32S3SPI35 | ESP32S335D
 |:---------  |:-----------:|:----------:|:--------:|:-----------:
 |Manufacturer|Wireless-Tag|Wireless-Tag|Makerfabs|Makerfabs
 |MCU   |ESP32|ESP32-S3   |ESP32-S3    | ESP32-S3
@@ -126,9 +126,8 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 |SD CARD |No|Yes|Yes|Yes
 |OTG |No|Yes|Yes|Yes
 |Datasheet|[PDF](datasheet/WT32-SC01_ESP32.pdf)|[PDF](datasheet/WT32-SC01_Plus_ESP32-S3.pdf)|[PDF](datasheet/Makerfabs-ESP32S3SPI35.PDF)|[PDF](datasheet/Makerfabs-ESP32S335D.pdf)
-|Purchase Link|[BUY](https://bit.ly/wt32-sc01)|[BUY](https://bit.ly/wt32-sc01-plus)|[BUY](https://bit.ly/ESP32S335D)|[BUY](https://bit.ly/ESP32S3SPI35)
+|Purchase Link|[BUY](https://bit.ly/wt32-sc01)|[BUY](https://bit.ly/wt32-sc01-plus)|[BUY](https://bit.ly/ESP32S3SPI35)|[BUY](https://bit.ly/ESP32S335D)
 > Flash & PSRAM specifications are as per what I received.
-
 
 
 ## Get Started

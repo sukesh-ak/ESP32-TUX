@@ -203,26 +203,32 @@ void lv_setup_styles()
     lv_style_set_bg_opa(&style_content_bg, LV_OPA_50);
     lv_style_set_radius(&style_content_bg, 0);
 
+// Enabling wallpaper image slows down scrolling perf etc...
+#if defined(CONFIG_WALLPAPER_IMAGE)
     // Image Background
     // CF_INDEXED_8_BIT for smaller size - resolution 480x480
     // NOTE: Dynamic loading bg from SPIFF makes screen perf bad
     if (lv_fs_is_ready('F')) { // NO SD CARD load default
+        ESP_LOGW(TAG,"Loading - F:/bg/dev_bg9.bin");
         lv_style_set_bg_img_src(&style_content_bg, "F:/bg/dev_bg9.bin");    
     } else {
+        ESP_LOGW(TAG,"Loading - from firmware");
         lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
     }
     //lv_style_set_bg_img_src(&style_content_bg, &dev_bg);
     // lv_style_set_bg_img_opa(&style_content_bg,LV_OPA_50);
-
+#else
+    ESP_LOGW(TAG,"Using Gradient");
     // Gradient Background
     static lv_grad_dsc_t grad;
     grad.dir = LV_GRAD_DIR_VER;
     grad.stops_count = 2;
-    grad.stops[0].color = lv_palette_main(LV_PALETTE_GREY);
-    grad.stops[1].color = theme_current->color_primary;
-    grad.stops[0].frac = 100;
-    grad.stops[1].frac = 192;
-    // lv_style_set_bg_grad(&style_content_bg, &grad);
+    grad.stops[0].color = lv_color_make(31,32,34) ;
+    grad.stops[1].color = lv_palette_main(LV_PALETTE_BLUE);
+    grad.stops[0].frac = 150;
+    grad.stops[1].frac = 190;
+    lv_style_set_bg_grad(&style_content_bg, &grad);
+#endif
 
     // DASHBOARD TITLE
     lv_style_init(&style_title);

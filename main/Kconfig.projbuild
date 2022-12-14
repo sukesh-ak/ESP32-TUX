@@ -1,4 +1,11 @@
 menu "ESP32-TUX Configuration"
+    config WALLPAPER_IMAGE
+        bool
+        default y
+        prompt "Enable wallpaper image"
+        help
+            Enable wallpaper (background) image.
+
     menu "Wifi Provision Config"
     choice PROV_TRANSPORT
         bool "Provisioning Transport"
