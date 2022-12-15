@@ -22,7 +22,7 @@
 3. SETTINGS (with WI-FI provisioning, brightness, theme, portrait/landscape)
 4. OTA (Over-the-air update and device info)  
 
-_Remember this is a template so make it your own for your needs._
+_Remember this is a template so make it your own as per your needs._
 
 ![As of 2022-12-11](assets/1.home.png)
 ![As of 2022-12-11](assets/2.app.png)
@@ -154,15 +154,15 @@ Please also make sure to set
 _Remaining default configuration is setup using sdkconfig file in the project root for ESP32 & ESP32-S3._
 
 ### Important customization configuration
-- ESP32-TUX Configuration > SNTP Config > Timezone settings
+- ESP32-TUX Configuration > SNTP Config > Timezone settings (Refer Wikipedia [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones))
 - ESP32-TUX Configuration > OTA Config > OTA URL settings (use local python [webserver.py](webserver.py))
-- ESP32-TUX Configuration > Weather Config > Weather Location (Test the location [here]https://openweathermap.org/find)
+- ESP32-TUX Configuration > Weather Config > Weather Location (Test the location [here](https://openweathermap.org/find))
 - ESP32-TUX Configuration > Weather Config > Weather Units
 - ESP32-TUX Configuration > Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
 
 ## Separate build folder for ESP32 & ESP32-S3
 > Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
-> This enables you to have separate build folder, in case you use multiple devices with different controllers.  
+> This enables you to have separate build folder, in case you use multiple devices with different controller variants like ESP32 vs ESP32-S3.  
 
 ```cmake
 # set target and build,flash,monitor - ESP32
