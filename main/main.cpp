@@ -253,6 +253,9 @@ extern "C" void app_main(void)
     cfg->load_config();
     // Change device name
     cfg->DeviceName = "ESP32-TUX";
+    cfg->WeatherAPIkey = CONFIG_WEATHER_API_KEY;
+    cfg->WeatherLocation = CONFIG_WEATHER_LOCATION;
+    cfg->WeatherProvider = CONFIG_WEATHER_OWM_URL;
     // Change brightness
     cfg->Brightness=250;
     // Save settings again
@@ -318,8 +321,7 @@ extern "C" void app_main(void)
     //lv_timer_pause(timer_datetime); // enable only when wifi is connected
 
     // Weather update timer - Once per min (60*1000) or maybe once in 10 mins (10*60*1000)
-    if (!cfg->WeatherAPIkey.empty())    // If API key not defined don't enable the weather timer
-        timer_weather = lv_timer_create(timer_weather_callback, WEATHER_UPDATE_INTERVAL,  NULL);
+    timer_weather = lv_timer_create(timer_weather_callback, WEATHER_UPDATE_INTERVAL,  NULL);
 
     //lv_timer_set_repeat_count(timer_weather,1);
     //lv_timer_pause(timer_weather);  // enable after wifi is connected
@@ -345,6 +347,11 @@ static void timer_datetime_callback(lv_timer_t * timer)
 
 static void timer_weather_callback(lv_timer_t * timer)
 {
+    if (cfg->WeatherAPIkey.empty()) {   // If API key not defined skip weather update
+        ESP_LOGW(TAG,"Weather API Key not set");
+        return;
+    }
+
     // Update weather and trigger UI update
     owm->request_weather_update();
     lv_msg_send(MSG_WEATHER_CHANGED, owm);

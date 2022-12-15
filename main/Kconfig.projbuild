@@ -1,4 +1,54 @@
 menu "ESP32-TUX Configuration"
+    choice TUX_DEVICE_SELECTED
+        prompt "Select the device"
+        default TUX_DEVICE_ESP32S335D
+        config TUX_DEVICE_ESP32S335D
+            bool "MakerFabs ESP32S335D - 16Bit Parallel - 16MB Flash"
+            help
+                This is the device with 16MB Flash on a MakerFabs ESP32S3SPI35 - 16Bit Parallel device.
+
+                The corresponding CSV file in the partition directory is
+                partitions/partition-16MB.csv
+        config TUX_DEVICE_ESP32S3SPI35
+            bool "MakerFabs ESP32S3SPI35 - SPI - 16MB Flash"
+            help
+                This is the device with 16MB Flash on a MakerFabs ESP32S3SPI35 - SPI device.
+
+                The corresponding CSV file in the partition directory is
+                partitions/partition-16MB.csv
+
+        config TUX_DEVICE_WT32_SC01
+            bool "Wireless-Tag WT32-SC01 - SPI - 4MB Flash"
+            help
+                This is the device with 4MB Flash on a WT32-SC01 device.
+
+                The corresponding CSV file in the partition directory is
+                partitions/partition-4MB.csv
+
+        config TUX_DEVICE_WT32_SC01_PLUS
+            bool "Wireless-Tag WT32-SC01-Plus - 8Bit Parallel - 8MB Flash"
+            help
+                This is the device with 8MB Flash on a WT32-SC01-Plus device.
+
+                The corresponding CSV file in the partition directory is
+                partitions/partition-8MB.csv
+    endchoice
+
+    # config PARTITION_TABLE_CUSTOM_FILENAME  
+    #     string "Selected custom filename"
+    #     default "partitions/partition-4MB.csv" if TUX_DEVICE_WT32-SC01
+    #     default "partitions/partition-8MB.csv" if TUX_DEVICE_WT32-SC01-PLUS
+    #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S3SPI35
+    #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S335D
+
+    # config PARTITION_TABLE_FILENAME  
+    #     string "Selected PARTITION_TABLE_FILENAME"
+    #     default "partitions/partition-4MB.csv" if TUX_DEVICE_WT32-SC01
+    #     default "partitions/partition-8MB.csv" if TUX_DEVICE_WT32-SC01-PLUS
+    #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S3SPI35
+    #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S335D   
+        
+
     config WALLPAPER_IMAGE
         bool
         default y
@@ -147,45 +197,6 @@ menu "ESP32-TUX Configuration"
             help
                 This options specifies HTTP request size. Number of bytes specified
                 in this option will be downloaded in single HTTP request.
-
-        choice PARTITION_TABLE_TYPE_UX
-            prompt "Select Partition Table"
-            default PARTITION_TABLE_WT32SC01PLUS_8MB
-            config PARTITION_TABLE_WT32SC01_4MB
-                bool "WT32-SC01 - 4MB Flash"
-                help
-                    This is the partition designed to fit 4MB on a WT32-SC01 device.
-    
-                    The corresponding CSV file in the partition directory is
-                    partitions/partitions_wt32sc01-4MB.csv
-            config PARTITION_TABLE_WT32SC01_8MB
-                bool "WT32-SC01 - 8MB Flash"
-                help
-                    This is the partition designed to fit 8MB on a WT32-SC01 device.
-
-                    The corresponding CSV file in the partition directory is
-                    partitions/partitions_wt32sc01-8MB.csv
-            config PARTITION_TABLE_WT32SC01PLUS_4MB
-                bool "WT32-SC01-PLUS - 4MB Flash"
-                help
-                    This is the partition designed to fit 4MB on a WT32-SC01-PLUS device.
-    
-                    The corresponding CSV file in the partition directory is
-                    partitions/partitions_wt32sc01plus-4MB.csv
-            config PARTITION_TABLE_WT32SC01PLUS_8MB
-                bool "WT32-SC01-PLUS - 8MB Flash"
-                help
-                    This is the partition designed to fit 8MB on a WT32-SC01-PLUS device.
-    
-                    The corresponding CSV file in the partition directory is
-                    partitions/partitions_wt32sc01plus-8MB.csv
-        endchoice
-        # config PARTITION_TABLE_FILENAME 
-        #     string "Selected filename"
-        #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01-4MB.csv" if PARTITION_TABLE_WT32SC01_4MB
-        #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01-8MB.csv" if PARTITION_TABLE_WT32SC01_8MB
-        #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-4MB.csv" if PARTITION_TABLE_WT32SC01PLUS_4MB
-        #     default "${PROJECT_DIR}/partitions/partitions_wt32sc01plus-8MB.csv" if PARTITION_TABLE_WT32SC01PLUS_8MB
     endmenu
 
     menu "Weather Config"
@@ -220,4 +231,16 @@ menu "ESP32-TUX Configuration"
             help
                 URL of server where sample weather.json is available.    
     endmenu
+    config PARTITION_TABLE_CUSTOM_FILENAME 
+        string "Custom Partition CSV filename"    
+    
+    choice ESPTOOLPY_FLASHSIZE
+        prompt "Flash size"
+        default ESPTOOLPY_FLASHSIZE_4MB
+        help
+            SPI flash size, in megabytes
+    endchoice
+
+
+
 endmenu

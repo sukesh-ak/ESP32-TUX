@@ -57,9 +57,14 @@ static const char* TAG = "OpenWeatherMap";
 
 OpenWeatherMap::OpenWeatherMap()
 {
+    // Weather cache filename
     file_name = "/spiffs/weather/weather.json";
-    cfg = new SettingsConfig(file_name);
-    
+
+    // Settings filename / add these after UI has these config options
+    // cfg_filename = "/spiffs/settings.json";
+    // cfg = new SettingsConfig(cfg_filename);
+    // cfg->load_config();
+
     // setup default values for everything.
 #if defined(CONFIG_WEATHER_UNITS_METRIC)    
     TemperatureUnit = 'C';

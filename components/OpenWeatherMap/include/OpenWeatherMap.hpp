@@ -112,8 +112,9 @@ class OpenWeatherMap
 
     private:
         SettingsConfig *cfg;
+        string cfg_filename;  /* Settings config filename*/
 
-        string file_name;
+        string file_name; /* Weather cache filename */
         string jsonString;
 
         cJSON *root;
