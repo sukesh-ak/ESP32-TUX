@@ -5,7 +5,8 @@
 cmake_minimum_required(VERSION 3.5)
 
 # Make sure sdkconfig is created in the build folder
-set(SDKCONFIG "${CMAKE_BINARY_DIR}/sdkconfig")
+# Only required if working with different controller variants
+# set(SDKCONFIG "${CMAKE_BINARY_DIR}/sdkconfig") 
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
