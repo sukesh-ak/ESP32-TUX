@@ -1,4 +1,6 @@
 menu "ESP32-TUX Configuration"
+    menu "Device Config"
+
     choice TUX_DEVICE_SELECTED
         prompt "Select the device"
         default TUX_DEVICE_ESP32S335D
@@ -33,7 +35,8 @@ menu "ESP32-TUX Configuration"
                 The corresponding CSV file in the partition directory is
                 partitions/partition-8MB.csv
     endchoice
-
+    
+    # TODO: Work in progress
     # config PARTITION_TABLE_CUSTOM_FILENAME  
     #     string "Selected custom filename"
     #     default "partitions/partition-4MB.csv" if TUX_DEVICE_WT32-SC01
@@ -48,6 +51,15 @@ menu "ESP32-TUX Configuration"
     #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S3SPI35
     #     default "partitions/partition-16MB.csv" if TUX_DEVICE_ESP32S335D   
         
+    config PARTITION_TABLE_CUSTOM_FILENAME 
+        string "Custom Partition CSV filename"    
+    
+    choice ESPTOOLPY_FLASHSIZE
+        prompt "Flash size"
+        default ESPTOOLPY_FLASHSIZE_4MB
+        help
+            SPI flash size, in megabytes
+    endchoice
 
     config WALLPAPER_IMAGE
         bool
@@ -56,6 +68,7 @@ menu "ESP32-TUX Configuration"
         help
             Enable wallpaper (background) image.
 
+    endmenu
     menu "Wifi Provision Config"
     choice PROV_TRANSPORT
         bool "Provisioning Transport"
@@ -231,16 +244,5 @@ menu "ESP32-TUX Configuration"
             help
                 URL of server where sample weather.json is available.    
     endmenu
-    config PARTITION_TABLE_CUSTOM_FILENAME 
-        string "Custom Partition CSV filename"    
-    
-    choice ESPTOOLPY_FLASHSIZE
-        prompt "Flash size"
-        default ESPTOOLPY_FLASHSIZE_4MB
-        help
-            SPI flash size, in megabytes
-    endchoice
-
-
 
 endmenu
