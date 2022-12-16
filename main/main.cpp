@@ -266,8 +266,10 @@ extern "C" void app_main(void)
     owm = new OpenWeatherMap();
 //********************** CONFIG HELPER TESTING ENDS
 
-    lcd.init();        // Initialize LovyanGFX
-    lv_init();         // Initialize lvgl
+    lcd.init();         // Initialize LovyanGFX
+    lcd.initDMA();      // Init DMA
+    lv_init();          // Initialize lvgl
+
     if (lv_display_init() != ESP_OK) // Configure LVGL
     {
         ESP_LOGE(TAG, "LVGL setup failed!!!");
