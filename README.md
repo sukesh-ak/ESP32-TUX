@@ -117,11 +117,11 @@ tux_panel_set_content_bg_color(panel1,lv_palette_main(LV_PALETTE_GREEN))
 // Get Content Area of the panel to add UI elements
 lv_obj_t *cont1 = tux_panel_get_content(panel1);
 
-    // Add Label to the content area
-    lv_obj_t *lbl_version = lv_label_create(cont1);
-    lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
-    lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
+// Add Label to the content area
+lv_obj_t *lbl_version = lv_label_create(cont1);
+lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
+lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
+lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 ```
 
 ## Currently Supported Devices 
@@ -155,10 +155,11 @@ cd ESP32-TUX
 ```
   
 Then you need to select your board
-  
-`idf.py set-target esp32s3` For WT32-SCO-Plus.
-According to the [maker](https://github.com/sukesh-ak/ESP32-TUX/issues/13#issuecomment-1367132385), this step is optional for the WT32-SCO (non plus) version.
 
+For WT32-SCO-Plus, use
+`idf.py set-target esp32s3`
+  
+For WT32-SCO (non-plus) you can skip this step according to [this](https://github.com/sukesh-ak/ESP32-TUX/issues/13#issuecomment-1367132385).
 
 ### To select your device uncomment [here](/main/main.hpp)
 
