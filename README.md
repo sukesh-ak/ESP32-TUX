@@ -16,6 +16,22 @@
 - UI / Widgets : [LVGL 8.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
+
+## idf.py
+
+Install `idf.py` toolset by using the guide:
+
+  * Linux/Mac:
+    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html
+  * Windows:
+    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/windows-setup.html
+
+On mac/linux activat the `idf.py` environment by using:
+
+  * `. ~/esp/esp-idf/export.sh`
+
+The `idf.py` tool should now be available.
+
 ## Screens
 1. HOME (you can add more widgets here)
 2. REMOTE (Sample App screen where you can have your own)
@@ -217,4 +233,3 @@ message(STATUS "---------------------------------------")
 [FREE - WT32-SC01 - 3D enclosure on Cults3d by DUANEORTON](https://cults3d.com/en/3d-model/tool/desk-enclosure-for-wt32-sc01)  
 [PAID - WT32-SC01 - 3D enclosure on Cults3d by PRINTMINION](https://cults3d.com/en/design-collections/printminion/various-cases-for-wt32-sc01-by-wireless-tag)  
 [PAID - WT32-SC01 - 3D enclosure on Cults3d by TOMCASA](https://cults3d.com/en/3d-model/gadget/boite-pour-wt32-sc01-esp32-tft-tactile)
-
