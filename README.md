@@ -163,6 +163,11 @@ Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration
 - OTA Config
 - Weather Config
 
+Select the board in the `idf.py menuconfig`
+
+![image](https://user-images.githubusercontent.com/6856673/209997757-21437d0e-c3b9-4fec-b349-2ec07e31e809.png)
+
+
 Please also make sure to set 
 - Flash size (under `Serial flasher config`)
 - Custom partition table CSV (under `Partition Table`)
