@@ -153,6 +153,12 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
 ```
+  
+Then you need to select your board
+  
+`idf.py set-target esp32s3` For WT32-SCO-Plus.
+According to the [maker](https://github.com/sukesh-ak/ESP32-TUX/issues/13#issuecomment-1367132385), this step is optional for the WT32-SCO (non plus) version.
+
 
 ### To select your device uncomment [here](/main/main.hpp)
 
