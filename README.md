@@ -16,6 +16,22 @@
 - UI / Widgets : [LVGL 8.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
+
+## idf.py
+
+Install `idf.py` toolset by using the guide:
+
+  * Linux/Mac:
+    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html
+  * Windows:
+    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/windows-setup.html
+
+On mac/linux activat the `idf.py` environment by using:
+
+  * `. ~/esp/esp-idf/export.sh`
+
+The `idf.py` tool should now be available.
+
 ## Screens
 1. HOME (you can add more widgets here)
 2. REMOTE (Sample App screen where you can have your own)
@@ -101,11 +117,11 @@ tux_panel_set_content_bg_color(panel1,lv_palette_main(LV_PALETTE_GREEN))
 // Get Content Area of the panel to add UI elements
 lv_obj_t *cont1 = tux_panel_get_content(panel1);
 
-    // Add Label to the content area
-    lv_obj_t *lbl_version = lv_label_create(cont1);
-    lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
-    lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
+// Add Label to the content area
+lv_obj_t *lbl_version = lv_label_create(cont1);
+lv_obj_set_size(lbl_version, LV_SIZE_CONTENT, 30);
+lv_obj_align(lbl_version, LV_ALIGN_CENTER, 0, 0);
+lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 ```
 
 ## Currently Supported Devices 
@@ -137,6 +153,13 @@ lv_obj_t *cont1 = tux_panel_get_content(panel1);
 git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
 ```
+  
+Then you need to select your board
+
+For WT32-SCO-Plus, use
+`idf.py set-target esp32s3`
+  
+For WT32-SCO (non-plus) you can skip this step according to [this](https://github.com/sukesh-ak/ESP32-TUX/issues/13#issuecomment-1367132385).
 
 ### To select your device uncomment [here](/main/main.hpp)
 
@@ -146,6 +169,11 @@ Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration
 - SNTP Config
 - OTA Config
 - Weather Config
+
+Select the board in the `idf.py menuconfig`
+
+![image](https://user-images.githubusercontent.com/6856673/209997757-21437d0e-c3b9-4fec-b349-2ec07e31e809.png)
+
 
 Please also make sure to set 
 - Flash size (under `Serial flasher config`)
@@ -217,4 +245,3 @@ message(STATUS "---------------------------------------")
 [FREE - WT32-SC01 - 3D enclosure on Cults3d by DUANEORTON](https://cults3d.com/en/3d-model/tool/desk-enclosure-for-wt32-sc01)  
 [PAID - WT32-SC01 - 3D enclosure on Cults3d by PRINTMINION](https://cults3d.com/en/design-collections/printminion/various-cases-for-wt32-sc01-by-wireless-tag)  
 [PAID - WT32-SC01 - 3D enclosure on Cults3d by TOMCASA](https://cults3d.com/en/3d-model/gadget/boite-pour-wt32-sc01-esp32-tft-tactile)
-
