@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
     "idf.portWin": "COM14",
     "idf.adapterTargetName": "esp32s3",
     "idf.openOcdConfigs": [
