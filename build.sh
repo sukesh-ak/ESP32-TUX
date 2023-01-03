@@ -5,3 +5,6 @@ set -e
 touch ./managed_components/espressif__fmt/.component_hash
 rm ./managed_components/espressif__fmt/.component_hash
 idf.py build
+echo
+echo Now run ./deploy.sh to flash the firmware
+echo
