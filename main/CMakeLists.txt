@@ -27,6 +27,8 @@ idf_component_register(SRCS "main.cpp"
 				app_update ota esp_event esp_timer esp_wifi wifi_provisioning spiffs esp_partition
 				esp_hw_support
 				)
+# CMAKE force include pins
 
+add_definitions(-include hal/gpio_types.h)
 spiffs_create_partition_image(storage ${PROJECT_DIR}/fatfs FLASH_IN_PROJECT)
 #fatfs_create_spiflash_image(storage ${PROJECT_DIR}/fatfs FLASH_IN_PROJECT PRESERVE_TIME)
