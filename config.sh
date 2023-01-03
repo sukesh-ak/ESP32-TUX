@@ -2,8 +2,9 @@
 set -e
 . activate.sh
 # hack to prevent an error
-touch ./managed_components/espressif__fmt/.component_hash
-rm ./managed_components/espressif__fmt/.component_hash
+if [ -f ./managed_components/espressif__fmt/.component_hash ]; then
+    rm ./managed_components/espressif__fmt/.component_hash
+fi
 echo "Choose your device:"
 echo " [1] esp32 - WT32-SC01"
 echo " [2] esp32c3 - WT32-SC01+"
@@ -25,6 +26,10 @@ case $choice in
        ;;
 esac
 
-touch ./managed_components/espressif__fmt/.component_hash
-rm ./managed_components/espressif__fmt/.component_hash
+if [ -f ./managed_components/espressif__fmt/.component_hash ]; then
+    rm ./managed_components/espressif__fmt/.component_hash
+fi
 idf.py menuconfig
+
+echo ""
+echo "Configuration done, now run ./deploy.sh to build and flash the firmware"
