@@ -9,7 +9,7 @@ echo "Choose your device:"
 echo " [1] esp32 - WT32-SC01"
 echo " [2] esp32s3 - WT32-SC01-Plus / ESP32S3SPI35 / ESP32S335D"
 # query user input for device selection
-read -p "Enter your choice [1-3]: " choice
+read -p "Enter your choice [1-2]: " choice
 rm -rf build
 
 case $choice in
