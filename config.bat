@@ -7,7 +7,8 @@ echo  [2] esp32c3 - WT32-SC01+
 echo  [3] esp32s3 - ESP32S3SPI35 / ESP32S335D
 
 rem query user input for device selection
-set /p choice=Enter your choice [1-3]: 
+set /p choice=Enter your choice [1-3]:
+rmdir /s /q build
 
 if "%choice%" == "1" (
   echo esp32 - WT32-SC01

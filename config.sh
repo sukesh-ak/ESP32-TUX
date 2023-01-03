@@ -11,6 +11,8 @@ echo " [2] esp32c3 - WT32-SC01+"
 echo " [3] esp32s3 - ESP32S3SPI35 / ESP32S335D"
 # query user input for device selection
 read -p "Enter your choice [1-3]: " choice
+rm -rf build
+
 case $choice in
     1) echo "esp32 - WT32-SC01"
        idf.py set-target esp32
