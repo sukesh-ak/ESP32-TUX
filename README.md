@@ -133,22 +133,6 @@ lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 ## Getting Started
 _Make sure you have installed ESP-IDF 5.0 (released version) and working from the command-line._
 
-### Install ESP-IDF 5.0 (released version)
-
-- Linux/Mac:
-    https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/get-started/linux-macos-setup.html
-- Windows:
-    https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/get-started/windows-setup.html
-
-```bash
-# On mac/linux activate the `idf.py` environment by using:
-$ ~/esp/esp-idf/export.sh
-
-# On Windows use the ESP-IDF command line shortcut in the start menu.
-```
-
-The `idf.py` tool should now be available.
-
 ### Watch project Demo Walkthrough - Clone, Build and Flash
 [![asciicast](https://asciinema.org/a/549415.svg)](https://asciinema.org/a/549415)
 
