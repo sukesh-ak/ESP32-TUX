@@ -145,41 +145,23 @@ lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 |Purchase Link|[BUY](https://bit.ly/wt32-sc01)|[BUY](https://bit.ly/wt32-sc01-plus)|[BUY](https://bit.ly/ESP32S3SPI35)|[BUY](https://bit.ly/ESP32S335D)
 > Flash & PSRAM specifications are as per what I received.
 
-
 ## Get Started
+### Watch project Demo Walkthrough - Clone, Build and Flash
+[![asciicast](https://asciinema.org/a/549415.svg)](https://asciinema.org/a/549415)
+
 > Git clone and recursively update submodule
 ```cmake
 # Clone repo and update submodules (LovyanGFX + LVGL) recursively
 git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
 cd ESP32-TUX
 ```
-  
-Then you need to select your board
 
-For WT32-SCO-Plus, use
-`idf.py set-target esp32s3`
-  
-For WT32-SCO (non-plus) you can skip this step according to [this](https://github.com/sukesh-ak/ESP32-TUX/issues/13#issuecomment-1367132385).
-
-### To select your device uncomment [here](/main/main.hpp)
-
-Run `idf.py menuconfig` to configure the settings under `ESP32-TUX Configuration` including
+Run `idf.py menuconfig` to configure other settings under `ESP32-TUX Configuration` including
 - WiFi Provisioning using Mobile App - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
 - MQTT Config (work-in-progress)
 - SNTP Config
 - OTA Config
 - Weather Config
-
-Select the board in the `idf.py menuconfig`
-
-![image](https://user-images.githubusercontent.com/6856673/209997757-21437d0e-c3b9-4fec-b349-2ec07e31e809.png)
-
-
-Please also make sure to set 
-- Flash size (under `Serial flasher config`)
-- Custom partition table CSV (under `Partition Table`)
-
-_Remaining default configuration is setup using sdkconfig file in the project root for ESP32 & ESP32-S3._
 
 ### Important customization configuration
 - ESP32-TUX Configuration > SNTP Config > Timezone settings (Refer Wikipedia [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones))
