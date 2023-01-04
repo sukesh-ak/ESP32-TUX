@@ -17,21 +17,6 @@
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
 
-## idf.py
-
-Install `idf.py` toolset by using the guide:
-
-  * Linux/Mac:
-    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html
-  * Windows:
-    * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/windows-setup.html
-
-On mac/linux activat the `idf.py` environment by using:
-
-  * `. ~/esp/esp-idf/export.sh`
-
-The `idf.py` tool should now be available.
-
 ## Screens
 1. HOME (you can add more widgets here)
 2. REMOTE (Sample App screen where you can have your own)
@@ -145,12 +130,28 @@ lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 |Purchase Link|[BUY](https://bit.ly/wt32-sc01)|[BUY](https://bit.ly/wt32-sc01-plus)|[BUY](https://bit.ly/ESP32S3SPI35)|[BUY](https://bit.ly/ESP32S335D)
 > Flash & PSRAM specifications are as per what I received.
 
-## Get Started
+## Getting Started
 _Make sure you have installed ESP-IDF 5.0 (released version) and working from the command-line._
+
+### Install ESP-IDF 5.0 (released version)
+
+- Linux/Mac:
+    https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/get-started/linux-macos-setup.html
+- Windows:
+    https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/get-started/windows-setup.html
+
+```bash
+# On mac/linux activate the `idf.py` environment by using:
+$ ~/esp/esp-idf/export.sh
+
+# On Windows use the ESP-IDF command line shortcut in the start menu.
+```
+
+The `idf.py` tool should now be available.
+
 ### Watch project Demo Walkthrough - Clone, Build and Flash
 [![asciicast](https://asciinema.org/a/549415.svg)](https://asciinema.org/a/549415)
 
-> Git clone and recursively update submodule
 ```cmake
 # Clone repo and update submodules (LovyanGFX + LVGL) recursively
 git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
@@ -171,31 +172,6 @@ Run `idf.py menuconfig` to configure other settings under `ESP32-TUX Configurati
 - ESP32-TUX Configuration > Weather Config > Weather Units
 - ESP32-TUX Configuration > Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
 
-## Separate build folder for ESP32 & ESP32-S3
-> Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
-> This enables you to have separate build folder, in case you use multiple devices with different controller variants like ESP32 vs ESP32-S3.  
-
-```cmake
-# set target and build,flash,monitor - ESP32
-idf.py -B build-esp32 set-target esp32 build
-idf.py -B build-esp32 flash monitor
-
-# set target and build,flash,monitor - ESP32-S3
-idf.py -B build-esp32s3 set-target esp32s3 build
-idf.py -B build-esp32s3 flash monitor
-```
-### Otherwise ESP32/ESP32-S3 devices
-```cmake
-# set IDF chip target (default is 'esp32')
-idf.py set-target esp32s3
-
-# set target and build
-idf.py build
-
-# Compile, Flash and Monitor
-idf.py flash monitor
-```
-
 ## How custom lvgl config is setup - ESP-IDF  
 > Check settings in CMakeLists.txt [here](CMakeLists.txt)
 ```cmake
@@ -203,6 +179,10 @@ idf.py flash monitor
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-I../main" APPEND)
 ```
+
+## Separate build folder for ESP32 & ESP32-S3
+> Check settings in CMakeLists.txt [here](CMakeLists.txt#L8)  
+> This enables you to have separate build folder, in case you use multiple devices with different controller variants like ESP32 vs ESP32-S3.  
 
 ## Display Helpful Compile Time Information
 > Check settings in CMakeLists.txt [here](CMakeLists.txt)  
