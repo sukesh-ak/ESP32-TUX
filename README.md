@@ -152,25 +152,7 @@ The `idf.py` tool should now be available.
 ### Watch project Demo Walkthrough - Clone, Build and Flash
 [![asciicast](https://asciinema.org/a/549415.svg)](https://asciinema.org/a/549415)
 
-```cmake
-# Clone repo and update submodules (LovyanGFX + LVGL) recursively
-git clone --recursive https://github.com/sukesh-ak/ESP32-TUX.git
-cd ESP32-TUX
-```
-
-Run `idf.py menuconfig` to configure other settings under `ESP32-TUX Configuration` including
-- WiFi Provisioning using Mobile App - [Android App](https://play.google.com/store/apps/details?id=com.espressif.provsoftap) and [iPhone App](https://apps.apple.com/in/app/esp-softap-provisioning/id1474040630)
-- MQTT Config (work-in-progress)
-- SNTP Config
-- OTA Config
-- Weather Config
-
-### Important customization configuration
-- ESP32-TUX Configuration > SNTP Config > Timezone settings (Refer Wikipedia [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones))
-- ESP32-TUX Configuration > OTA Config > OTA URL settings (use local python [webserver.py](webserver.py))
-- ESP32-TUX Configuration > Weather Config > Weather Location (Test the location [here](https://openweathermap.org/find))
-- ESP32-TUX Configuration > Weather Config > Weather Units
-- ESP32-TUX Configuration > Weather Config > Weather API Key (Register for free API Key from [OpenWeatherMap](https://openweathermap.org/api))
+### Refer Project Wiki for more details [here](https://github.com/sukesh-ak/ESP32-TUX/wiki)
 
 ## How custom lvgl config is setup - ESP-IDF  
 > Check settings in CMakeLists.txt [here](CMakeLists.txt)
