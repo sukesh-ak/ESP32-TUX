@@ -32,7 +32,7 @@ _Remember this is a template so make it your own as per your needs._
 
 ## Web Installer : [https://tux.sukesh.me](https://tux.sukesh.me)
 > You only need a USB Cable and Browser to install and test on your device.  
-_(Work in progress)_
+
 
 ## Key Project Goals
 - An easy UI Template to get started quickly
