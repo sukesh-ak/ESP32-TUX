@@ -146,6 +146,7 @@ lv_label_set_text(lbl_version, "Firmware Version 1.1.0");
 > Flash & PSRAM specifications are as per what I received.
 
 ## Get Started
+_Make sure you have installed ESP-IDF 5.0 (released version) and working from the command-line._
 ### Watch project Demo Walkthrough - Clone, Build and Flash
 [![asciicast](https://asciinema.org/a/549415.svg)](https://asciinema.org/a/549415)
 
