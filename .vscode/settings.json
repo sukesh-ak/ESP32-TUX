@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
     "idf.portWin": "COM14",
     "idf.adapterTargetName": "esp32s3",
     "idf.openOcdConfigs": [
