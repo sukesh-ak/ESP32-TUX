@@ -2,8 +2,10 @@ menu "ESP32-TUX Configuration"
     menu "Device Config"
 
     choice TUX_DEVICE_SELECTED
+		default TUX_DEVICE_NONE
         prompt "Select the device"
-        default TUX_DEVICE_ESP32S335D
+		config TUX_DEVICE_NONE
+			bool "Select a supported device"
         config TUX_DEVICE_ESP32S335D
             bool "MakerFabs ESP32S335D - 16Bit Parallel - 16MB Flash"
             help
