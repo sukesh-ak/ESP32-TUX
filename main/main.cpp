@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-static const char *TAG = "ESP32-TUX";
+static const char *TAG = "robohome";
 #include "main.hpp"
 
 static void set_timezone()
@@ -252,7 +252,7 @@ extern "C" void app_main(void)
     // Load values
     cfg->load_config();
     // Change device name
-    cfg->DeviceName = "ESP32-TUX";
+    cfg->DeviceName = "robohome";
     cfg->WeatherAPIkey = CONFIG_WEATHER_API_KEY;
     cfg->WeatherLocation = CONFIG_WEATHER_LOCATION;
     cfg->WeatherProvider = CONFIG_WEATHER_OWM_URL;

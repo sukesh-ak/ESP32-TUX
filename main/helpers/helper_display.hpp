@@ -91,6 +91,35 @@ esp_err_t lv_display_init()
     lcd.setRotation(2);
     lcd.setColorDepth(16);
     lcd.setBrightness(128);
+
+    lcd.setTextDatum(textdatum_t::middle_center);
+    lcd.drawString("touch the arrow marker.", lcd.width()>>1, lcd.height() >> 1);
+    lcd.setTextDatum(textdatum_t::top_left);
+
+    // タッチを使用する場合、キャリブレーションを行います。画面の四隅に表示される矢印の先端を順にタッチしてください。
+    std::uint16_t fg = TFT_WHITE;
+    std::uint16_t bg = TFT_BLACK;
+    uint16_t calibData[7];
+    calibData[0]= 3628;
+    calibData[1]= 481;
+    calibData[2]= 3808;
+    calibData[3]= 3885;
+    calibData[4]= 373;
+    calibData[5]= 436;
+    calibData[6]= 491;
+    calibData[7]= 3893;
+
+    //uncomment the following line to run calibration on start
+   // lcd.calibrateTouch(calibData, fg, bg, std::max(lcd.width(), lcd.height()) >> 3);
+    for (size_t i = 0; i < 8; i++)
+    {
+        ESP_LOGI(TAG, "calibData[%i] = %i", i,calibData[i]);
+    }
+    lcd.setTouchCalibrate(calibData);
+    copy(calibData,
+    calibData + sizeof(calibData) / sizeof(calibData[0]),
+    ostream_iterator<short>(cout, "\n"));
+
     //lcd.fillScreen(TFT_BLACK);
 
     /* LVGL : Setting up buffer to use for display */
