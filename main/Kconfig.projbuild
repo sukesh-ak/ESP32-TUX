@@ -36,6 +36,14 @@ menu "ESP32-TUX Configuration"
 
                 The corresponding CSV file in the partition directory is
                 partitions/partition-8MB.csv
+
+        config TUX_DEVICE_ESP32_ILI9341
+            bool "ESP32 WITH ILI9341 - SPI - 4MB Flash"
+            help
+                ESP32 with 4MB flash and ILI9341 / XPT2046.
+
+                The corresponding CSV file in the partition directory is
+                partitions/partition-4MB.csv
     endchoice
     
     # TODO: Work in progress

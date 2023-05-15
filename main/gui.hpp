@@ -122,6 +122,8 @@ static lv_style_t style_ui_island;
 
 static lv_style_t style_glow;
 
+ extern lv_disp_drv_t disp_drv;
+
 /******************
  *  LVL ANIMATION
  ******************/
@@ -326,7 +328,7 @@ static void create_header(lv_obj_t *parent)
 
     // HEADER TITLE
     label_title = lv_label_create(panel_title);
-    lv_label_set_text(label_title, LV_SYMBOL_HOME " ESP32-TUX");
+    lv_label_set_text(label_title, LV_SYMBOL_HOME "robohome");
 
     // HEADER STATUS ICON PANEL
     panel_status = lv_obj_create(panel_header);
@@ -407,7 +409,7 @@ static void create_footer(lv_obj_t *parent)
 
 static void tux_panel_clock_weather(lv_obj_t *parent)
 {
-    tux_clock_weather = tux_panel_create(parent, "", 130);
+    tux_clock_weather = tux_panel_create(parent, "", 245);
     lv_obj_add_style(tux_clock_weather, &style_ui_island, 0);
 
     lv_obj_t *cont_panel = tux_panel_get_content(tux_clock_weather);
@@ -416,14 +418,15 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // ************ Date/Time panel
     lv_obj_t *cont_datetime = lv_obj_create(cont_panel);
-    lv_obj_set_size(cont_datetime,180,120);
+    lv_obj_set_size(cont_datetime,180,110);
     lv_obj_set_flex_flow(cont_datetime, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_scrollbar_mode(cont_datetime, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_align(cont_datetime,LV_ALIGN_LEFT_MID,0,0);
+   lv_obj_align(cont_datetime,LV_ALIGN_TOP_MID,0,0);
     lv_obj_set_style_bg_opa(cont_datetime,LV_OPA_TRANSP,0);
     lv_obj_set_style_border_opa(cont_datetime,LV_OPA_TRANSP,0);
     //lv_obj_set_style_pad_gap(cont_datetime,10,0);
-    lv_obj_set_style_pad_top(cont_datetime,20,0);
+    lv_obj_set_style_pad_top(cont_datetime,0,0);
+    lv_obj_set_style_pad_left(cont_datetime,15,0);
 
     // MSG - MSG_TIME_CHANGED - EVENT
     lv_obj_add_event_cb(cont_datetime, datetime_event_cb, LV_EVENT_MSG_RECEIVED, NULL);
@@ -432,13 +435,14 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     // Time
     lbl_time = lv_label_create(cont_datetime);
     lv_obj_set_style_align(lbl_time, LV_ALIGN_TOP_LEFT, 0);
+    lv_obj_set_style_pad_left(lbl_time,15,0);
     lv_obj_set_style_text_font(lbl_time, &font_7seg_56, 0);
     lv_label_set_text(lbl_time, "00:00");
 
-    // AM/PM
-    lbl_ampm = lv_label_create(cont_datetime);
-    lv_obj_set_style_align(lbl_ampm, LV_ALIGN_TOP_LEFT, 0);
-    lv_label_set_text(lbl_ampm, "AM");
+    // // AM/PM
+    // lbl_ampm = lv_label_create(cont_datetime);
+    // lv_obj_set_style_align(lbl_ampm, LV_ALIGN_TOP_LEFT, 0);
+    // lv_label_set_text(lbl_ampm, "AM");
 
     // Date
     lbl_date = lv_label_create(cont_datetime);
@@ -449,11 +453,11 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
 
     // ************ Weather panel (panel widen with weekly forecast in landscape)
     lv_obj_t *cont_weather = lv_obj_create(cont_panel);
-    lv_obj_set_size(cont_weather,100,115);
+    lv_obj_set_size(cont_weather,100,125);
     lv_obj_set_flex_flow(cont_weather, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(cont_weather, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(cont_weather, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_align_to(cont_weather,cont_datetime,LV_ALIGN_OUT_RIGHT_MID,0,0);
+    lv_obj_align_to(cont_weather,cont_datetime,LV_ALIGN_OUT_BOTTOM_MID,0,-30);
     lv_obj_set_style_bg_opa(cont_weather,LV_OPA_TRANSP,0);
     lv_obj_set_style_border_opa(cont_weather,LV_OPA_TRANSP,0);
 
@@ -479,6 +483,13 @@ static void tux_panel_clock_weather(lv_obj_t *parent)
     lv_obj_set_style_text_font(lbl_temp, font_xl, 0);
     lv_obj_set_style_align(lbl_temp, LV_ALIGN_BOTTOM_MID, 0);
     lv_label_set_text(lbl_temp, "0°C");
+
+    lbl_hl = lv_label_create(cont_weather);
+    lv_obj_set_style_text_font(lbl_hl, &font_robotomono_13, 0);
+    lv_obj_set_style_align(lbl_hl, LV_ALIGN_BOTTOM_MID, 0);
+    lv_label_set_text(lbl_hl, CONFIG_WEATHER_LOCATION);
+
+
 
     lbl_hl = lv_label_create(cont_weather);
     lv_obj_set_style_text_font(lbl_hl, font_normal, 0);
@@ -804,6 +815,15 @@ static void rotate_event_handler(lv_event_t *e)
         // footer_message("%d,%d",screen_h,screen_w);
     }
 }
+static void my_rounder(lv_area_t *a)
+{
+    a->x1 = 0;
+    a->x2 = LV_HOR_RES - 1;
+
+    a->y1 = 0;
+    a->y2 = LV_VER_RES - 1;
+}
+
 
 static void theme_switch_event_handler(lv_event_t *e)
 {
@@ -975,13 +995,18 @@ void datetime_event_cb(lv_event_t * e)
         strftime(strftime_buf, sizeof(strftime_buf), "%a, %e %b %Y", dtinfo);
         lv_label_set_text_fmt(lbl_date,"%s",strftime_buf);
 
-        // Time in 12hrs 
-        strftime(strftime_buf, sizeof(strftime_buf), "%I:%M", dtinfo);
-        lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);        
+        // Time in 24hrs 
+        strftime(strftime_buf, sizeof(strftime_buf), "%H:%M", dtinfo);
+        lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);   
 
-        // 12hr clock AM/PM
-        strftime(strftime_buf, sizeof(strftime_buf), "%p", dtinfo);
-        lv_label_set_text_fmt(lbl_ampm, "%s", strftime_buf);        
+
+        // // Time in 12hrs 
+        // strftime(strftime_buf, sizeof(strftime_buf), "%I:%M", dtinfo);
+        // lv_label_set_text_fmt(lbl_time, "%s", strftime_buf);        
+
+        // // 12hr clock AM/PM
+        // strftime(strftime_buf, sizeof(strftime_buf), "%p", dtinfo);
+        // lv_label_set_text_fmt(lbl_ampm, "%s", strftime_buf);        
     }
 }
 

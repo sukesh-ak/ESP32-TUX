@@ -68,7 +68,10 @@ using namespace std ;
 #include "conf_Makerfabs_S3_STFT.h" 
 #elif defined(CONFIG_TUX_DEVICE_ESP32S335D)
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
-#include "conf_Makerfabs_S3_PTFT.h"    
+#include "conf_Makerfabs_S3_PTFT.h" 
+#elif defined(CONFIG_TUX_DEVICE_ESP32_ILI9341)
+// Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
+#include "conf_ESP32_ILI9341.h"    
 #else
     #error Unsupported device. Configure device in menuconfig
 #endif

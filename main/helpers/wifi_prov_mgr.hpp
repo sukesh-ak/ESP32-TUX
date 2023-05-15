@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include <freertos/event_groups.h>
-
+#include "qrcode.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
 
