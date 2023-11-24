@@ -36,6 +36,12 @@ menu "ESP32-TUX Configuration"
 
                 The corresponding CSV file in the partition directory is
                 partitions/partition-8MB.csv
+
+        config TUX_DEVICE_LILYGO_T_DISPLAY_S3_CAP
+            bool "ESP32-S3 1.9 inch ST7789 LCD Display Touch Screen - 16MB Flash"
+            help
+                 The corresponding CSV file in the partition directory is
+                partitions/partition-16MB.csv
     endchoice
     
     # TODO: Work in progress
