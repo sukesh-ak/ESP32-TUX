@@ -36,6 +36,22 @@ menu "ESP32-TUX Configuration"
 
                 The corresponding CSV file in the partition directory is
                 partitions/partition-8MB.csv
+
+        config TUX_DEVICE_LILYGO_T_DISPLAY_S3_CAP
+            bool "Lilygo T-Display S3 - 16MB Flash"
+            help
+                The corresponding CSV file in the partition directory is partitions/partition-16MB.csv
+
+        config TUX_DEVICE_LGFX_AUTODETECT
+            bool "use LovyanGFX autodetect"
+            help
+                select a corresponding CSV file from partitions/*
+
+        config TUX_DEVICE_SUNTON_8048S070
+            bool "use Sunton 8048S070 7in board"
+            help
+                select a corresponding CSV file from partitions/*
+
     endchoice
     
     # TODO: Work in progress
