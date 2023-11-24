@@ -69,6 +69,9 @@ using namespace std ;
 #elif defined(CONFIG_TUX_DEVICE_ESP32S335D)
 // Makerfabs ESP32S335D (ESP32-S3 + 16Bit Parellel) with SD Card, Audio support
 #include "conf_Makerfabs_S3_PTFT.h"    
+#elif defined(CONFIG_TUX_DEVICE_LILYGO_T_DISPLAY_S3_CAP)
+// https://www.lilygo.cc/products/t-display-s3
+#include "conf_LILYGO_T_DISPLAY_S3_CAP.h"
 #else
     #error Unsupported device. Configure device in menuconfig
 #endif
