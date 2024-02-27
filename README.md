@@ -16,6 +16,12 @@
 - UI / Widgets : [LVGL 8.x](https://github.com/lvgl/lvgl)
 - Framework : [ESP-IDF](https://github.com/espressif/esp-idf/)
 
+### SPONSORING
+[![Github sponsor](https://img.shields.io/static/v1?label=Click%20here%20to%20Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23FF007F&style=for-the-badge)](https://github.com/sponsors/sukesh-ak)  
+
+Your sponsorship would help me not only to maintain this project but also to work on a `version 2` of this project with `LVGL v9` support and other useful additions. If you're an individual user who has enjoyed my projects or benefited from my community work, please consider donating as a sign of appreciation. If you run a business that uses my work in your products, sponsoring my development makes good business sense: it ensures that the projects your product relies on stay healthy and actively maintained. I am also available in case you have custom HMI requirements.
+
+Thank you for considering supporting my work!
 
 ## Screens
 1. HOME (you can add more widgets here)
